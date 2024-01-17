@@ -38,21 +38,21 @@ app.use(
 );
 app.use(cookieParser());
 
-app.use((req, res, next) => {
-  const originalCookieFunction = res.cookie;
-console.log('a');
-  res.cookie = function (name, value, options) {
-    // Thay đổi domain từ "127.0.0.1" sang "localhost" tại đây nếu cần thiết
-    if (options && options.domain === '127.0.0.1') {
-      options.domain = 'localhost';
-    }
+// app.use((req, res, next) => {
+//   const originalCookieFunction = res.cookie;
+// console.log('a');
+//   res.cookie = function (name, value, options) {
+//     // Thay đổi domain từ "127.0.0.1" sang "localhost" tại đây nếu cần thiết
+//     if (options && options.domain === '127.0.0.1') {
+//       options.domain = 'localhost';
+//     }
     
-    // Gọi hàm cookie ban đầu
-    originalCookieFunction.call(this, name, value, options);
-  };
+//     // Gọi hàm cookie ban đầu
+//     originalCookieFunction.call(this, name, value, options);
+//   };
 
-  next();
-});
+//   next();
+// });
 
 
 app.use(logger("dev"));

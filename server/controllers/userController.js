@@ -51,7 +51,7 @@ const register = asyncHandler(async (req, res) => {
         httpOnly: true,
         secure: true,
         maxAge: 15 * 60 * 1000,
-        domain:'localhost',
+        // domain:'localhost',
       }
     );
 

@@ -31,7 +31,7 @@ app.set("view engine", "jade");
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT_URL,
     methods: ["POST", "PUT", "GET", "DELETE"],
     credentials: true,
   })

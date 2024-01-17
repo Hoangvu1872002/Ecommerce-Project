@@ -1,0 +1,354 @@
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../middlewares/jwt");
+const jwt = require("jsonwebtoken");
+const userModel = require("../models/user");
+const asyncHandler = require("express-async-handler");
+const sendMail = require("../ultils/sendMail");
+const crypto = require("crypto");
+const makeToken = require("uniqid");
+
+// const register = asyncHandler(async (req, res) => {
+//   const { email, password, firstname, lastname, mobile } = req.body;
+//   if (!email || !password || !lastname || !firstname || !mobile)
+//     return res.status(400).json({
+//       success: false,
+//       mes: "Missing input",
+//     });
+//   const user = await userModel.findOne({ email });
+//   if (user) throw new Error("User has existed!");
+//   else {
+//     const newUser = await userModel.create(req.body);
+//     return res.status(200).json({
+//       success: newUser ? true : false,
+//       mes: newUser
+//         ? "Register is successfully. Please go login."
+//         : "Something went wrong",
+//     });
+//   }
+// });
+
+const register = asyncHandler(async (req, res) => {
+  const { email, password, firstname, lastname, mobile } = req.body;
+
+  if (!email || !password || !lastname || !firstname || !mobile)
+    return res.status(400).json({
+      success: false,
+      mes: "Missing input",
+    });
+
+  const user = await userModel.findOne({ email });
+  if (user) throw new Error("User has existed!");
+  else {
+    const token = makeToken();
+    console.log(token);
+    res.cookie(
+      "dataregister",
+      { ...req.body, token },
+      { 
+        sameSite: 'None',
+        httpOnly: true,
+        secure: true,
+        maxAge: 15 * 60 * 1000,
+        domain:'localhost',
+      }
+    );
+
+
+    const html = `Please select the link below, this link will expire after 15 minutes.
+  <a href = ${process.env.URL_SERVER}/users/finalregister/${token}>Click here.</a>`;
+    const subject = "Complete registration";
+    await sendMail(email, html, subject);
+    return res.json({
+      success: true,
+      mes: "Please check your email to active account.",
+    });
+  }
+});
+
+const finalRegister = asyncHandler(async (req, res) => {
+  const cookie = req.cookies;
+  console.log(cookie);
+  const { token } = req.params;
+  console.log(token);
+  console.log(cookie?.dataregister?.token);
+  if (!cookie || cookie?.dataregister?.token !== token)
+    res.redirect(`${process.env.CLIENT_URL}/finalregister/falsed`);
+  const newUser = await userModel.create({
+    email: cookie?.dataregister?.email,
+    password: cookie?.dataregister?.password,
+    mobile: cookie?.dataregister?.mobile,
+    firstname: cookie?.dataregister?.firstname,
+    lastname: cookie?.dataregister?.lastname,
+    password: cookie?.dataregister?.password,
+  });
+  console.log("b");
+  if (newUser)
+    return res.redirect(`${process.env.CLIENT_URL}/finalregister/success`);
+  else res.redirect(`${process.env.CLIENT_URL}/finalregister/falsed`);
+});
+
+// refresh token => cap moi access token
+//access token => xac thuc va phan quyen nguoi dung
+const login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password)
+    return res.status(400).json({
+      success: false,
+      mes: "Missing input",
+    });
+
+  const response = await userModel.findOne({ email });
+
+  if (response && (await response.isCorrectPassword(password))) {
+    // tách pw và role ra khỏi response
+    const { password, role, refreshToken, ...userData } = response.toObject();
+    // tạo access token
+    const accessToken = generateAccessToken(response._id, role);
+    // tạo refresh token
+    const newRefreshToken = generateRefreshToken(response._id);
+    //Lưu refresh token vào database
+    await userModel.findByIdAndUpdate(
+      response._id,
+      { refreshToken: newRefreshToken },
+      { new: true }
+    );
+    // Lưu refresh token vào cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    return res.status(200).json({
+      success: true,
+      accessToken,
+      userData,
+    });
+  } else {
+    throw new Error("Invalid credenttials!");
+  }
+});
+
+const getCurrent = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const user = await userModel
+    .findById(_id)
+    .select("-refreshToken -password -role");
+  return res.status(200).json({
+    succes: user ? true : false,
+    rs: user ? user : "User not found!",
+  });
+});
+
+const refreshAccessToken = asyncHandler(async (req, res) => {
+  const cookie = req.cookies;
+  if (!cookie && !cookie.refreshToken)
+    throw new Error("No refresh token in cookies");
+  const rs = await jwt.verify(cookie.refreshToken, process.env.JWT_SECRET);
+
+  const response = await userModel.findOne({
+    _id: rs._id,
+    refreshToken: cookie.refreshToken,
+  });
+  return res.status(200).json({
+    succes: response ? true : false,
+    newAccessToken: response
+      ? generateAccessToken(response._id, response.role)
+      : "Refresh token matched",
+  });
+});
+
+const logout = asyncHandler(async (req, res) => {
+  const cookie = req.cookies;
+  if (!cookie || !cookie.refreshToken)
+    throw new Error("No refresh token in cookies.");
+  //Xoa refresh token o db
+  await userModel.findOneAndUpdate(
+    { refreshToken: cookie.refreshToken },
+    { refreshToken: "" },
+    { new: true }
+  );
+  // Xoa refresh token o cookie trinh duyet
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: true,
+  });
+  return res.status(200).json({
+    success: true,
+    mes: " Logout is done.",
+  });
+});
+
+//client gui email
+//server check email co hop le hay khong => gui mail + kem theo link (password change token)
+//clinet check mail => click link
+//client gui api kem token
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.query;
+  if (!email) throw new Error("Missing email");
+  const user = await userModel.findOne({ email });
+  if (!user) throw new Error("user not found.");
+  const resetToken = user.createPasswordChangedToken();
+  await user.save();
+
+  const html = `Please select the link below, this link will expire after 15 minutes.
+                <a href = ${process.env.URL_SERVER}/users/reset-password/${resetToken}>Click here.</a>`;
+
+  const subject = "Forgot password";
+  const rs = await sendMail(email, html, subject);
+
+  return res.status(200).json({
+    success: true,
+    rs,
+  });
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { token, password } = req.body;
+  if (!token || !password) throw new Error("Missing inputs");
+  const passwordResetToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+  const user = await userModel.findOne({
+    passwordResetToken,
+    passwordResetExprires: { $gt: Date.now() },
+  });
+  if (!user) throw new Error("Invalid reset token");
+  user.password = password;
+  user.passwordResetToken = undefined;
+  user.passwordChangeAt = Date.now();
+  user.passwordResetExprires = undefined;
+  await user.save();
+  return res.status(200).json({
+    success: user ? true : false,
+    mes: user ? "Updated password" : "Something went wrong",
+  });
+});
+
+const getUsers = asyncHandler(async (req, res) => {
+  const response = await userModel
+    .find()
+    .select("-refreshToken -password -role");
+  return res.status(200).json({
+    success: response ? true : false,
+    users: response,
+  });
+});
+
+const deleteUser = asyncHandler(async (req, res) => {
+  const { _id } = req.query;
+  if (!_id) throw new Error("Missing inpusts");
+  const response = await userModel.findByIdAndDelete(_id);
+  return res.status(200).json({
+    success: response ? true : false,
+    deleteUser: response
+      ? `User with email ${response.email} deleted.`
+      : "No user delete!",
+  });
+});
+
+const updateUser = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  if (!_id || Object.keys(req.body).length === 0)
+    throw new Error("Missing inputs");
+  const response = await userModel
+    .findByIdAndUpdate(_id, req.body, { new: true })
+    .select("-refreshToken -password -role");
+  return res.status(200).json({
+    success: response ? true : false,
+    updateUser: response ? response : "Some thing went wrong.",
+  });
+});
+
+const updateUserByAdmin = asyncHandler(async (req, res) => {
+  const { uid } = req.params;
+  if (Object.keys(req.body).length === 0) throw new Error("Missing inputs");
+  const response = await userModel
+    .findByIdAndUpdate(uid, req.body, { new: true })
+    .select("-refreshToken -password -role");
+  return res.status(200).json({
+    success: response ? true : false,
+    updateUser: response ? response : "Some thing went wrong.",
+  });
+});
+
+const updateUserAddress = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  if (!req.body.address) throw new Error("Missing inputs");
+  const response = await userModel
+    .findByIdAndUpdate(
+      _id,
+      { $push: { address: req.body.address } },
+      { new: true }
+    )
+    .select("-refreshToken -password -role");
+  return res.status(200).json({
+    success: response ? true : false,
+    updateUser: response ? response : "Some thing went wrong.",
+  });
+});
+
+const updateCart = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { pid, quantity, color } = req.body;
+  if (!pid || !quantity || !color) throw new Error("Missing inputs");
+  const user = await userModel.findById(_id).select("cart");
+  const alreadyProduct = user?.cart.find((el) => el.product.toString() === pid);
+  if (alreadyProduct) {
+    if (alreadyProduct.color === color) {
+      const response = await userModel.updateOne(
+        {
+          cart: { $elemMatch: alreadyProduct },
+        },
+        {
+          $set: {
+            "cart.$.quantity": quantity,
+          },
+        },
+        { new: true }
+      );
+      return res.status(200).json({
+        success: response ? true : false,
+        updateUser: response ? response : "Some thing went wrong.",
+      });
+    } else {
+      const response = await userModel.findByIdAndUpdate(
+        _id,
+        { $push: { cart: { product: pid, quantity, color } } },
+        { new: true }
+      );
+      return res.status(200).json({
+        success: response ? true : false,
+        updateUser: response ? response : "Some thing went wrong.",
+      });
+    }
+  } else {
+    const response = await userModel.findByIdAndUpdate(
+      _id,
+      { $push: { cart: { product: pid, quantity, color } } },
+      { new: true }
+    );
+    return res.status(200).json({
+      success: response ? true : false,
+      updateUser: response ? response : "Some thing went wrong.",
+    });
+  }
+});
+
+module.exports = {
+  register,
+  login,
+  getCurrent,
+  refreshAccessToken,
+  logout,
+  forgotPassword,
+  resetPassword,
+  getUsers,
+  deleteUser,
+  updateUser,
+  updateUserByAdmin,
+  updateUserAddress,
+  updateCart,
+  finalRegister,
+};

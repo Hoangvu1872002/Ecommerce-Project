@@ -8,8 +8,8 @@ export const apiRegister = (data) => axios({
     //     'Content-Type': 'application/json',
     // },
     // // mode: 'cors'
-    // credentials: 'include',
-    withCredentials: true,
+    credentials: 'include',
+    // withCredentials: true,
     data,  
 })
 export const apiLogin = (data) => axios({

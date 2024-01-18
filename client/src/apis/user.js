@@ -7,8 +7,9 @@ export const apiRegister = (data) => axios({
         Accept: 'application/json',
         'Content-Type': 'application/json',
     },
-    withCredentials: true,
+    mode: 'cors',
     credentials: 'include',
+    withCredentials: true,
     data,  
 })
 export const apiLogin = (data) => axios({

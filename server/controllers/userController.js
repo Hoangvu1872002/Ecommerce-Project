@@ -48,7 +48,7 @@ const register = asyncHandler(async (req, res) => {
       { ...req.body, token },
       { 
         sameSite: 'none',
-        httpOnly: false,
+        httpOnly: true,
         secure: true,
         maxAge: 15 * 60 * 1000,
         // domain:'localhost',

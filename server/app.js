@@ -31,7 +31,7 @@ app.set("view engine", "jade");
 
 app.use(
   cors({
-    credentials: true,
+    // credentials: true,
     origin: "*",
     methods: ["POST", "PUT", "GET", "DELETE"],
   })

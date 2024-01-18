@@ -31,7 +31,7 @@ app.set("view engine", "jade");
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: "*",
     methods: ["POST", "PUT", "GET", "DELETE"],
     credentials: true,
   })
@@ -46,14 +46,13 @@ app.use(cookieParser());
 //     if (options && options.domain === '127.0.0.1') {
 //       options.domain = 'localhost';
 //     }
-    
+
 //     // Gọi hàm cookie ban đầu
 //     originalCookieFunction.call(this, name, value, options);
 //   };
 
 //   next();
 // });
-
 
 app.use(logger("dev"));
 app.use(express.json());

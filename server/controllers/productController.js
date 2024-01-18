@@ -76,7 +76,7 @@ const getManyProduct = asyncHandler(async (req, res) => {
       });
     })
     .catch((err) => {
-      throw new Error(err.message);
+      throw new Error(err);
     });
 });
 

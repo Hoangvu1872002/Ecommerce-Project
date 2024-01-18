@@ -31,9 +31,9 @@ app.set("view engine", "jade");
 
 app.use(
   cors({
+    credentials: true,
     origin: "*",
     methods: ["POST", "PUT", "GET", "DELETE"],
-    // credentials: true,
   })
 );
 app.use(cookieParser());

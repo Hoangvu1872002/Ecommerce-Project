@@ -47,8 +47,8 @@ const register = asyncHandler(async (req, res) => {
       "dataregister",
       { ...req.body, token },
       { 
-        sameSite: 'None',
-        httpOnly: true,
+        sameSite: 'none',
+        httpOnly: false,
         secure: true,
         maxAge: 15 * 60 * 1000,
         // domain:'localhost',

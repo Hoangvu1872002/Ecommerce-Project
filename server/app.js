@@ -32,7 +32,7 @@ app.set("view engine", "jade");
 app.use(
   cors({
     // credentials: true,
-    origin: "*",
+    origin: process.env.CLIENT_URL,
     methods: ["POST", "PUT", "GET", "DELETE"],
   })
 );

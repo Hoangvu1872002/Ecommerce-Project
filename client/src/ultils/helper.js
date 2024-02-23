@@ -10,12 +10,61 @@ export const createSlug = (string) =>
     .split(" ")
     .join("-");
 
-export const formatMoney = (number) => Number(number?.toFixed(1)).toLocaleString();
-
+export const formatMoney = (number) =>
+  Number(number?.toFixed(1)).toLocaleString();
 
 export const renderStarFromNumber = (number, size) => {
   const stars = [];
-  for (let i = 0; i < +number; i++) stars.push(<BiSolidStar color="orange" size ={size || 16}></BiSolidStar>);
-  for (let i = 5; i > +number; i--) stars.push(<BiStar color="orange" size ={size || 16}></BiStar>);
+  number = Math.round(number)
+  for (let i = 0; i < +number; i++)
+    stars.push(<BiSolidStar color="orange" size={size || 16}></BiSolidStar>);
+  for (let i = 5; i > +number; i--)
+    stars.push(<BiStar color="orange" size={size || 16}></BiStar>);
   return stars;
 };
+
+export const validate = (payload, setInvaliFields) => {
+  let invalids = 0;
+  const fomatPayload = Object.entries(payload);
+  for (let arr of fomatPayload) {
+    if (arr[1].trim() === "") {
+      invalids++;
+      setInvaliFields((prev) => [
+        ...prev,
+        { name: arr[0], mes: "Require this field." },
+      ]);
+    }
+  }
+
+  for (let arr of fomatPayload) {
+    switch (arr[0]) {
+      case "email":
+        const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        if (!arr[1].match(regex)) {
+          invalids++;
+          setInvaliFields((prev) => [
+            ...prev,
+            { name: arr[0], mes: "Email invalid." },
+          ]);
+        }
+        break;
+
+      case "password":
+        if (arr[1].length < 1) {
+          invalids++;
+          setInvaliFields((prev) => [
+            ...prev,
+            { name: arr[0], mes: "Password minimum 1 characters." },
+          ]);
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  return invalids;
+};
+
+export const fotmatPrice = (number) => Math.round(number / 1000) * 1000;

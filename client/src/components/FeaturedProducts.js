@@ -16,7 +16,7 @@ const FeaturedProducts = () => {
     fetchProducts();
   }, []);
   return (
-    <div className="w-full">
+    <div className="w-main">
       <h3 className="text-[20px] font-semibold py-[15px] border-b-2 border-main">
         FREATURED PRODUCTS
       </h3>

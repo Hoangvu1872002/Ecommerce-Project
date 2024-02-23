@@ -6,14 +6,19 @@ import { renderStarFromNumber } from "../ultils/helper";
 import SelectOption from "./SelectOption";
 import icons from "../ultils/icons";
 import { Link } from "react-router-dom";
-import path from "../ultils/path";
+
 
 const { LiaEyeSolid, HiMenu, FaHeart } = icons;
 
-const Product = ({ productData, isNew }) => {
+const Product = ({ productData, isNew, normal }) => {
   const [isShowOption, setIsShowOption] = useState(false);
   return (
-    <Link className="w-full text-base px-[10px]" to = {`/${path.DETAIL_PRODUCT}/${productData?._id}/${productData?.title}`}>
+    <Link
+      className="w-full text-base px-[10px]"
+      to={`/${productData?.category?.toLowerCase()}/${productData?._id}/${
+        productData?.title
+      }`}
+    >
       <div
         className="w-full border p-[15px] flex flex-col items-center"
         onMouseEnter={(e) => {
@@ -41,28 +46,32 @@ const Product = ({ productData, isNew }) => {
             alt=""
             className="w-[274px] object-cover h-[274px]"
           ></img>
-          {isNew === true ? (
-            <>
-              <img
-                src={label}
-                alt=""
-                className="absolute top-[-16px] right-[-16px] w-[90px] h-[80px] object-cover"
-              ></img>
-              <span className="font-bold top-[10px] right-[8px] absolute text-white origin-bottom -rotate-12">
-                NEW
-              </span>
-            </>
-          ) : (
-            <>
-              <img
-                src={labelTrending}
-                alt=""
-                className="absolute top-[-33.5px] left-[-16px] w-[140px] h-[80px] object-cover"
-              ></img>
-              <span className="font-bold top-[-5px] left-[33px] absolute text-white ">
-                TRENDING
-              </span>
-            </>
+          {!normal && (
+            <div>
+              {isNew === true ? (
+                <>
+                  <img
+                    src={label}
+                    alt=""
+                    className="absolute top-[-16px] right-[-16px] w-[90px] h-[80px] object-cover"
+                  ></img>
+                  <span className="font-bold top-[10px] right-[8px] absolute text-white origin-bottom -rotate-12">
+                    NEW
+                  </span>
+                </>
+              ) : (
+                <>
+                  <img
+                    src={labelTrending}
+                    alt=""
+                    className="absolute top-[-33.5px] left-[-16px] w-[140px] h-[80px] object-cover"
+                  ></img>
+                  <span className="font-bold top-[-5px] left-[33px] absolute text-white ">
+                    TRENDING
+                  </span>
+                </>
+              )}
+            </div>
           )}
         </div>
         <div className="flex flex-col mt-[15px] items-start gap gap-1 w-full">

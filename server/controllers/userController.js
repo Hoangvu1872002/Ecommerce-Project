@@ -4,6 +4,7 @@ const {
 } = require("../middlewares/jwt");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/user");
+const cookieModel = require("../models/cookie");
 const asyncHandler = require("express-async-handler");
 const sendMail = require("../ultils/sendMail");
 const crypto = require("crypto");
@@ -42,21 +43,24 @@ const register = asyncHandler(async (req, res) => {
   if (user) throw new Error("User has existed!");
   else {
     const token = makeToken();
-    console.log(token);
-    res.cookie(
-      "dataregister",
-      { ...req.body, token },
-      { 
-        sameSite: 'none',
-        httpOnly: true,
-        secure: true,
-        maxAge: 15 * 60 * 1000,
-        // domain:'localhost',
-      }
-    );
+    // console.log(token);
+    // res.cookie(
+    //   "dataregister",
+    //   { ...req.body, token },
+    //   {
+    //     sameSite: 'none',
+    //     httpOnly: true,
+    //     secure: true,
+    //     maxAge: 15 * 60 * 1000,
+    //     // domain:'localhost',
+    //   }
+    // );
+    await cookieModel.create({
+      ...req.body,
+      token,
+    });
 
-
-    const html = `Please select the link below, this link will expire after 15 minutes.
+    const html = `Please select the link below.
   <a href = ${process.env.URL_SERVER}/users/finalregister/${token}>Click here.</a>`;
     const subject = "Complete registration";
     await sendMail(email, html, subject);
@@ -68,23 +72,32 @@ const register = asyncHandler(async (req, res) => {
 });
 
 const finalRegister = asyncHandler(async (req, res) => {
-  const cookie = req.cookies;
-  console.log(cookie);
-  const { token } = req.params;
-  console.log(token);
-  console.log(cookie?.dataregister?.token);
-  if (!cookie || cookie?.dataregister?.token !== token)
-    res.redirect(`${process.env.CLIENT_URL}/finalregister/falsed`);
-  const newUser = await userModel.create({
-    email: cookie?.dataregister?.email,
-    password: cookie?.dataregister?.password,
-    mobile: cookie?.dataregister?.mobile,
-    firstname: cookie?.dataregister?.firstname,
-    lastname: cookie?.dataregister?.lastname,
-    password: cookie?.dataregister?.password,
+  const currentTime = new Date();
+
+  const agoTime = new Date(currentTime - 15 * 60 * 1000);
+  console.log(agoTime);
+
+  await cookieModel.deleteMany({
+    createdAt: { $lt: agoTime },
   });
-  console.log("b");
-  if (newUser)
+
+  const { token } = req.params;
+  const cookie = await cookieModel.findOne({ token });
+
+  if (!cookie || cookie?.token !== token) {
+    await cookieModel.deleteOne({ token });
+    return res.redirect(`${process.env.CLIENT_URL}/finalregister/falsed`);
+  }
+  const newUser = await userModel.create({
+    email: cookie?.email,
+    password: cookie?.password,
+    mobile: cookie?.mobile,
+    firstname: cookie?.firstname,
+    lastname: cookie?.lastname,
+    password: cookie?.password,
+  });
+  const cookieDelete = await cookieModel.deleteOne({ token });
+  if (newUser && cookieDelete)
     return res.redirect(`${process.env.CLIENT_URL}/finalregister/success`);
   else res.redirect(`${process.env.CLIENT_URL}/finalregister/falsed`);
 });
@@ -135,7 +148,7 @@ const getCurrent = asyncHandler(async (req, res) => {
     .findById(_id)
     .select("-refreshToken -password -role");
   return res.status(200).json({
-    succes: user ? true : false,
+    success: user ? true : false,
     rs: user ? user : "User not found!",
   });
 });
@@ -184,7 +197,7 @@ const logout = asyncHandler(async (req, res) => {
 //clinet check mail => click link
 //client gui api kem token
 const forgotPassword = asyncHandler(async (req, res) => {
-  const { email } = req.query;
+  const { email } = req.body;
   if (!email) throw new Error("Missing email");
   const user = await userModel.findOne({ email });
   if (!user) throw new Error("user not found.");
@@ -192,14 +205,16 @@ const forgotPassword = asyncHandler(async (req, res) => {
   await user.save();
 
   const html = `Please select the link below, this link will expire after 15 minutes.
-                <a href = ${process.env.URL_SERVER}/users/reset-password/${resetToken}>Click here.</a>`;
+                <a href = ${process.env.CLIENT_URL}/reset-password/${resetToken}>Click here.</a>`;
 
   const subject = "Forgot password";
   const rs = await sendMail(email, html, subject);
 
   return res.status(200).json({
     success: true,
-    rs,
+    mes: rs.response?.includes("OK")
+      ? "Please check your email."
+      : "Please do it again.",
   });
 });
 
@@ -210,6 +225,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     .createHash("sha256")
     .update(token)
     .digest("hex");
+    console.log(passwordResetToken);
   const user = await userModel.findOne({
     passwordResetToken,
     passwordResetExprires: { $gt: Date.now() },

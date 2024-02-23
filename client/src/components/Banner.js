@@ -6,7 +6,7 @@ const Banner = () => {
       <img
         src="https://phuongnamvina.com/img_data/images/ecommerce.jpeg"
         alt="banner"
-        className=" h-[400px] w-full object-cover"
+        className=" h-[445.5px] w-full object-cover"
       />
     </div>
   );

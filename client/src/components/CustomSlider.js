@@ -4,23 +4,24 @@ import Product from "./Product";
 
 const settings = {
   dots: false,
-  infinite: true,
+  infinite: false,
   speed: 800,
   slidesToShow: 3,
   slidesToScroll: 1,
 };
 
-const CustomSlider = ({products, activeTab}) => {
+const CustomSlider = ({products, activeTab, normal}) => {
   return (
     <div>
       {products && (
-        <Slider {...settings}>
+        <Slider className="custom-slider" {...settings}>
           {products?.map((e) => (
             <Product
               key={e._id}
               pid={e._id}
               productData={e}
               isNew={activeTab === 1 ? false : true}
+              normal= {normal}
             ></Product>
           ))}
         </Slider>

@@ -17,13 +17,13 @@ const Home = () => {
   const { isLogedIn, current } = useSelector((state) => state.user);
 
   return (
-    <div>
-      <div className="w-main flex">
-        <div className="flex flex-col gap-5 w-[25%] flex-auto ">
+    <>
+      <div className="w-main flex mt-6">
+        <div className="flex flex-col gap-5 w-[24%] flex-auto ">
           <Sidebar></Sidebar>
           <DealDaily></DealDaily>
         </div>
-        <div className="flex flex-col gap-5 pl-5 w-[75%] flex-auto ">
+        <div className="flex flex-col gap-5 pl-5 w-[76%] flex-auto ">
           <Banner></Banner>
           <BestSeller></BestSeller>
         </div>
@@ -31,7 +31,7 @@ const Home = () => {
       <div className="my-8">
         <FeaturedProducts></FeaturedProducts>
       </div>
-      <div className="my-8 w-full ">
+      <div className="my-8 w-main ">
         <h3 className="text-[20px] font-semibold py-[15px] border-b-2 border-main">
           NEW ARRIVALS
         </h3>
@@ -68,7 +68,7 @@ const Home = () => {
         </div>
       </div>
       
-    </div>
+    </>
   );
 };
 

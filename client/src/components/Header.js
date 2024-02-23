@@ -2,15 +2,15 @@ import React from "react";
 import logo from "../assets/logo.png";
 import icons from "../ultils/icons";
 import { Link } from "react-router-dom";
-import path from '../ultils/path'
+import path from "../ultils/path";
 
 const Header = () => {
   const { FaPhoneAlt, MdEmail, IoBagRemove, FaUserCircle, IoHomeSharp } = icons;
   return (
     <div className=" w-main flex justify-between h-[110px] py-[35px]">
-    <Link to= {`/${path.HOME}`}>
-    <img src={logo} alt="logo" className="w-[234px] object-contain"></img>
-    </Link>
+      <Link to={`/${path.HOME}`}>
+        <img src={logo} alt="logo" className="w-[234px] object-contain"></img>
+      </Link>
       <div className="flex text-[13px]">
         <div className="flex flex-col px-6 border-r items-center">
           <span className="flex gap-3 items-center">
@@ -26,12 +26,13 @@ const Header = () => {
           </span>
           <span>Online Support 24/7</span>
         </div>
-        <div className="flex items-center px-6 border-r justify-center gap-2">
-          <IoBagRemove color="red"></IoBagRemove>
-          <span>0 item</span>
+        <div className="flex cursor-pointer items-center px-6 border-r justify-center gap-2">
+          <IoBagRemove size={24} color="red"></IoBagRemove>
+          <span>0 item (5)</span>
         </div>
-        <div className="flex items-center px-6 justify-center">
+        <div className="flex cursor-pointer items-center px-6 justify-center gap-2">
           <FaUserCircle size={24}></FaUserCircle>
+          <span> Profile </span>
         </div>
       </div>
     </div>

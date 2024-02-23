@@ -1,16 +1,18 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { InputField, Button } from "../../components";
-import { apiLogin, apiRegister } from "../../apis";
+import { apiForgotPassword, apiLogin, apiRegister } from "../../apis";
 import Swal from "sweetalert2";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import path from "../../ultils/path";
 import { useDispatch } from "react-redux";
-import { register } from "../../store/users/userSlide";
+import { login } from "../../store/users/userSlide";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { validate } from "../../ultils/helper";
 
 const Login = () => {
   const dispath = useDispatch();
   const navigate = useNavigate();
-  const localtion = useLocation();
   const [payload, setPayLoad] = useState({
     firstname: "",
     lastname: "",
@@ -18,6 +20,7 @@ const Login = () => {
     password: "",
     mobile: "",
   });
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const resetPayload = () => {
     setPayLoad({
@@ -28,36 +31,86 @@ const Login = () => {
       mobile: "",
     });
   };
+  const [email, setEmail] = useState("");
+  const [invaliFields, setInvaliFields] = useState([]);
+  const handleForgetPassword = async () => {
+    const response = await apiForgotPassword({ email });
+    if (response.success) {
+      toast.success(response.mes, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    } else {
+      toast.error(response.mes, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+  };
+
+  useEffect(() => {}, [isRegister]);
+
   const handleSubmit = useCallback(async () => {
     const { firstname, lastname, mobile, ...data } = payload;
-    if (isRegister) {
-      const response = await apiRegister(payload);
-      if (response.success) {
-        Swal.fire("Congratulation!", response.mes, "success").then(() => {
-          setIsRegister(false);
-          resetPayload();
-        });
+
+    const invalids = isRegister
+      ? validate(payload, setInvaliFields)
+      : validate(data, setInvaliFields);
+
+    if (invalids === 0) {
+      if (isRegister) {
+        const response = await apiRegister(payload);
+        if (response.success) {
+          Swal.fire("Congratulation!", response.mes, "success").then(() => {
+            setIsRegister(false);
+            resetPayload();
+          });
+        } else {
+          Swal.fire("Oops!", response.mes, "error");
+        }
       } else {
-        Swal.fire("Oops!", response.mes, "error");
-      }
-    } else {
-      const rs = await apiLogin(data);
-      if (rs.success) {
-        dispath(
-          register({
-            isLoggedIn: true,
-            token: rs.accessToken,
-            userData: rs.userData,
-          })
-        );
-        navigate(`/${path.HOME}`);
-      } else {
-        Swal.fire("Oops!", rs.mes, "error");
+        const rs = await apiLogin(data);
+        if (rs.success) {
+          dispath(
+            login({
+              isLoggedIn: true,
+              token: rs.accessToken,
+              userData: rs.userData,
+            })
+          );
+          navigate(`/${path.HOME}`);
+        } else {
+          Swal.fire("Oops!", rs.mes, "error");
+        }
       }
     }
   }, [payload, isRegister]);
   return (
     <div className="w-screen h-screen relative bg-slate-300">
+      {isForgotPassword && (
+        <div className="absolute animate-slide-right top-0 left-0 bottom-0 right-0 bg-white py-8 flex flex-col items-center z-50 ">
+          <div className="flex flex-col gap-4">
+            <label htmlFor="email">Enter your email:</label>
+            <input
+              type="text"
+              id="email"
+              className="w-[800px] pb-2 border-b outline-none placeholder:text-sm"
+              placeholder="Exp:email@gmail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            ></input>
+            <div className="flex items-center justify-end w-full gap-4">
+              <Button
+                name="Submit"
+                handleOnClick={handleForgetPassword}
+                style="px-4 py-2 my-2 rounded-md text-white bg-blue-500 text-seminold"
+              ></Button>
+              <Button
+                name="Back"
+                handleOnClick={() => setIsForgotPassword(false)}
+              ></Button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* <img
         src="https://www.shutterstock.com/shutterstock/videos/1107990943/thumb/1.jpg?ip=x480"
         alt=""
@@ -74,11 +127,15 @@ const Login = () => {
                 value={payload.firstname}
                 setValue={setPayLoad}
                 nameKey="firstname"
+                invaliFields={invaliFields}
+                setInvaliFields={setInvaliFields}
               ></InputField>
               <InputField
                 value={payload.lastname}
                 setValue={setPayLoad}
                 nameKey="lastname"
+                invaliFields={invaliFields}
+                setInvaliFields={setInvaliFields}
               ></InputField>
             </div>
           )}
@@ -86,12 +143,16 @@ const Login = () => {
             value={payload.email}
             setValue={setPayLoad}
             nameKey="email"
+            invaliFields={invaliFields}
+            setInvaliFields={setInvaliFields}
           ></InputField>
           {isRegister && (
             <InputField
               value={payload.mobile}
               setValue={setPayLoad}
               nameKey="mobile"
+              invaliFields={invaliFields}
+              setInvaliFields={setInvaliFields}
             ></InputField>
           )}
           <InputField
@@ -99,16 +160,22 @@ const Login = () => {
             setValue={setPayLoad}
             nameKey="password"
             type="password"
+            invaliFields={invaliFields}
+            setInvaliFields={setInvaliFields}
           ></InputField>
-          <Button
-            name={isRegister ? "Register" : "Login"}
+          <Button       
             handleOnClick={handleSubmit}
             fw
-          ></Button>
+          >
+            {isRegister ? "Register" : "Login"}
+          </Button>
           <div className="flex items-center justify-between my-2 w-full text-sm">
             {!isRegister && (
-              <span className="text-blue-500 hover: underline cursor-pointer">
-                Forgot your password?
+              <span
+                onClick={() => setIsForgotPassword(true)}
+                className="text-blue-500 hover: underline cursor-pointer"
+              >
+                Forgot your password.
               </span>
             )}
             {!isRegister && (
@@ -119,7 +186,7 @@ const Login = () => {
                   resetPayload();
                 }}
               >
-                Create Account
+                Create Account.
               </span>
             )}
             {isRegister && (
@@ -130,12 +197,19 @@ const Login = () => {
                   resetPayload();
                 }}
               >
-                Go to login
+                Go to login.
               </span>
             )}
           </div>
+          <Link
+            className="text-blue-500 hover:underline cursor-pointer text-sm"
+            to={`/${path.HOME}`}
+          >
+            Go home.
+          </Link>
         </div>
       </div>
+      <ToastContainer autoClose={1200} />
     </div>
   );
 };

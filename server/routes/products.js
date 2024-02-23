@@ -15,7 +15,7 @@ const uploadImage = require("../config/cloudinary.config");
 /* GET users listing. */
 router.post("/", verifyAccessToken, isAdmin, createProduct);
 router.get("/", getManyProduct);
-router.put("/rating", verifyAccessToken, isAdmin, rating);
+router.put("/rating", verifyAccessToken, rating);
 
 router.put(
   "/upload-image/:pid",

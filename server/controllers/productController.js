@@ -15,16 +15,23 @@ const createProduct = asyncHandler(async (req, res) => {
 
 const getProduct = asyncHandler(async (req, res) => {
   const { pid } = req.params;
-  const product = await productModel.findById(pid);
+  const product = await productModel.findById(pid).populate({
+    path: "ratings",
+    populate: {
+      path: "postedBy",
+      select: "firstname lastname avatar",
+    },
+  });
   return res.status(200).json({
     success: product ? true : false,
-    createProduct: product ? product : "Cannot get product.",
+    productData: product ? product : "Cannot get product.",
   });
 });
 
 //filltering, sorting, pagination
 const getManyProduct = asyncHandler(async (req, res) => {
   const queries = { ...req.query };
+  console.log(queries.category);
 
   // tach ca truong dac biet ra khoi query
   const excludeFields = ["limit", "sort", "page", "fields"];
@@ -37,11 +44,23 @@ const getManyProduct = asyncHandler(async (req, res) => {
     (macthedEl) => `$${macthedEl}`
   );
   const formatedQueries = JSON.parse(queryString);
+  let colorQueryObject = {};
 
   //filltering
   if (queries?.title)
     formatedQueries.title = { $regex: queries.title, $options: "i" };
-  let queryCommand = productModel.find(formatedQueries);
+  if (queries?.category)
+    formatedQueries.category = { $regex: queries.category, $options: "i" };
+  if (queries?.color) {
+    delete formatedQueries.color;
+    const colorArr = queries.color?.split(",");
+    const colorQuery = colorArr.map((e) => ({
+      color: { $regex: e, $options: "i" },
+    }));
+    colorQueryObject = { $or: colorQuery };
+  }
+  const q = { ...colorQueryObject, ...formatedQueries };
+  let queryCommand = productModel.find(q);
 
   //sorting
   //abc,efg => [abc,efg] => abc efg
@@ -68,7 +87,7 @@ const getManyProduct = asyncHandler(async (req, res) => {
   //so luong san pham thoa man dieu kien !== so luong sp tra ve 1 lan goi api
   queryCommand
     .then(async (response) => {
-      const counts = await productModel.find(formatedQueries).countDocuments();
+      const counts = await productModel.find(q).countDocuments();
       return res.status(200).json({
         success: response ? true : false,
         counts,
@@ -104,7 +123,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 const rating = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  const { star, comment, pid } = req.body;
+  const { star, comment, pid, updateAt } = req.body;
   if (!star || !pid) throw new Error("Missing inputs.");
   const ratingProduct = await productModel.findById(pid);
   const alreadyRating = ratingProduct?.ratings?.find(
@@ -120,6 +139,7 @@ const rating = asyncHandler(async (req, res) => {
         $set: {
           "ratings.$.star": star,
           "ratings.$.comment": comment,
+          "ratings.$.updateAt": updateAt,
         },
       },
       {
@@ -131,7 +151,7 @@ const rating = asyncHandler(async (req, res) => {
     const response = await productModel.findByIdAndUpdate(
       pid,
       {
-        $push: { ratings: { star, comment, postedBy: _id } },
+        $push: { ratings: { star, comment, postedBy: _id, updateAt } },
       },
       { new: true }
     );

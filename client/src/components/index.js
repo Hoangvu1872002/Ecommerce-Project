@@ -14,4 +14,14 @@ export { default as TopHeader } from "./TopHeader";
 export { default as Footer } from "./Footer";
 export { default as InputField } from "./InputField";
 export { default as Button } from "./Button";
-
+export { default as Breadcrumbs } from "./Breadcrumbs";
+export { default as SelectQuantity } from "./SelectQuantity";
+export { default as ProductExtrainfo } from "./ProductExtrainfo";
+export { default as ProductInfo } from "./ProductInfo";
+export { default as SearchItem } from "./SearchItem";
+export { default as InputSelect } from "./InputSelect";
+export { default as Votebar } from "./Votebar";
+export { default as Rating } from "./Rating";
+export { default as VoteOption } from "./VoteOption";
+export { default as Modal } from "./Modal";
+export { default as Comment } from "./Comment";

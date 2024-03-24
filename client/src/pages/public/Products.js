@@ -8,12 +8,14 @@ import {
 import {
   Breadcrumbs,
   InputSelect,
+  Pagination,
   Product,
   SearchItem,
 } from "../../components";
 import { apiGetProducts } from "../../apis";
 import Masonry from "react-masonry-css";
-import { sorts } from "../../ultils/contants";
+import { sorts, limit } from "../../ultils/contants";
+
 
 const breakpointColumnsObj = {
   default: 4,
@@ -34,16 +36,13 @@ const Products = () => {
   const navigate = useNavigate();
 
   const fetchProductsByCategory = async (queries) => {
-    const response = await apiGetProducts(queries);
-    if (response) setProducts(response.products);
+    const response = await apiGetProducts({...queries, limit});
+    if (response) setProducts(response);
   };
 
   useEffect(() => {
-    let param = [];
-    for (let i of params.entries()) param.push(i);
-    const queries = {};
+    const queries = Object.fromEntries([...params]);
     let priceQuery = {};
-    for (let i of params) queries[i[0]] = i[1];
 
     if (queries.to && queries.from) {
       priceQuery = {
@@ -53,13 +52,20 @@ const Products = () => {
         ],
       };
       delete queries.price;
+    } else {
+      if (queries.from) queries.price = { gte: queries.from };
+      if (queries.to) queries.price = { lte: queries.to };
     }
-    if (queries.from) queries.price = { gte: queries.from };
-    if (queries.to) queries.price = { lte: queries.to };
     delete queries.to;
     delete queries.from;
-    const q = { ...priceQuery, ...queries };
+    let q;
+    if (category === ":category") {
+      q = { ...priceQuery, ...queries };
+    } else {
+      q = { ...priceQuery, ...queries, ...{ category } };
+    }
     fetchProductsByCategory(q);
+    window.scrollTo(0, 0);
   }, [params]);
 
   const changeActiveFitler = useCallback(
@@ -78,12 +84,14 @@ const Products = () => {
   );
 
   useEffect(() => {
-    navigate({
-      pathname: `/${category}`,
-      search: createSearchParams({
-        sort,
-      }).toString(),
-    });
+    if (sort) {
+      navigate({
+        pathname: `/${category}`,
+        search: createSearchParams({
+          sort,
+        }).toString(),
+      });
+    }
   }, [sort]);
   return (
     <div className="w-full">
@@ -127,7 +135,7 @@ const Products = () => {
           className="my-masonry-grid flex "
           columnClassName="my-masonry-grid_column"
         >
-          {products?.map((e) => (
+          {products?.products?.map((e) => (
             <Product
               key={e._id}
               pid={e._id}
@@ -136,6 +144,9 @@ const Products = () => {
             ></Product>
           ))}
         </Masonry>
+      </div>
+      <div className=" w-main m-auto my-4 flex justify-end">
+        <Pagination totalCount={products?.counts}></Pagination>
       </div>
       <div className="ư-full h-[100px]"></div>
     </div>

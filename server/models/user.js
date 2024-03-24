@@ -31,6 +31,7 @@ var userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
+      enum: ["admin", "user"],
       default: "user",
     },
     cart: [
@@ -46,8 +47,8 @@ var userSchema = new mongoose.Schema(
     },
     wishlist: [{ type: mongoose.Types.ObjectId, ref: "Product" }],
     isBocked: {
-      type: Boolean,
-      default: false,
+      type: String,
+      default: "Active",
     },
     refreshToken: {
       type: String,

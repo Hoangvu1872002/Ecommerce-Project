@@ -13,7 +13,16 @@ const { verifyAccessToken, isAdmin } = require("../middlewares/verifyToken");
 const uploadImage = require("../config/cloudinary.config");
 
 /* GET users listing. */
-router.post("/", verifyAccessToken, isAdmin, createProduct);
+router.post(
+  "/",
+  verifyAccessToken,
+  isAdmin,
+  uploadImage.fields([
+    { name: "images", maxCount: 10 },
+    { name: "thumb", maxCount: 1 },
+  ]),
+  createProduct
+);
 router.get("/", getManyProduct);
 router.put("/rating", verifyAccessToken, rating);
 

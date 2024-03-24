@@ -15,11 +15,13 @@ const {
   updateUserAddress,
   updateCart,
   finalRegister,
+  createUsers,
 } = require("../controllers/userController");
 const { verifyAccessToken, isAdmin } = require("../middlewares/verifyToken");
 
 /* GET users listing. */
 router.post("/register", register);
+router.post("/mock", createUsers);
 router.get("/finalregister/:token", finalRegister);
 router.post("/login", login);
 router.get("/current", verifyAccessToken, getCurrent);
@@ -28,7 +30,7 @@ router.get("/logout", logout);
 router.post("/forgotpassword", forgotPassword);
 router.put("/resetpassword", resetPassword);
 router.get("/", verifyAccessToken, isAdmin, getUsers);
-router.delete("/", verifyAccessToken, isAdmin, deleteUser);
+router.delete("/:uid", verifyAccessToken, isAdmin, deleteUser);
 router.put("/current", verifyAccessToken, updateUser);
 router.put("/address", verifyAccessToken, updateUserAddress);
 router.put("/cart", verifyAccessToken, updateCart);

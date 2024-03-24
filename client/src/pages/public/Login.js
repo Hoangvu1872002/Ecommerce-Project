@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { InputField, Button } from "../../components";
+import { InputField, Button, Loading } from "../../components";
 import { apiForgotPassword, apiLogin, apiRegister } from "../../apis";
 import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import { login } from "../../store/users/userSlide";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { validate } from "../../ultils/helper";
+import { showModal } from "../../store/app/appSlice";
 
 const Login = () => {
   const dispath = useDispatch();
@@ -57,7 +58,9 @@ const Login = () => {
 
     if (invalids === 0) {
       if (isRegister) {
+        dispath(showModal({isShowModal: true, modalChildren: <Loading></Loading>}))
         const response = await apiRegister(payload);
+        dispath(showModal({isShowModal: false, modalChildren: null}))
         if (response.success) {
           Swal.fire("Congratulation!", response.mes, "success").then(() => {
             setIsRegister(false);
@@ -129,6 +132,7 @@ const Login = () => {
                 nameKey="firstname"
                 invaliFields={invaliFields}
                 setInvaliFields={setInvaliFields}
+                fullWidth
               ></InputField>
               <InputField
                 value={payload.lastname}
@@ -136,6 +140,7 @@ const Login = () => {
                 nameKey="lastname"
                 invaliFields={invaliFields}
                 setInvaliFields={setInvaliFields}
+                fullWidth
               ></InputField>
             </div>
           )}
@@ -145,6 +150,7 @@ const Login = () => {
             nameKey="email"
             invaliFields={invaliFields}
             setInvaliFields={setInvaliFields}
+            fullWidth
           ></InputField>
           {isRegister && (
             <InputField
@@ -153,6 +159,7 @@ const Login = () => {
               nameKey="mobile"
               invaliFields={invaliFields}
               setInvaliFields={setInvaliFields}
+              fullWidth
             ></InputField>
           )}
           <InputField
@@ -162,6 +169,7 @@ const Login = () => {
             type="password"
             invaliFields={invaliFields}
             setInvaliFields={setInvaliFields}
+            fullWidth
           ></InputField>
           <Button       
             handleOnClick={handleSubmit}

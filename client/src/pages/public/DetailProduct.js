@@ -17,6 +17,7 @@ import {
   fotmatPrice,
   renderStarFromNumber,
 } from "../../ultils/helper";
+import DOMPurify from "dompurify";
 
 const settings = {
   dots: false,
@@ -93,7 +94,8 @@ const DetailProduct = () => {
       </div>
       <div className="w-main m-auto mt-4 flex">
         <div className="w-2/5 flex flex-col gap-4 ">
-          <div className="h-[458px] w-[458px] object-cover border">
+          <div className="h-[458px] w-[458px] object-cover flex items-center justify-center border">
+            {/* <div className="h-[458px] w-[458px] overflow-hidden border"> */}
             <ReactImageMagnify
               {...{
                 smallImage: {
@@ -141,12 +143,22 @@ const DetailProduct = () => {
             ))}
             <span className="text-sm text-main italic pl-2">{`(Sold: ${product?.sold} pieces)`}</span>
           </div>
-          <ul className=" list-square text-sm text-gray-500 pl-4">
-            {product?.description?.map((e, index) => (
-              <li className=" leading-6 " key={index}>
-                {e}
-              </li>
-            ))}
+          <ul className=" list-square text-sm text-gray-500 pl-4 mb-8">
+            {product?.description?.length > 1 &&
+              product?.description?.map((e, index) => (
+                <li className=" leading-6" key={index}>
+                  {e}
+                </li>
+              ))}
+
+            {product?.description?.length === 1 && (
+              <li
+                className="leading-6 line-clamp-[15]"
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(product?.description[0]),
+                }}
+              ></li>
+            )}
           </ul>
           <div className="flex flex-col gap-8">
             <div className="flex items-center gap-4">
@@ -177,7 +189,7 @@ const DetailProduct = () => {
           ratings={product?.ratings}
           nameProduct={product?.title}
           pid={product?._id}
-          rerender ={rerender}
+          rerender={rerender}
         ></ProductInfo>
       </div>
       <div className="w-main m-auto mt-8">

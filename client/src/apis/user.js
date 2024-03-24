@@ -1,6 +1,6 @@
 import axios from "../axios";
 
-export const apiRegister = async(data) =>
+export const apiRegister = async (data) =>
   axios({
     url: "/users/register",
     method: "post",
@@ -14,7 +14,7 @@ export const apiRegister = async(data) =>
     data,
   });
 
-  export const apiGetCurrent = () =>
+export const apiGetCurrent = () =>
   axios({
     url: "/users/current",
     method: "get",
@@ -41,3 +41,22 @@ export const apiResetPassword = (data) =>
     data,
   });
 
+export const apiGetUsers = (params) =>
+  axios({
+    url: "/users/",
+    method: "get",
+    params,
+  });
+
+export const apiUpdateUser = (data, uid) =>
+  axios({
+    url: "/users/" + uid,
+    method: "put",
+    data,
+  });
+
+export const apiDeleteUser = (uid) =>
+  axios({
+    url: "/users/" + uid,
+    method: "delete",
+  });

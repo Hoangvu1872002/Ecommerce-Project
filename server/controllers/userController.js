@@ -9,6 +9,7 @@ const asyncHandler = require("express-async-handler");
 const sendMail = require("../ultils/sendMail");
 const crypto = require("crypto");
 const makeToken = require("uniqid");
+const { users } = require("../ultils/constant");
 
 // const register = asyncHandler(async (req, res) => {
 //   const { email, password, firstname, lastname, mobile } = req.body;
@@ -144,9 +145,7 @@ const login = asyncHandler(async (req, res) => {
 
 const getCurrent = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  const user = await userModel
-    .findById(_id)
-    .select("-refreshToken -password -role");
+  const user = await userModel.findById(_id).select("-refreshToken -password");
   return res.status(200).json({
     success: user ? true : false,
     rs: user ? user : "User not found!",
@@ -225,7 +224,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     .createHash("sha256")
     .update(token)
     .digest("hex");
-    console.log(passwordResetToken);
+  console.log(passwordResetToken);
   const user = await userModel.findOne({
     passwordResetToken,
     passwordResetExprires: { $gt: Date.now() },
@@ -243,22 +242,77 @@ const resetPassword = asyncHandler(async (req, res) => {
 });
 
 const getUsers = asyncHandler(async (req, res) => {
-  const response = await userModel
-    .find()
-    .select("-refreshToken -password -role");
-  return res.status(200).json({
-    success: response ? true : false,
-    users: response,
-  });
+  const queries = { ...req.query };
+
+  // tach ca truong dac biet ra khoi query
+  const excludeFields = ["limit", "sort", "page", "fields"];
+  excludeFields.forEach((el) => delete queries[el]);
+
+  // format lai cac operators cho dung cu phap cua mongoes
+  let queryString = JSON.stringify(queries);
+  queryString = queryString.replace(
+    /\b(gte|gt|lt|lte)\b/g,
+    (macthedEl) => `$${macthedEl}`
+  );
+  const formatedQueries = JSON.parse(queryString);
+
+  //filltering
+  if (queries?.name)
+    formatedQueries.name = { $regex: queries.name, $options: "i" };
+  
+  if (req.query.q) {
+    delete formatedQueries.q;
+    formatedQueries["$or"] = [
+      { firstname: { $regex: req.query.q, $options: "i" } },
+      { lastname: { $regex: req.query.q, $options: "i" } },
+      { email: { $regex: req.query.q, $options: "i" } },
+    ];
+  }
+  
+  let queryCommand = userModel.find(formatedQueries);
+  //sorting
+  //abc,efg => [abc,efg] => abc efg
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join(" ");
+    queryCommand = queryCommand.sort(sortBy);
+  }
+
+  //fields limit
+  if (req.query.fields) {
+    const fields = req.query.fields.split(",").join(" ");
+    queryCommand = queryCommand.select(fields);
+  }
+
+  //pagination
+  //limit: so object lay ve trong 1 l;an goij api
+  //skip: bo qua bao nhieu object
+  const page = +req.query.page || 1;
+  const limit = +req.query.limit || process.env.LIMIT_PRODUCT;
+  const skip = (page - 1) * limit;
+  queryCommand.skip(skip).limit(limit);
+
+  //execute query
+  //so luong san pham thoa man dieu kien !== so luong sp tra ve 1 lan goi api
+  queryCommand
+    .then(async (response) => {
+      const counts = await userModel.find(formatedQueries).countDocuments();
+      return res.status(200).json({
+        success: response ? true : false,
+        counts,
+        users: response ? response : "Cannot get users.",
+      });
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
 });
 
 const deleteUser = asyncHandler(async (req, res) => {
-  const { _id } = req.query;
-  if (!_id) throw new Error("Missing inpusts");
-  const response = await userModel.findByIdAndDelete(_id);
+  const { uid } = req.params;
+  const response = await userModel.findByIdAndDelete(uid);
   return res.status(200).json({
     success: response ? true : false,
-    deleteUser: response
+    mes: response
       ? `User with email ${response.email} deleted.`
       : "No user delete!",
   });
@@ -285,7 +339,7 @@ const updateUserByAdmin = asyncHandler(async (req, res) => {
     .select("-refreshToken -password -role");
   return res.status(200).json({
     success: response ? true : false,
-    updateUser: response ? response : "Some thing went wrong.",
+    mes: response ? 'Updated.' : "Some thing went wrong.",
   });
 });
 
@@ -352,6 +406,14 @@ const updateCart = asyncHandler(async (req, res) => {
   }
 });
 
+const createUsers = asyncHandler(async (req, res) => {
+  const response = await userModel.create(users);
+  return res.status(200).json({
+    succes: response ? true : false,
+    users: response ? response : "Some thing went wrong.",
+  });
+});
+
 module.exports = {
   register,
   login,
@@ -367,4 +429,5 @@ module.exports = {
   updateUserAddress,
   updateCart,
   finalRegister,
+  createUsers,
 };

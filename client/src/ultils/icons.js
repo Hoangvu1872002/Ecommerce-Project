@@ -1,4 +1,4 @@
-import { MdEmail } from "react-icons/md";
+import { MdEmail, MdGroups } from "react-icons/md";
 import {
   FaUserCircle,
   FaPhoneAlt,
@@ -19,6 +19,10 @@ import { HiMenu } from "react-icons/hi";
 import { IoIosArrowForward, IoIosArrowDown  } from "react-icons/io";
 import { TfiMenuAlt } from "react-icons/tfi";
 import { FaTty } from "react-icons/fa6";
+import { BsThreeDots } from "react-icons/bs";
+import { AiOutlineDashboard } from "react-icons/ai";
+import { RiProductHuntLine, RiBillLine } from "react-icons/ri";
+import { ImBin } from "react-icons/im";
 
 const icons = {
   FaPhoneAlt,
@@ -40,7 +44,13 @@ const icons = {
   IoGiftSharp,
   FaReply,
   FaTty,
-  IoIosArrowDown
+  IoIosArrowDown,
+  BsThreeDots,
+  AiOutlineDashboard,
+  MdGroups,
+  RiProductHuntLine,
+  RiBillLine,
+  ImBin
 };
 
 export default icons;

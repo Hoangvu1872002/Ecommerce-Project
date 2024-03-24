@@ -1,6 +1,18 @@
 import path from "./path";
 import icons from "./icons";
 import { VoteOption } from "../components";
+const {
+  IoShieldHalf,
+  FaTruck,
+  IoGiftSharp,
+  FaReply,
+  FaTty,
+  AiOutlineDashboard,
+  MdGroups,
+  RiProductHuntLine,
+  RiBillLine,
+} = icons;
+
 
 export const navigation = [
   {
@@ -29,7 +41,6 @@ export const navigation = [
     path: `${path.FAQS}`,
   },
 ];
-const { IoShieldHalf, FaTruck, IoGiftSharp, FaReply, FaTty } = icons;
 
 export const productExtrainfoData = [
   {
@@ -176,4 +187,68 @@ export const voteOptions = [
   { id: 3, text: "Neutral" },
   { id: 4, text: "Good" },
   { id: 5, text: "Perfect" },
+];
+
+export const adminSidebar = [
+  {
+    id: 1,
+    type: "SINGLE",
+    text: "Dashboard",
+    path: `/${path.ADMIN}/${path.DASHBOARD}`,
+    icon: <AiOutlineDashboard size={20}></AiOutlineDashboard>,
+  },
+  {
+    id: 2,
+    type: "SINGLE",
+    text: "Manage users",
+    path: `/${path.ADMIN}/${path.MANAGE_USER}`,
+    icon: <MdGroups size={20}></MdGroups>,
+  },
+  {
+    id: 3,
+    type: "PARENT",
+    text: "Manage products",
+    icon: <RiProductHuntLine size={20}></RiProductHuntLine>,
+    submenu: [
+      {
+        text: "Create product",
+        path: `/${path.ADMIN}/${path.CREATE_PRODUCTS}`,
+      },
+      {
+        text: "Manage product",
+        path: `/${path.ADMIN}/${path.MANAGE_PRODUCTS}`,
+      },
+    ],
+  },
+  {
+    id: 4,
+    type: "SINGLE",
+    text: "Manage orders",
+    path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
+    icon: <RiBillLine size={20}></RiBillLine>,
+  },
+];
+
+export const limit = 10;
+
+export const roles = [
+  {
+    id: 1,
+    value: "admin",
+  },
+  {
+    id: 2,
+    value: "user",
+  },
+];
+
+export const blockStatus = [
+  {
+    id: 1,
+    value: "Blocked",
+  },
+  {
+    id: 2,
+    value: "Active",
+  },
 ];

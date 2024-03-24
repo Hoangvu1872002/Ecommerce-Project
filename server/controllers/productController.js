@@ -4,12 +4,18 @@ const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
 
 const createProduct = asyncHandler(async (req, res) => {
-  if (Object.keys(req.body).length === 0) throw new Error("Missing inputs");
-  if (req.body && req.body.title) req.body.slug = slugify(req.body.title);
+  const { title, price, description, brand, category, color } = req.body;
+  const thumb = req.files?.thumb[0]?.path;
+  const images = req.files?.images?.map((e) => e.path);
+  if (!(title && price && description && brand && category && color))
+    throw new Error("Missing inputs");
+  req.body.slug = slugify(req.body.title);
+  if (thumb) req.body.thumb = thumb;
+  if (images) req.body.images = images;
   const newProduct = await productModel.create(req.body);
   return res.status(200).json({
     success: newProduct ? true : false,
-    createProduct: newProduct ? newProduct : "Cannot create new product.",
+    mes: newProduct ? 'Created new product.' : "Cannot create new product.",
   });
 });
 
@@ -31,7 +37,6 @@ const getProduct = asyncHandler(async (req, res) => {
 //filltering, sorting, pagination
 const getManyProduct = asyncHandler(async (req, res) => {
   const queries = { ...req.query };
-  console.log(queries.category);
 
   // tach ca truong dac biet ra khoi query
   const excludeFields = ["limit", "sort", "page", "fields"];
@@ -66,6 +71,7 @@ const getManyProduct = asyncHandler(async (req, res) => {
   //abc,efg => [abc,efg] => abc efg
   if (req.query.sort) {
     const sortBy = req.query.sort.split(",").join(" ");
+    console.log(sortBy);
     queryCommand = queryCommand.sort(sortBy);
   }
 

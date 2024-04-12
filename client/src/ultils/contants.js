@@ -13,7 +13,6 @@ const {
   RiBillLine,
 } = icons;
 
-
 export const navigation = [
   {
     id: 0,
@@ -229,7 +228,38 @@ export const adminSidebar = [
   },
 ];
 
-export const limit = 10;
+export const memberSidebar = [
+  {
+    id: 1,
+    type: "SINGLE",
+    text: "Personal",
+    path: `/${path.MEMBER}/${path.PERSONAL}`,
+    icon: <AiOutlineDashboard size={20}></AiOutlineDashboard>,
+  },
+  {
+    id: 2,
+    type: "SINGLE",
+    text: "My Cart",
+    path: `/${path.MEMBER}/${path.MY_CART}`,
+    icon: <MdGroups size={20}></MdGroups>,
+  },
+  {
+    id: 3,
+    type: "SINGLE",
+    text: "Buy Histories",
+    path: `/${path.MEMBER}/${path.HISTORY}`,
+    icon: <RiBillLine size={20}></RiBillLine>,
+  },
+  {
+    id: 4,
+    type: "SINGLE",
+    text: "Wislist",
+    path: `/${path.MEMBER}/${path.WISLIST}`,
+    icon: <RiBillLine size={20}></RiBillLine>,
+  },
+];
+
+export const limit = 8;
 
 export const roles = [
   {

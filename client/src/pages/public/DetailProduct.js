@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { apiGetProduct, apiGetProducts } from "../../apis";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
+import { createSearchParams, useParams } from "react-router-dom";
+import { apiGetProduct, apiGetProducts, apiUpdateCart } from "../../apis";
 import {
   Breadcrumbs,
   Button,
@@ -18,6 +18,15 @@ import {
   renderStarFromNumber,
 } from "../../ultils/helper";
 import DOMPurify from "dompurify";
+import clsx from "clsx";
+import { ToastContainer } from "react-toastify";
+import { useSelector } from "react-redux";
+import withBase from "../../hocs/withBase";
+import path from "../../ultils/path";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+import { getCurrent } from "../../store/users/asyncAction";
+import { showCart } from "../../store/app/appSlice";
 
 const settings = {
   dots: false,
@@ -27,13 +36,29 @@ const settings = {
   slidesToScroll: 1,
 };
 
-const DetailProduct = () => {
-  const { pid, title, category } = useParams();
+const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
+  const params = useParams();
+  const titleRef = useRef();
+
+  const { current, currentCart } = useSelector((state) => state.user);
+  console.log(currentCart);
+
   const [product, setProduct] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [relatedProducts, setRelatedProducts] = useState();
   const [currentImage, setCurrentImage] = useState();
+  const [pid, setPid] = useState();
   const [update, setUpdate] = useState(false);
+  const [varriant, setVarriant] = useState();
+  const [currentProduct, setCurentProduct] = useState([
+    {
+      title: "",
+      thumb: "",
+      price: "",
+      images: [],
+      color: "",
+    },
+  ]);
 
   const fetchProductData = async () => {
     const responese = await apiGetProduct(pid);
@@ -43,6 +68,8 @@ const DetailProduct = () => {
     }
     // console.log(responese.productData);
   };
+  const category = params?.category || data?.category;
+
   const fetchProducts = async () => {
     const responese = await apiGetProducts({ category });
     if (responese.success) setRelatedProducts(responese.products);
@@ -62,6 +89,55 @@ const DetailProduct = () => {
     [quantity]
   );
 
+  const handleAddtoCart = async () => {
+    if (!current) {
+      return Swal.fire({
+        title: "Almost...",
+        text: "Please login first!",
+        icon: "info",
+        cancelButtonText: "Not now!",
+        showCancelButton: true,
+        confirmButtonText: "Go login page.",
+      }).then((rs) => {
+        if (rs.isConfirmed)
+          navigate({
+            pathname: `/${path.LOGIN}`,
+            search: createSearchParams({
+              redirect: location.pathname,
+            }).toString(),
+          });
+      });
+    }
+    const response = await apiUpdateCart({
+      pid,
+      quantity,
+      color: currentProduct?.color || product?.color || " ",
+      price: currentProduct?.price || product?.price,
+      thumbnail: currentProduct?.thumb || product?.thumb,
+      title: currentProduct?.title || product?.title,
+    });
+    if (response.success) {
+      toast.success(response.mes);
+      setQuantity(1);
+      dispatch(getCurrent());
+    } else {
+      toast.error(response.mes);
+    }
+  };
+
+  const handleShowCart = () => {
+    return Swal.fire({
+      title: "Almost...",
+      text: "You want to open cart?",
+      icon: "info",
+      cancelButtonText: "Not now!",
+      showCancelButton: true,
+      confirmButtonText: "Open cart.",
+    }).then((rs) => {
+      if (rs.isConfirmed) dispatch(showCart());
+    });
+  };
+
   const rerender = useCallback(() => {
     setUpdate(!update);
   }, [update]);
@@ -71,6 +147,15 @@ const DetailProduct = () => {
       fetchProductData();
     }
   }, [update]);
+
+  useEffect(() => {
+    if (data && data.pid) {
+      setPid(data.pid);
+    } else if (params && params.pid) {
+      setPid(params.pid);
+      titleRef.current.scrollIntoView({ block: "start" });
+    }
+  }, [data, params]);
 
   const handleChangeQuantity = (flag) => {
     if (flag === "minus" && quantity === 1) return;
@@ -82,18 +167,64 @@ const DetailProduct = () => {
       fetchProductData();
       fetchProducts();
     }
-    window.scrollTo(0, 0);
   }, [pid]);
+
+  useEffect(() => {
+    setCurentProduct({
+      title: product?.varriants?.find((e) => e.sku === varriant)?.title || "",
+      color: product?.varriants?.find((e) => e.sku === varriant)?.color || "",
+      price: product?.varriants?.find((e) => e.sku === varriant)?.price || "",
+      images: product?.varriants?.find((e) => e.sku === varriant)?.images || [],
+      thumb: product?.varriants?.find((e) => e.sku === varriant)?.thumb || "",
+    });
+    setCurrentImage(
+      product?.varriants?.find((e) => e.sku === varriant)?.thumb ||
+        product.thumb
+    );
+  }, [varriant]);
+
+  // useEffect(() => {
+  //   modalRefQuickView.current.scrollIntoView({
+  //     block: isQuickView && "start",
+  //     behavior: "smooth",
+  //   });
+  // }, [data, params]);
+  // console.log(product);
   return (
-    <div className="w-full">
-      <div className="h-[81px] flex justify-center items-center bg-gray-50">
-        <div className="w-main">
-          <h3 className="font-semibold">{title}</h3>
-          <Breadcrumbs title={title} category={category}></Breadcrumbs>
+    <div className={clsx(`w-full`, isQuickView && "")}>
+      {!isQuickView && (
+        <div
+          ref={titleRef}
+          className="h-[81px] mt-4 flex justify-center items-center bg-gray-50"
+        >
+          <div className="w-main">
+            <span className="font-semibold text-[18px]">
+              {currentProduct.title || data?.title || params?.title}
+            </span>
+            <div className="mt-2">
+              <Breadcrumbs
+                title={currentProduct.title || data?.title || params?.title}
+                category={category}
+              ></Breadcrumbs>
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="w-main m-auto mt-4 flex">
-        <div className="w-2/5 flex flex-col gap-4 ">
+      )}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className={clsx(
+          "bg-white m-auto mt-4 flex",
+          isQuickView
+            ? "max-w-[950px]  gap-16 p-4 max-h-[80vh] overflow-y-auto"
+            : "w-main"
+        )}
+      >
+        <div
+          className={clsx(
+            " flex flex-col gap-4 ",
+            isQuickView ? "w-1/2" : "w-2/5"
+          )}
+        >
           <div className="h-[458px] w-[458px] object-cover flex items-center justify-center border">
             {/* <div className="h-[458px] w-[458px] overflow-hidden border"> */}
             <ReactImageMagnify
@@ -117,23 +248,41 @@ const DetailProduct = () => {
           </div>
           <div className="w-[458px]">
             <Slider className="image-slider" {...settings}>
-              {product?.images?.map((e, index) => (
-                <div className="flex w-full gap-2" key={index}>
-                  <img
-                    src={e}
-                    alt="err"
-                    className="h-[143px] w-[143px] object-cover border cursor-pointer"
-                    onClick={(el) => handleClickImage(el, e)}
-                  ></img>
-                </div>
-              ))}
+              {currentProduct?.images?.length === 0 &&
+                product?.images?.map((e, index) => (
+                  <div className="flex w-full gap-2" key={index}>
+                    <img
+                      src={e}
+                      alt="err"
+                      className="h-[143px] w-[143px] object-cover border cursor-pointer"
+                      onClick={(el) => handleClickImage(el, e)}
+                    ></img>
+                  </div>
+                ))}
+
+              {currentProduct?.images?.length > 0 &&
+                currentProduct?.images?.map((e, index) => (
+                  <div className="flex w-full gap-2" key={index}>
+                    <img
+                      src={e}
+                      alt="err"
+                      className="h-[143px] w-[143px] object-cover border cursor-pointer"
+                      onClick={(el) => handleClickImage(el, e)}
+                    ></img>
+                  </div>
+                ))}
             </Slider>
           </div>
         </div>
-        <div className="w-2/5 flex flex-col gap-4 pr-[24px]">
+        <div
+          className={clsx(
+            " flex flex-col gap-4 pr-[24px]",
+            isQuickView ? "w-1/2" : "w-2/5"
+          )}
+        >
           <div className="flex items-center justify-between">
             <h2 className="text-[30px] font-semibold">{`${formatMoney(
-              fotmatPrice(product?.price)
+              fotmatPrice(currentProduct?.price || product?.price)
             )} VND`}</h2>
             <span className="text-sm text-main ">{`(Warehouse: ${product?.quantity})`}</span>
           </div>
@@ -160,47 +309,131 @@ const DetailProduct = () => {
               ></li>
             )}
           </ul>
+          <div className="my-2 flex gap-4 justify-center items-center">
+            <span className="font-bold">Color:</span>
+            <div className="flex flex-wrap gap-4 items-center w-full">
+              <div
+                onClick={() => {
+                  setVarriant(null);
+                  setQuantity(1);
+                }}
+                className={clsx(
+                  `flex items-center gap-2 p-2 border cursor-pointer`,
+                  !varriant && "border-red-500"
+                )}
+              >
+                <img
+                  src={product?.thumb}
+                  alt="thumb"
+                  className="w-8 h-8 rounded-md object-cover"
+                ></img>
+                <span className="flex flex-col">
+                  <span>{product?.color}</span>
+                  <span className="text-sm">
+                    {formatMoney(product?.price)} vnd
+                  </span>
+                </span>
+              </div>
+              {product?.varriants?.map((e, index) => (
+                <div
+                  key={index}
+                  onClick={() => {
+                    setVarriant(e?.sku);
+                    setQuantity(1);
+                  }}
+                  className={clsx(
+                    `flex items-center gap-2 p-2 border cursor-pointer`,
+                    varriant === e?.sku && "border-red-500"
+                  )}
+                >
+                  <img
+                    src={e?.thumb}
+                    alt="thumb"
+                    className="w-8 h-8 rounded-md object-cover"
+                  ></img>
+                  <span className="flex flex-col">
+                    <span>{e?.color}</span>
+                    <span className="text-sm">{formatMoney(e?.price)} vnd</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="flex flex-col gap-8">
             <div className="flex items-center gap-4">
-              <span className="font-semibold">Quantity</span>
+              <span className="font-semibold">Quantity:</span>
               <SelectQuantity
                 quantity={quantity}
                 handleQuantity={handleQuantity}
                 handleChangeQuantity={handleChangeQuantity}
               ></SelectQuantity>
             </div>
-            <Button fw>Add to cart</Button>
+            {currentCart?.find(
+              (e) =>
+                (e.product._id === pid && e.color === currentProduct?.color) ||
+                (e.product._id === pid && e.color === product?.color)
+            ) ? (
+              <Button
+                type="text"
+                handleOnClick={handleShowCart}
+                style={`px-4 py-2 my-2 rounded-md text-white bg-gray-600 text-seminold w-full`}
+              >
+                Added to cart
+              </Button>
+            ) : (
+              <Button handleOnClick={handleAddtoCart} fw>
+                Add to cart
+              </Button>
+            )}
+            {/* <Button handleOnClick={handleAddtoCart} fw>
+              Add to cart
+            </Button> */}
           </div>
         </div>
-        <div className=" w-1/5">
-          {productExtrainfoData.map((e) => (
-            <ProductExtrainfo
-              key={e.id}
-              title={e.title}
-              icon={e.icon}
-              sub={e.sub}
-            ></ProductExtrainfo>
-          ))}
+        {!isQuickView && (
+          <div className=" w-1/5">
+            {productExtrainfoData.map((e) => (
+              <ProductExtrainfo
+                key={e.id}
+                title={e.title}
+                icon={e.icon}
+                sub={e.sub}
+              ></ProductExtrainfo>
+            ))}
+          </div>
+        )}
+      </div>
+      {!isQuickView && (
+        <div className="w-main m-auto mt-8">
+          <ProductInfo
+            totalRating={product?.totalRating}
+            ratings={product?.ratings}
+            nameProduct={product?.title}
+            pid={product?._id}
+            rerender={rerender}
+          ></ProductInfo>
         </div>
-      </div>
-      <div className="w-main m-auto mt-8">
-        <ProductInfo
-          totalRating={product?.totalRating}
-          ratings={product?.ratings}
-          nameProduct={product?.title}
-          pid={product?._id}
-          rerender={rerender}
-        ></ProductInfo>
-      </div>
-      <div className="w-main m-auto mt-8">
-        <h3 className="text-[20px] font-semibold py-[15px] border-b-2 border-main">
-          OTHER CUSTOMERS ALSO BUY:
-        </h3>
-        <CustomSlider products={relatedProducts} normal={true}></CustomSlider>
-      </div>
-      <div className="h-[50px] w-full"></div>
+      )}
+      {!isQuickView && (
+        <div>
+          <div className="w-main m-auto mt-8">
+            <h3 className=" mb-4 text-[20px] font-semibold py-[15px] border-b-2 border-main">
+              OTHER CUSTOMERS ALSO BUY:
+            </h3>
+            <div className="mx-[-10px]">
+              <CustomSlider
+                products={relatedProducts}
+                normal={true}
+              ></CustomSlider>
+            </div>
+          </div>
+          <div className="h-[50px] w-full"></div>
+        </div>
+      )}
+      <ToastContainer autoClose={1200} />
     </div>
   );
 };
 
-export default DetailProduct;
+export default withBase(memo(DetailProduct));

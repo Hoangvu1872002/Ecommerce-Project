@@ -17,7 +17,7 @@ const DealDaily = () => {
   const fetchDealDaily = async () => {
     const response = await apiGetProducts({
       limit: 1,
-      page: Math.round(Math.random() * 4),
+      // page: Math.round(Math.random() * 5),
       totalRating: 5,
     });
 
@@ -66,7 +66,7 @@ const DealDaily = () => {
   }, [seconds, minutes, hours, expireTime]);
   return (
     <div className="w-full border flex-auto">
-      <div className="flex items-center justify-between p-4 w-full">
+      <div className="flex items-center justify-between p-4 mt-2 w-full">
         <span className="flex-1 flex justify-center">
           <BiSolidStar size={20} color="#DD1111"></BiSolidStar>
         </span>
@@ -75,7 +75,7 @@ const DealDaily = () => {
         </span>
         <span className="flex-1"></span>
       </div>
-      <div className="w-full flex flex-col items-center px-4 pt-8 gap-2">
+      <div className="w-full flex flex-col items-center px-4 pt-5 gap-2">
         <img
           src={
             dealDaily?.thumb ||
@@ -84,16 +84,16 @@ const DealDaily = () => {
           alt=""
           className="w-full object-contain"
         ></img>
-        <span className="line-clamp-1 text-center">{dealDaily?.title}</span>
-        <span className="flex h-4">
+        <span className="line-clamp-1 mt-2 text-center">{dealDaily?.title}</span>
+        <span className="flex h-4 mt-1">
           {renderStarFromNumber(dealDaily?.totalRating, 20).map((e, index) => (
             <span key={index}>{e}</span>
           ))}
         </span>
-        <span>{`${formatMoney(dealDaily?.price)} VND`}</span>
+        <span className="mt-2">{`${formatMoney(dealDaily?.price)} VND`}</span>
       </div>
-      <div className="px-4 mt-8">
-        <div className="flex justify-center gap-2 items-center mb-4">
+      <div className="px-4 mt-6">
+        <div className="flex justify-center gap-2 items-center mb-5">
           <Countdown unit={"Hours"} number={hours}></Countdown>
           <Countdown unit={"Minutes"} number={minutes}></Countdown>
           <Countdown unit={"Seconds"} number={seconds}></Countdown>

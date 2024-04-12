@@ -5,18 +5,97 @@ import labelTrending from "../../assets/labelTrending.png";
 import { renderStarFromNumber } from "../../ultils/helper";
 import SelectOption from "../search/SelectOption";
 import icons from "../../ultils/icons";
-import { Link } from "react-router-dom";
+import { Link, createSearchParams } from "react-router-dom";
+import withBase from "../../hocs/withBase";
+import { showModal } from "../../store/app/appSlice";
+import DetailProduct from "../../pages/public/DetailProduct";
+import { apiUpdateCart } from "../../apis";
+import { getCurrent } from "../../store/users/asyncAction";
+import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+import path from "../../ultils/path";
 
-const { LiaEyeSolid, HiMenu, FaHeart } = icons;
+const { LiaEyeSolid, BsFillCartPlusFill, FaHeart, BsFillCartCheckFill } = icons;
 
-const Product = ({ productData, isNew, normal }) => {
+const Product = ({
+  productData,
+  isNew,
+  normal,
+  navigate,
+  dispatch,
+  location,
+}) => {
   const [isShowOption, setIsShowOption] = useState(false);
+  const { current } = useSelector((state) => state.user);
+
+  const handleClickOptions = async (e, flag) => {
+    e.stopPropagation();
+    if (flag === "CART") {
+      if (!current) {
+        return Swal.fire({
+          title: "Almost...",
+          text: "Please login first!",
+          icon: "info",
+          cancelButtonText: "Not now!",
+          showCancelButton: true,
+          confirmButtonText: "Go login page.",
+        }).then((rs) => {
+          if (rs.isConfirmed)
+            navigate({
+              pathname: `/${path.LOGIN}`,
+              search: createSearchParams({
+                redirect: location.pathname,
+              }).toString(),
+            });
+        });
+      }
+      const response = await apiUpdateCart({
+        pid: productData?._id,
+        quantity: 1,
+        color: productData?.color,
+        price: productData?.price,
+        thumbnail: productData?.thumb,
+        title: productData?.title,
+      });
+      if (response.success) {
+        toast.success(response.mes);
+        dispatch(getCurrent());
+      } else {
+        toast.error(response.mes);
+      }
+    }
+    if (flag === "WISHLISH") {
+      console.log("wishlist");
+    }
+    if (flag === "VIEW") {
+      dispatch(
+        showModal({
+          isShowModal: true,
+          modalChildren: (
+            <DetailProduct
+              data={{
+                pid: productData?._id,
+                category: productData?.category,
+                title: productData.title,
+              }}
+              isQuickView
+            ></DetailProduct>
+          ),
+        })
+      );
+    }
+  };
   return (
-    <Link
+    <div
       className="w-full text-base px-[10px]"
-      to={`/${productData?.category?.toLowerCase()}/${productData?._id}/${
-        productData?.title
-      }`}
+      onClick={() =>
+        navigate(
+          `/${productData?.category?.toLowerCase()}/${productData?._id}/${
+            productData?.title
+          }`
+        )
+      }
     >
       <div
         className="w-full border p-[15px] flex flex-col items-center"
@@ -32,9 +111,37 @@ const Product = ({ productData, isNew, normal }) => {
         <div className="w-full relative">
           {isShowOption && (
             <div className="absolute gap-2 bottom-[-10px] left-0 right-0 flex justify-center animate-silde-top">
-              <SelectOption icon={<FaHeart />}></SelectOption>
-              <SelectOption icon={<HiMenu />}></SelectOption>
-              <SelectOption icon={<LiaEyeSolid />}></SelectOption>
+              <span
+                title="Add to wishlist"
+                onClick={(e) => handleClickOptions(e, "WISHLISH")}
+              >
+                <SelectOption icon={<FaHeart />}></SelectOption>
+              </span>
+              {current?.cart?.some(
+                (e) => e.product._id === productData?._id
+              ) ? (
+                <span
+                  title="Added to cart"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <SelectOption
+                    icon={<BsFillCartCheckFill color="red" />}
+                  ></SelectOption>
+                </span>
+              ) : (
+                <span
+                  title="Add to cart"
+                  onClick={(e) => handleClickOptions(e, "CART")}
+                >
+                  <SelectOption icon={<BsFillCartPlusFill />}></SelectOption>
+                </span>
+              )}
+              <span
+                title="Quick view"
+                onClick={(e) => handleClickOptions(e, "VIEW")}
+              >
+                <SelectOption icon={<LiaEyeSolid />}></SelectOption>
+              </span>
             </div>
           )}
           <img
@@ -83,8 +190,8 @@ const Product = ({ productData, isNew, normal }) => {
           <span>{`${formatMoney(productData?.price)} VND`}</span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 
-export default memo(Product);
+export default withBase(memo(Product));

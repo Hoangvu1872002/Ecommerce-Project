@@ -17,25 +17,27 @@
 .custom-slider button.slick-next::before {
   color: gray;
   content: "\276F";
-  background-color: #c4a7a7;
-  width: 80px;
-  height: 80px;
+  background-color: #dfcdcd;
+  width: 60px;
+  height: 60px;
   font-size: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: 100%;
 }
 
 .custom-slider button.slick-prev::before {
   color: gray;
   content: "\276E";
-  background-color: #c4a7a7;
-  width: 80px;
-  height: 80px;
+  background-color: #dfcdcd;
+  width: 60px;
+  height: 60px;
   font-size: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: 100%;
 }
 
 .image-slider button.slick-next {

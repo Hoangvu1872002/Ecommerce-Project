@@ -269,7 +269,7 @@ const ManageUser = () => {
                       <span className="">
                         <Button
                           handleOnClick={() => setEditElm(null)}
-                          style="px-2 py-1 my-2 rounded-md text-white bg-black text-seminold"
+                          style="px-1 py-1 my-2 rounded-md text-white bg-black text-seminold"
                         >
                           Back
                         </Button>
@@ -277,7 +277,7 @@ const ManageUser = () => {
                     ) : (
                       <span
                         onClick={() => handleDeleteUser(e._id)}
-                        className="px-2 text-orange-600 hover:underline cursor-pointer"
+                        className="pl-1 text-orange-600 hover:underline cursor-pointer"
                       >
                         Delete
                       </span>

@@ -9,6 +9,7 @@ import {
 } from "../../components";
 import { useSelector } from "react-redux";
 import icons from "../../ultils/icons";
+import { ToastContainer } from "react-toastify";
 
 const {IoIosArrowForward} = icons
 const Home = () => {
@@ -28,21 +29,21 @@ const Home = () => {
           <BestSeller></BestSeller>
         </div>
       </div>
-      <div className="my-8">
+      <div className="mt-8">
         <FeaturedProducts></FeaturedProducts>
       </div>
-      <div className="my-8 w-main ">
+      <div className="mt-8 w-main ">
         <h3 className="text-[20px] font-semibold py-[15px] border-b-2 border-main">
           NEW ARRIVALS
         </h3>
-        <div className="mt-4 mx-[-10px]">
+        <div className="mt-4 border">
           <CustomSlider products={newProducts}></CustomSlider>
         </div>
         <div className="my-8 w-full ">
           <h3 className="text-[20px] font-semibold py-[15px] border-b-2 border-main">
             HOT COLLECTIONS
           </h3>
-          <div className="flex flex-wrap gap-3 mt-4 ">
+          <div className="flex flex-wrap gap-5 mt-6 ">
             {categories?.filter(e => e.brand.length > 0)?.map((e) => (
               <div key={e._id} className="w-[290px] ">
                 <div className="border flex p-4 gap-4 min-h-[270px]">
@@ -67,7 +68,7 @@ const Home = () => {
         <h3 className="text-[20px] font-semibold py-[15px] border-b-2 border-main">POSTS</h3>
         </div>
       </div>
-      
+      <ToastContainer autoClose={1200} />
     </>
   );
 };

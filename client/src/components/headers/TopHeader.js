@@ -30,7 +30,7 @@ const TopHeader = () => {
       });
   }, [mes]);
   return (
-    <div className="h-[38px] w-full bg-main flex items-center justify-center">
+    <div className="min-h-[40px] w-full bg-main flex items-center justify-center p-2">
       <div className="w-main flex items-center justify-between text-xs text-white">
         <span>ORDER ONLINE OR CALL US (+1800) 000 8808</span>
         {isLoggedIn && current ? (

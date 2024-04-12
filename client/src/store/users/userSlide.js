@@ -9,6 +9,7 @@ export const userSlide = createSlice({
     token: null,
     isLoading: false,
     mes: "",
+    currentCart: [],
   },
   reducers: {
     login: (state, action) => {
@@ -21,10 +22,26 @@ export const userSlide = createSlice({
       state.token = null;
       state.isLoading = false;
       state.mes = "";
+      state.currentCart = []
     },
     clearMessage: (state) => {
       state.mes = "";
     },
+    // updateCart: (state, action) => {
+    //   const { pid, color, count } = action.payload;
+    //   console.log({ pid, color, count });
+    //   const updateItem = state.currentCart.find(
+    //     (e) => (e.color === color && e.product?._id === pid)
+    //   );
+    //   if(updateItem) updateItem.quantity = count
+    //   // else state.mes = 'Please try late.'
+    //   // const updatingCart = JSON.parse(JSON.stringify(state.currentCart))
+    //   // state.currentCart = updatingCart.map(e => {
+    //   //   if(e.color === color && e.product?._id === pid){
+    //   //     return {...e, count}
+    //   //   }else return e
+    //   // })
+    // },
   },
 
   extraReducers: (builder) => {
@@ -36,6 +53,7 @@ export const userSlide = createSlice({
       state.isLoading = false;
       state.current = action.payload;
       state.isLoggedIn = true;
+      state.currentCart = action.payload.cart;
       // console.log(state.current);
     });
 

@@ -8,6 +8,7 @@ const {
   deleteProduct,
   rating,
   uploadImagesProduct,
+  addVarriants,
 } = require("../controllers/productController");
 const { verifyAccessToken, isAdmin } = require("../middlewares/verifyToken");
 const uploadImage = require("../config/cloudinary.config");
@@ -33,7 +34,27 @@ router.put(
   uploadImage.array("images", 10),
   uploadImagesProduct
 );
-router.put("/:pid", verifyAccessToken, isAdmin, updateProduct);
+router.put(
+  "/varriant/:pid",
+  verifyAccessToken,
+  isAdmin,
+  uploadImage.fields([
+    { name: "images", maxCount: 10 },
+    { name: "thumb", maxCount: 1 },
+  ]),
+  addVarriants
+);
+router.put(
+  "/:pid",
+  verifyAccessToken,
+  isAdmin,
+  uploadImage.fields([
+    { name: "images", maxCount: 10 },
+    { name: "thumb", maxCount: 1 },
+  ]),
+  updateProduct
+);
+
 router.delete("/:pid", verifyAccessToken, isAdmin, deleteProduct);
 router.get("/:pid", getProduct);
 

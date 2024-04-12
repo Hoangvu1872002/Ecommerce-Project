@@ -12,7 +12,7 @@ const settings = {
 
 const CustomSlider = ({ products, activeTab, normal }) => {
   return (
-    <div>
+    <div className="py-2">
       {products && (
         <Slider className="custom-slider" {...settings}>
           {products?.map((e) => (

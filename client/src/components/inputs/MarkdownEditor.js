@@ -8,6 +8,7 @@ const MarkdownEditor = ({
   name,
   invalidFields,
   setInvalidFields,
+  setIsFocusDescription,
 }) => {
   return (
     <div className=" flex flex-col">
@@ -33,7 +34,10 @@ const MarkdownEditor = ({
         onChange={(e) =>
           changeValue((prev) => ({ ...prev, [name]: e.target.getContent() }))
         }
-        onFocus={() => setInvalidFields && setInvalidFields([])}
+        onFocus={() => {
+          setInvalidFields && setInvalidFields([])
+        }}
+        
         initialValue={value}
       />
       {invalidFields?.some((e) => e.name === name) && (

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { InputField, Button, Loading } from "../../components";
 import { apiForgotPassword, apiLogin, apiRegister } from "../../apis";
 import Swal from "sweetalert2";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import path from "../../ultils/path";
 import { useDispatch } from "react-redux";
 import { login } from "../../store/users/userSlide";
@@ -14,6 +14,7 @@ import { showModal } from "../../store/app/appSlice";
 const Login = () => {
   const dispath = useDispatch();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [payload, setPayLoad] = useState({
     firstname: "",
     lastname: "",
@@ -58,9 +59,11 @@ const Login = () => {
 
     if (invalids === 0) {
       if (isRegister) {
-        dispath(showModal({isShowModal: true, modalChildren: <Loading></Loading>}))
+        dispath(
+          showModal({ isShowModal: true, modalChildren: <Loading></Loading> })
+        );
         const response = await apiRegister(payload);
-        dispath(showModal({isShowModal: false, modalChildren: null}))
+        dispath(showModal({ isShowModal: false, modalChildren: null }));
         if (response.success) {
           Swal.fire("Congratulation!", response.mes, "success").then(() => {
             setIsRegister(false);
@@ -79,7 +82,9 @@ const Login = () => {
               userData: rs.userData,
             })
           );
-          navigate(`/${path.HOME}`);
+          searchParams.get("redirect")
+            ? navigate(searchParams.get("redirect"))
+            : navigate(`/${path.HOME}`);
         } else {
           Swal.fire("Oops!", rs.mes, "error");
         }
@@ -171,10 +176,7 @@ const Login = () => {
             setInvaliFields={setInvaliFields}
             fullWidth
           ></InputField>
-          <Button       
-            handleOnClick={handleSubmit}
-            fw
-          >
+          <Button handleOnClick={handleSubmit} fw>
             {isRegister ? "Register" : "Login"}
           </Button>
           <div className="flex items-center justify-between my-2 w-full text-sm">

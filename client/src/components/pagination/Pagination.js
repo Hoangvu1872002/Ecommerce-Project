@@ -10,7 +10,7 @@ const Pagination = ({ totalCount, productNumber }) => {
   const range = () => {
     const currentPage = +params.get("page");
     const pageSize = limit ||10;
-    const start = (currentPage - 1) * pageSize + 1;
+    const start = Math.min((currentPage - 1) * pageSize + 1, totalCount);
     const end = Math.min(currentPage * pageSize, totalCount);
 
     return `${start} - ${end}`;
@@ -18,7 +18,7 @@ const Pagination = ({ totalCount, productNumber }) => {
   return (
     <div className="flex justify-between w-full items-center">
       {!params.get("page") && (
-        <span className="text-sm italic">{`Show products 1 - ${Math.min(limit, totalCount)} of ${totalCount}`}</span>
+        <span className="text-sm italic">{`Show products ${Math.min(totalCount, 1)} - ${Math.min(limit, totalCount)} of ${totalCount}`}</span>
       )}
       {params.get("page") && (
         <span className="text-sm italic">{`Show products ${range()} of ${totalCount}`}</span>

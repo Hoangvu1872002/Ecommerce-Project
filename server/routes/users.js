@@ -16,8 +16,10 @@ const {
   updateCart,
   finalRegister,
   createUsers,
+  removeProductInCart,
 } = require("../controllers/userController");
 const { verifyAccessToken, isAdmin } = require("../middlewares/verifyToken");
+const uploadImage = require("../config/cloudinary.config");
 
 /* GET users listing. */
 router.post("/register", register);
@@ -31,9 +33,15 @@ router.post("/forgotpassword", forgotPassword);
 router.put("/resetpassword", resetPassword);
 router.get("/", verifyAccessToken, isAdmin, getUsers);
 router.delete("/:uid", verifyAccessToken, isAdmin, deleteUser);
-router.put("/current", verifyAccessToken, updateUser);
+router.put(
+  "/current",
+  verifyAccessToken,
+  uploadImage.single("avatar"),
+  updateUser
+);
 router.put("/address", verifyAccessToken, updateUserAddress);
 router.put("/cart", verifyAccessToken, updateCart);
+router.delete("/remove-cart/:pid/:color", verifyAccessToken, removeProductInCart);
 router.put("/:uid", verifyAccessToken, isAdmin, updateUserByAdmin);
 
 module.exports = router;

@@ -12,15 +12,20 @@ const InputForm = ({
   placeholder,
   fullWith,
   defaultValue,
-  style
+  style,
+  readOnly,
 }) => {
-    // const [defaultValueNew, setDefaultValueNew] = useState()
-    // if(defaultValueNew !== defaultValue){
-    //   setDefaultValueNew(defaultValue)
-    // }
+  // const [defaultValueNew, setDefaultValueNew] = useState()
+  // if(defaultValueNew !== defaultValue){
+  //   setDefaultValueNew(defaultValue)
+  // }
   return (
     <div className={clsx(`flex flex-col h-[78px] gap-2`, style)}>
-      {label && <label htmlFor={id}>{label}</label>}
+      {label && (
+        <label className="font-medium" htmlFor={id}>
+          {label + ":"}
+        </label>
+      )}
       <input
         type={type}
         id={id}
@@ -29,6 +34,7 @@ const InputForm = ({
         placeholder={placeholder}
         className={clsx(`form-input my-auto`, fullWith && "w-full", style)}
         defaultValue={defaultValue}
+        readOnly={readOnly}
       ></input>
       {errors[id] && (
         <small className="text-xs text-red-500">{errors[id]?.message}</small>

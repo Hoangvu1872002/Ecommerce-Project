@@ -15,6 +15,7 @@ import {
 import { apiGetProducts } from "../../apis";
 import Masonry from "react-masonry-css";
 import { sorts, limit } from "../../ultils/contants";
+import { ToastContainer } from "react-toastify";
 
 
 const breakpointColumnsObj = {
@@ -95,13 +96,15 @@ const Products = () => {
   }, [sort]);
   return (
     <div className="w-full">
-      <div className="h-[81px] flex justify-center items-center bg-gray-50">
+      <div className="h-[81px] mt-4 flex justify-center items-center bg-gray-50">
         <div className="w-main">
-          <h3 className="font-semibold uppercase">{category}</h3>
-          <Breadcrumbs category={category}></Breadcrumbs>
+          <span className="font-semibold text-[18px] uppercase">{category.slice(1)}</span>
+          <div className="mt-2">
+          <Breadcrumbs category={category.slice(1)}></Breadcrumbs>
+          </div>
         </div>
       </div>
-      <div className="w-main border p-4 flex justify-between mt-8 m-auto">
+      <div className="w-main border p-4 flex justify-between mt-4 m-auto">
         <div className="w-4/5 flex-auto flex flex-col gap-3">
           <span className="font-semibold text-sm mt-[-7px]">Filter by</span>
           <div className="flex items-center gap-4">
@@ -120,7 +123,7 @@ const Products = () => {
         </div>
         <div className="w-1/5 flex flex-col gap-3">
           <span className="font-semibold text-sm mt-[-7px]">Sort by</span>
-          <div className="w-full">
+          <div className="w-full ">
             <InputSelect
               value={sort}
               changeValue={changeValue}
@@ -129,8 +132,8 @@ const Products = () => {
           </div>
         </div>
       </div>
-      <div className="mt-2 w-main m-auto">
-        <Masonry
+      <div className="mt-4 w-main m-auto  grid grid-cols-4 gap-4">
+        {/* <Masonry
           breakpointCols={breakpointColumnsObj}
           className="my-masonry-grid flex "
           columnClassName="my-masonry-grid_column"
@@ -143,12 +146,23 @@ const Products = () => {
               normal={true}
             ></Product>
           ))}
-        </Masonry>
+        </Masonry> */}
+        {products?.products?.map((e, index) => (
+          <div key={index} className="mx-[-10px]">
+            <Product
+              key={e._id}
+              pid={e._id}
+              productData={e}
+              normal={true}
+            ></Product>
+          </div>
+          ))}
       </div>
       <div className=" w-main m-auto my-4 flex justify-end">
         <Pagination totalCount={products?.counts}></Pagination>
       </div>
       <div className="ư-full h-[100px]"></div>
+      <ToastContainer autoClose={1200} />
     </div>
   );
 };

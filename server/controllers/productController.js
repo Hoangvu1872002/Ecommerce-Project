@@ -2,8 +2,10 @@ const { response } = require("express");
 const productModel = require("../models/product");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
+const makeSKU = require("uniqid");
 
 const createProduct = asyncHandler(async (req, res) => {
+  console.log(req.body);
   const { title, price, description, brand, category, color } = req.body;
   const thumb = req.files?.thumb[0]?.path;
   const images = req.files?.images?.map((e) => e.path);
@@ -15,7 +17,7 @@ const createProduct = asyncHandler(async (req, res) => {
   const newProduct = await productModel.create(req.body);
   return res.status(200).json({
     success: newProduct ? true : false,
-    mes: newProduct ? 'Created new product.' : "Cannot create new product.",
+    mes: newProduct ? "Created new product." : "Cannot create new product.",
   });
 });
 
@@ -64,8 +66,22 @@ const getManyProduct = asyncHandler(async (req, res) => {
     }));
     colorQueryObject = { $or: colorQuery };
   }
-  const q = { ...colorQueryObject, ...formatedQueries };
-  let queryCommand = productModel.find(q);
+
+  let queryObject = {};
+  if (queries?.q) {
+    delete formatedQueries.q;
+    queryObject = {
+      $or: [
+        { color: { $regex: queries?.q, $options: "i" } },
+        { title: { $regex: queries?.q, $options: "i" } },
+        { category: { $regex: queries?.q, $options: "i" } },
+        { brand: { $regex: queries?.q, $options: "i" } },
+      ],
+    };
+  }
+
+  const qr = { ...colorQueryObject, ...formatedQueries, ...queryObject };
+  let queryCommand = productModel.find(qr);
 
   //sorting
   //abc,efg => [abc,efg] => abc efg
@@ -93,7 +109,7 @@ const getManyProduct = asyncHandler(async (req, res) => {
   //so luong san pham thoa man dieu kien !== so luong sp tra ve 1 lan goi api
   queryCommand
     .then(async (response) => {
-      const counts = await productModel.find(q).countDocuments();
+      const counts = await productModel.find(qr).countDocuments();
       return res.status(200).json({
         success: response ? true : false,
         counts,
@@ -107,13 +123,18 @@ const getManyProduct = asyncHandler(async (req, res) => {
 
 const updateProduct = asyncHandler(async (req, res) => {
   const { pid } = req.params;
+  const files = req?.files;
+  if (files?.thumb) req.body.thumb = files?.thumb[0]?.path;
+  if (files?.images) req.body.images = files?.images?.map((e) => e.path);
+  console.log(req.body.thumb);
+  console.log(req.body.images);
   if (req.body && req.body.title) req.body.slug = slugify(req.body.title);
   const updatedProduct = await productModel.findByIdAndUpdate(pid, req.body, {
     new: true,
   });
   return res.status(200).json({
     success: updatedProduct ? true : false,
-    updateProduct: updatedProduct ? updatedProduct : "Cannot update products.",
+    mes: updatedProduct ? "Updated." : "Cannot update products.",
   });
 });
 
@@ -123,7 +144,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
   const deletedProduct = await productModel.findByIdAndDelete(pid);
   return res.status(200).json({
     success: deletedProduct ? true : false,
-    deleteProduct: deletedProduct ? deletedProduct : "Cannot delete products.",
+    mes: deletedProduct ? "Deleted." : "Cannot delete products.",
   });
 });
 
@@ -196,6 +217,34 @@ const uploadImagesProduct = asyncHandler(async (req, res) => {
   });
 });
 
+const addVarriants = asyncHandler(async (req, res) => {
+  const { pid } = req.params;
+  const { title, price, color } = req.body;
+  const thumb = req.files?.thumb[0]?.path;
+  const images = req.files?.images?.map((e) => e.path);
+  if (!(title && price && color)) throw new Error("Missing inputs");
+  const response = await productModel.findByIdAndUpdate(
+    pid,
+    {
+      $push: {
+        varriants: {
+          color,
+          price,
+          thumb,
+          images,
+          title,
+          sku: makeSKU().toString().toUpperCase(),
+        },
+      },
+    },
+    { new: true }
+  );
+  return res.status(200).json({
+    success: response ? true : false,
+    mes: response ? "Added varriant." : "Cannot add varriant.",
+  });
+});
+
 module.exports = {
   createProduct,
   getProduct,
@@ -204,4 +253,5 @@ module.exports = {
   deleteProduct,
   rating,
   uploadImagesProduct,
+  addVarriants,
 };

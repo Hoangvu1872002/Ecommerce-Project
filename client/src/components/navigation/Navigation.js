@@ -4,7 +4,7 @@ import { navigation } from "../../ultils/contants";
 
 const Navigation = () => {
   return (
-    <div className="w-main h-[48px] py-2 border-y text-sm flex items-center">
+    <div className="w-main min-h-[48px] py-2 border-y text-sm flex items-center">
       {navigation.map((e) => (
         <NavLink
           to={e.path}

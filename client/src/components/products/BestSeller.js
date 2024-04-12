@@ -45,7 +45,7 @@ const BestSeller = () => {
     }
   }, [activeTab]);
   return (
-    <div>
+    <div className="">
       <div className="flex text-[20px] ml-[-32px] ">
         {tabs.map((e) => (
           <span
@@ -59,10 +59,15 @@ const BestSeller = () => {
           </span>
         ))}
       </div>
-      <div className="mt-3 border-t-2 border-main">
-        <CustomSlider products={products} activeTab={activeTab}></CustomSlider>
+      <div className="mt-3 pt-3 border-t-2 border-main">
+        <div className="mx-[-10px]">
+          <CustomSlider
+            products={products}
+            activeTab={activeTab}
+          ></CustomSlider>
+        </div>
       </div>
-      <div className="w-full flex gap-4 mt-[-5px]">
+      <div className="w-full flex gap-5 mt-3">
         <img
           src="https://digital-world-2.myshopify.com/cdn/shop/files/banner2-home2_2000x_crop_center.png?v=1613166657"
           alt="banner"

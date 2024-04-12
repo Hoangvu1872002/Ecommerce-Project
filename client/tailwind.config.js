@@ -10,6 +10,16 @@ module.exports = {
       roman: "upper-roman",
     },
     extend: {
+      gridRow: {
+        'span-7': 'span 7 /span 7',
+      },
+      gridTemplateRows: {
+        // Simple 16 row grid
+        '10': 'repeat(10, minmax(0, 1fr))',
+
+        // Complex site-specific row configuration
+        'layout': '200px minmax(900px, 1fr) 100px',
+      },
       width: {
         main: "1220px",
       },

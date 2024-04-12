@@ -60,3 +60,23 @@ export const apiDeleteUser = (uid) =>
     url: "/users/" + uid,
     method: "delete",
   });
+
+export const apiUpdateCurrent = (data) =>
+  axios({
+    url: "/users/current",
+    method: "put",
+    data,
+  });
+
+export const apiUpdateCart = (data) =>
+  axios({
+    url: "/users/cart",
+    method: "put",
+    data,
+  });
+
+export const apiRemoveCart = (pid, color) =>
+  axios({
+    url: `/users/remove-cart/${pid}/${color}`,
+    method: "delete",
+  });

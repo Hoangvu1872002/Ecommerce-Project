@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { HashLoader } from "react-spinners";
 const Loading = () => {
   return (
-    <div>
+    <div className="h-full">
       <HashLoader color="#ee3131"></HashLoader>
     </div>
   );

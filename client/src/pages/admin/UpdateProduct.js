@@ -1,36 +1,30 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
+import {
+  Button,
+  InputForm,
+  Loading,
+  MarkdownEditor,
+  Select,
+} from "../../components";
 import { useForm } from "react-hook-form";
-import { Button, InputForm, Loading, MarkdownEditor, Select } from "../../components";
-import { useDispatch, useSelector } from "react-redux";
-import { validate, getBase64 } from "../../ultils/helper";
-import { ToastContainer, toast } from "react-toastify";
-import icons from "../../ultils/icons";
-import { apiCreateProduct } from "../../apis";
+import { getBase64, validate } from "../../ultils/helper";
 import { showModal } from "../../store/app/appSlice";
+import { apiUpdateProduct } from "../../apis";
+import { useDispatch, useSelector } from "react-redux";
 
-const CreateProduct = () => {
+const UpdateProduct = ({ editProduct, setEditProduct, render, toast }) => {
   const {
     register,
     formState: { errors },
     reset,
     handleSubmit,
     watch,
-  } = useForm({
-    title: "",
-    price: "",
-    category: "",
-    brand: "",
-    thumb: null,
-    color: "",
-    images: [],
-  });
+  } = useForm();
+
+  const dispatch = useDispatch();
 
   const { categories } = useSelector((state) => state.app);
-  const dispatch = useDispatch()
 
-  const { ImBin } = icons;
-
-  const [update, setUpdate] = useState();
   const [payload, setPayload] = useState({
     description: "",
   });
@@ -39,45 +33,14 @@ const CreateProduct = () => {
     images: [],
   });
   const [invalidFields, setInvalidFields] = useState([]);
+  const [isFocusDescription, setIsFocusDescription] = useState();
+
   const changeValue = useCallback(
     (e) => {
       setPayload(e);
     },
     [payload]
   );
-
-  const handleCreateProduct = async (data) => {
-    const invalids = validate(payload, setInvalidFields);
-    if (invalids === 0) {
-      // if (data.category)
-      //   data.category = categories?.find((e) => e._id === data.category)?.title;
-      const finalPayload = { ...data, ...payload };
-      const formData = new FormData();
-      for (let i of Object.entries(finalPayload)) formData.append(i[0], i[1]);
-      // console.log(finalPayload);
-      if (finalPayload.thumb) formData.append("thumb", finalPayload.thumb[0]);
-      if (finalPayload.images) {
-        for (let image of finalPayload.images) formData.append("images", image);
-      }
-      dispatch(showModal({isShowModal: true, modalChildren: <Loading></Loading>}))
-      const response = await apiCreateProduct(formData);
-      dispatch(showModal({isShowModal: false, modalChildren: null}))
-      if (response.success) {
-        toast.success(response.mes, {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-        reset();
-        setPayload({
-          thumb: "",
-          image: [],
-        });
-      }else{
-        toast.error(response.mes, {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-      }
-    }
-  };
 
   const handlePreviewThumb = async (file) => {
     const base64Thumb = await getBase64(file);
@@ -94,41 +57,84 @@ const CreateProduct = () => {
         return;
       }
       const base64 = await getBase64(file);
-      imagesPreview.push({ name: file.name, path: base64 });
+      imagesPreview.push(base64);
     }
     setPreview((prev) => ({ ...prev, images: imagesPreview }));
   };
 
-  // const handleRemoveImage = (name) => {
-  //   const files = [...watch('images')]
-  //   console.log(files.filter(e => e.name !== name));
-  //   reset({
-  //     images: files.filter(e => e.name !== name)
-  //   })
-  //   if (preview.images?.some((e) => e.name === name)) {
-  //     setPreview((prev) => ({
-  //       ...prev,
-  //       images: prev.images?.filter((el) => el.name !== name),
-  //     }));
-  //   }
-  // };
+  const handleUpdateProduct = async (data) => {
+    const invalids = validate(payload, setInvalidFields);
+    if (invalids === 0) {
+      // if (data.category)
+      //   data.category = categories?.find((e) => e._id === data.category)?.title;
+      const finalPayload = { ...data, ...payload };
+      finalPayload.thumb =
+        data?.thumb.length === 0 ? preview.thumb : data.thumb[0];
+      const formData = new FormData();
+      for (let i of Object.entries(finalPayload)) formData.append(i[0], i[1]);
+      // console.log(finalPayload);
+      finalPayload.images =
+        data?.images.length === 0 ? preview.images : data.images;
+      for (let image of finalPayload.images) formData.append("images", image);
+      // dispatch(showModal({isShowModal: true, modalChildren: <Loading></Loading>}))
+      const response = await apiUpdateProduct(formData, editProduct._id);
+      // dispatch(showModal({ isShowModal: false, modalChildren: null }));
+      console.log(response);
+      if (response.success) {
+        toast.success(response.mes);
+        render();
+        setEditProduct(null);
+      } else {
+        toast.error(response.mes);
+      }
+    }
+  };
 
   useEffect(() => {
-    handlePreviewThumb(watch("thumb")[0]);
+    reset({
+      title: editProduct?.title || "",
+      price: editProduct?.price || "",
+      quantity: editProduct?.quantity || "",
+      color: editProduct?.color || "",
+      category: editProduct?.category || "",
+      brand: editProduct?.brand?.toLowerCase() || "",
+    });
+    setPayload({
+      description:
+        typeof editProduct?.description === "object"
+          ? editProduct?.description?.join(",")
+          : editProduct?.description,
+    });
+    setPreview({
+      thumb: editProduct?.thumb || "",
+      images: editProduct?.images || [],
+    });
+  }, [editProduct]);
+
+  useEffect(() => {
+    if (watch("thumb") instanceof FileList && watch("thumb").length > 0)
+      handlePreviewThumb(watch("thumb")[0]);
   }, [watch("thumb")]);
 
   useEffect(() => {
-    handlePreviewImages(watch("images"));
+    if (watch("images") instanceof FileList && watch("images").length > 0)
+      handlePreviewImages(watch("images"));
   }, [watch("images")]);
 
   return (
     <div className="w-full relative">
-      <h1 className="fixed z-50 bg-gray-100 w-full h-[75px] flex justify-between items-center text-3xl font-bold px-5 border-b">
-        <span>Create Product</span>
-      </h1>
+      <div className="flex w-full">
+        <h1 className="fixed z-50 bg-gray-100 w-full h-[75px] flex justify-between items-center text-3xl font-bold px-5 border-b">
+          <span>Update Product</span>
+        </h1>
+        <div className="flex fixed z-50 top-2 right-4 font-semibold">
+          <Button handleOnClick={() => setEditProduct(null)}>Cancel</Button>
+        </div>
+      </div>
+
       <div className="h-[75px] w-full"></div>
       <div className="p-4">
-        <form onSubmit={handleSubmit(handleCreateProduct)}>
+        <form onSubmit={handleSubmit(handleUpdateProduct)}>
           <InputForm
             label="Name product"
             register={register}
@@ -195,7 +201,7 @@ const CreateProduct = () => {
               options={categories
                 ?.find((el) => el.title === watch("category"))
                 ?.brand?.map((item) => ({
-                  value: item,
+                  value: item?.toLowerCase(),
                 }))}
               register={register}
               id={"brand"}
@@ -211,16 +217,13 @@ const CreateProduct = () => {
             label={"Description"}
             setInvalidFields={setInvalidFields}
             invalidFields={invalidFields}
+            value={payload?.description}
           ></MarkdownEditor>
           <div className="flex flex-col gap-2 mt-8">
             <label className="font-semibold" htmlFor="thumb">
               Upload thumb
             </label>
-            <input
-              type="file"
-              id="thumb"
-              {...register("thumb", { required: "Need fill" })}
-            ></input>
+            <input type="file" id="thumb" {...register("thumb")}></input>
             {errors["thumb"] && (
               <small className="text-xs text-red-500">
                 {errors["thumb"]?.message}
@@ -243,7 +246,7 @@ const CreateProduct = () => {
             <input
               type="file"
               id="images"
-              {...register("images", { required: "Need fill" })}
+              {...register("images")}
               multiple
             ></input>
             {/* <label htmlFor="file">Choose a file</label> */}
@@ -263,30 +266,21 @@ const CreateProduct = () => {
                   // onMouseLeave={() => setHoverElm(null)}
                 >
                   <img
-                    src={e.path}
+                    src={e}
                     alt="product"
                     className="w-[200px] object-contain"
                   ></img>
-                  {/* {hoverElm === e.name && (
-                    <div
-                      onClick={() => {
-                        handleRemoveImage(e.name);
-                      }}
-                      className="absolute inset-0 flex items-center justify-center cursor-pointer bg-overlay"
-                    >
-                      <ImBin size={24} color="white"></ImBin>
-                    </div>
-                  )} */}
                 </div>
               ))}
             </div>
           )}
-          <Button type="submit">Create new product</Button>
+          <Button type="submit">Update new product</Button>
         </form>
       </div>
-      <ToastContainer autoClose={1200} />
+
+      
     </div>
   );
 };
 
-export default CreateProduct;
+export default memo(UpdateProduct);

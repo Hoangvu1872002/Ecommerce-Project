@@ -12,6 +12,7 @@ import {
   Products,
   FinalRegister,
   ResetPassword,
+  DetailCart,
 } from "./pages/public";
 
 import {
@@ -22,20 +23,38 @@ import {
   ManageProduct,
   CreateProduct,
 } from "./pages/admin";
-import { MemberLayout, Personal } from "./pages/member";
+import {
+  MemberLayout,
+  MyCart,
+  Personal,
+  Wishlist,
+  History,
+  Checkout,
+} from "./pages/member";
 import { getCategories } from "./store/app/asyncAction";
 import { useDispatch, useSelector } from "react-redux";
-import { Modal } from "./components";
+import { Cart, Modal } from "./components";
+import { showCart } from "./store/app/appSlice";
 
 function App() {
   const dispatch = useDispatch();
-  const { isShowModal, modalChildren } = useSelector((state) => state.app);
+  const { isShowModal, modalChildren, isShowCart } = useSelector(
+    (state) => state.app
+  );
 
   useEffect(() => {
     dispatch(getCategories());
   }, []);
   return (
-    <div className="font-main relative">
+    <div className="font-main relative h-screen">
+      {isShowCart && (
+        <div
+          onClick={() => dispatch(showCart())}
+          className="absolute inset-0 bg-overlay z-[1000] flex justify-end"
+        >
+          <Cart></Cart>
+        </div>
+      )}
       {isShowModal && <Modal>{modalChildren}</Modal>}
       <Routes>
         <Route path={path.PUBLIC} element={<Public></Public>}>
@@ -48,6 +67,7 @@ function App() {
           <Route path={path.FAQS} element={<FAQ></FAQ>} />
           <Route path={path.OUR_SERVICES} element={<Services></Services>} />
           <Route path={path.PRODUCTS} element={<Products></Products>} />
+          <Route path={path.DETAIL_CART} element={<DetailCart></DetailCart>} />
           <Route
             path={path.RESETPASSWORD}
             element={<ResetPassword></ResetPassword>}
@@ -78,6 +98,10 @@ function App() {
         </Route>
         <Route path={path.MEMBER} element={<MemberLayout></MemberLayout>}>
           <Route path={path.PERSONAL} element={<Personal></Personal>}></Route>
+          <Route path={path.MY_CART} element={<MyCart></MyCart>}></Route>
+          <Route path={path.HISTORY} element={<History></History>}></Route>
+          <Route path={path.WISLIST} element={<Wishlist></Wishlist>}></Route>
+          <Route path={path.CHECKOUT} element={<Checkout></Checkout>}></Route>
         </Route>
         <Route path={path.LOGIN} element={<Login></Login>} />
         <Route

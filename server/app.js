@@ -17,6 +17,7 @@ var brandsRouter = require("./routes/brand");
 var couponsRouter = require("./routes/coupon");
 var ordersRouter = require("./routes/order");
 var insertRouter = require("./routes/insert");
+var vnpayRouter = require("./routes/vnpay");
 
 const { errorsMiddleware } = require("./middlewares/errorsMiddleware");
 const dbConnect = require("./config/database");
@@ -69,6 +70,7 @@ app.use("/brands", brandsRouter);
 app.use("/coupons", couponsRouter);
 app.use("/orders", ordersRouter);
 app.use("/inserts", insertRouter);
+app.use("/vnpay", vnpayRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -77,5 +79,23 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(errorsMiddleware);
+
+const PORT = process.env.PORT;
+const http = require("http");
+const server = http
+  .createServer(app)
+  .listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+const socketIO = require("socket.io");
+// const driverModel = require("./models/driverModel");
+const io = socketIO(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+const socketCtl = require("./controllers/socketCtl");
+
+socketCtl(io);
 
 module.exports = app;

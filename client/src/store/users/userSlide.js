@@ -9,7 +9,7 @@ export const userSlide = createSlice({
     token: null,
     isLoading: false,
     mes: "",
-    currentCart: [],
+    currentCart: null,
   },
   reducers: {
     login: (state, action) => {
@@ -22,7 +22,7 @@ export const userSlide = createSlice({
       state.token = null;
       state.isLoading = false;
       state.mes = "";
-      state.currentCart = []
+      state.currentCart = null
     },
     clearMessage: (state) => {
       state.mes = "";
@@ -51,9 +51,9 @@ export const userSlide = createSlice({
 
     builder.addCase(actions.getCurrent.fulfilled, (state, action) => {
       state.isLoading = false;
+      state.currentCart = action.payload.cart;
       state.current = action.payload;
       state.isLoggedIn = true;
-      state.currentCart = action.payload.cart;
       // console.log(state.current);
     });
 
@@ -62,6 +62,7 @@ export const userSlide = createSlice({
       state.current = null;
       state.isLoggedIn = false;
       state.token = null;
+      state.currentCart = null;
       state.mes = "Login session has expired. Please log in again!";
     });
   },

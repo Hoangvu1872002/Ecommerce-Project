@@ -21,6 +21,7 @@ const Login = () => {
     email: "",
     password: "",
     mobile: "",
+    address: "",
   });
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
@@ -31,6 +32,7 @@ const Login = () => {
       email: "",
       password: "",
       mobile: "",
+      address: "",
     });
   };
   const [email, setEmail] = useState("");
@@ -51,7 +53,7 @@ const Login = () => {
   useEffect(() => {}, [isRegister]);
 
   const handleSubmit = useCallback(async () => {
-    const { firstname, lastname, mobile, ...data } = payload;
+    const { firstname, lastname, mobile, address, ...data } = payload;
 
     const invalids = isRegister
       ? validate(payload, setInvaliFields)
@@ -162,6 +164,16 @@ const Login = () => {
               value={payload.mobile}
               setValue={setPayLoad}
               nameKey="mobile"
+              invaliFields={invaliFields}
+              setInvaliFields={setInvaliFields}
+              fullWidth
+            ></InputField>
+          )}
+          {isRegister && (
+            <InputField
+              value={payload.address}
+              setValue={setPayLoad}
+              nameKey="address"
               invaliFields={invaliFields}
               setInvaliFields={setInvaliFields}
               fullWidth

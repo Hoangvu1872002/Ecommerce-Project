@@ -4,12 +4,13 @@ import { ToastContainer } from "react-toastify";
 import { formatMoney } from "../../ultils/helper";
 import OrderItem from "../../components/products/OrderItem";
 import { useSelector } from "react-redux";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import path from "../../ultils/path";
+import withBase from "../../hocs/withBase";
 
-const MyCart = () => {
+
+const MyCart = ({dispatch}) => {
   const { currentCart } = useSelector((state) => state.user);
-
   return (
     <div className="relative w-full flex flex-col">
       <h1 className="fixed z-50 bg-gray-100 w-full h-[75px] flex justify-between items-center text-3xl font-bold px-5 border-b">
@@ -28,12 +29,13 @@ const MyCart = () => {
             <span className="col-span-2 w-full text-center">Action</span>
           </div>
         </div>
-
+        <div className="w-main">
         {currentCart?.map((e, index) => (
-          <div key={index}>
+          <div key={index} className="">
             <OrderItem e={e} defaultQuantity={e.quantity}></OrderItem>
           </div>
         ))}
+        </div>
         <div className="w-main mx-auto flex flex-col gap-3 items-end justify-center mt-4">
           <span className="flex gap-4">
             <span>
@@ -65,4 +67,4 @@ const MyCart = () => {
   );
 };
 
-export default memo(MyCart);
+export default withBase(memo(MyCart));

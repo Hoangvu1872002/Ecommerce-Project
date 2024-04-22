@@ -1,5 +1,5 @@
 import path from "./ultils/path";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import {
   Blog,
@@ -13,6 +13,8 @@ import {
   FinalRegister,
   ResetPassword,
   DetailCart,
+  DetailBlog,
+  DetailCheckout,
 } from "./pages/public";
 
 import {
@@ -35,12 +37,35 @@ import { getCategories } from "./store/app/asyncAction";
 import { useDispatch, useSelector } from "react-redux";
 import { Cart, Modal } from "./components";
 import { showCart } from "./store/app/appSlice";
+import io from "socket.io-client";
 
 function App() {
   const dispatch = useDispatch();
   const { isShowModal, modalChildren, isShowCart } = useSelector(
     (state) => state.app
   );
+
+  const [resetHistoryOrder, setResetHistoryOrder] = useState(false)
+
+  // let socket;
+  const socket = io("http://127.0.0.1:5001/orderStatus");
+  useEffect(() => {
+    // Xử lý các sự kiện từ máy chủ
+    socket.on("connect", () => {
+      console.log("Connected to server");
+    });
+    socket.on("updatedStatus", (data) => {
+      setResetHistoryOrder(prev => !prev)
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  const handleUpdateStatusOrder = (statusOrder) => {
+    socket.emit("update-status-order", statusOrder);
+  };
 
   useEffect(() => {
     dispatch(getCategories());
@@ -64,10 +89,18 @@ function App() {
             path={path.DETAIL_PRODUCT_CATEGORY_PID__TITLE}
             element={<DetailProduct></DetailProduct>}
           />
+          <Route
+            path={path.DETAIL_BLOG_TITLE}
+            element={<DetailBlog></DetailBlog>}
+          />
           <Route path={path.FAQS} element={<FAQ></FAQ>} />
           <Route path={path.OUR_SERVICES} element={<Services></Services>} />
           <Route path={path.PRODUCTS} element={<Products></Products>} />
           <Route path={path.DETAIL_CART} element={<DetailCart></DetailCart>} />
+          <Route
+            path={path.DETAIL_CHECKOUT}
+            element={<DetailCheckout></DetailCheckout>}
+          />
           <Route
             path={path.RESETPASSWORD}
             element={<ResetPassword></ResetPassword>}
@@ -81,7 +114,12 @@ function App() {
           ></Route>
           <Route
             path={path.MANAGE_ORDER}
-            element={<ManageOrder></ManageOrder>}
+            element={
+              <ManageOrder
+                handleUpdateStatusOrder={handleUpdateStatusOrder}
+                resetHistoryOrder={resetHistoryOrder}
+              ></ManageOrder>
+            }
           ></Route>
           <Route
             path={path.MANAGE_USER}
@@ -99,7 +137,7 @@ function App() {
         <Route path={path.MEMBER} element={<MemberLayout></MemberLayout>}>
           <Route path={path.PERSONAL} element={<Personal></Personal>}></Route>
           <Route path={path.MY_CART} element={<MyCart></MyCart>}></Route>
-          <Route path={path.HISTORY} element={<History></History>}></Route>
+          <Route path={path.HISTORY} element={<History resetHistoryOrder={resetHistoryOrder} handleUpdateStatusOrder={handleUpdateStatusOrder}></History>}></Route>
           <Route path={path.WISLIST} element={<Wishlist></Wishlist>}></Route>
           <Route path={path.CHECKOUT} element={<Checkout></Checkout>}></Route>
         </Route>

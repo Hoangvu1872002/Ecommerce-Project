@@ -11,8 +11,6 @@ import { getCurrent } from "../../store/users/asyncAction";
 const OrderItem = ({ e, dispatch, defaultQuantity = 1 }) => {
   const { MdDeleteForever } = icons;
 
-  console.log(e);
-
   const [quantity, setQuantity] = useState(() => defaultQuantity);
 
   const handleQuantity = useCallback(
@@ -61,7 +59,7 @@ const OrderItem = ({ e, dispatch, defaultQuantity = 1 }) => {
   }, [quantity]);
 
   return (
-    <div className="border grid grid-cols-11 w-main mt-1 py-3 mx-auto">
+    <div className="border grid grid-cols-11 w-full mt-1 py-3 mx-auto">
       <span className="col-span-3 w-full text-center flex justify-start pl-8 items-center">
         <div className="flex gap-2  items-center ">
           <img

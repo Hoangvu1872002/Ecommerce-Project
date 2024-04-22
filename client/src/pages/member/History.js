@@ -1,11 +1,367 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect, useRef, useState } from "react";
+import { apiGetUserOrders } from "../../apis";
+import { limit, statusOrders } from "../../ultils/contants";
+import { useForm } from "react-hook-form";
+import { Button, CustomSelect, InputForm, Pagination } from "../../components";
+import useDebounce from "../../hooks/useDebounce";
+import {
+  createSearchParams,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
+import { formatMoney } from "../../ultils/helper";
+import clsx from "clsx";
 
-const History = () => {
-    return (
-        <div>
-            
+const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
+  const [orders, setOrders] = useState();
+  const [count, setCout] = useState(0);
+  const [scroll, setScroll] = useState(() => resetHistoryOrder);
+
+  const titleRef = useRef();
+
+  const [params] = useSearchParams();
+
+  const navigate = useNavigate();
+
+  const location = useLocation();
+
+  const {
+    register,
+    formState: { errors },
+    watch,
+    setValue,
+    reset
+  } = useForm();
+
+  const queryDebounce = useDebounce(watch("q"), 800);
+  const status = watch("myCustomSelect");
+
+  const fetchOrder = async (params) => {
+    const response = await apiGetUserOrders({
+      ...params,
+      limit: limit,
+      sort: "-createdAt",
+    });
+    if (response.success) {
+      setCout(response.counts);
+      setOrders(response.order);
+    } else {
+      setCout(0);
+      setOrders([]);
+    }
+  };
+  useEffect(() => {
+    const searchParams = Object.fromEntries([...params]);
+    fetchOrder(searchParams);
+    if (scroll === resetHistoryOrder) {
+      titleRef.current.scrollIntoView({ block: "start" });
+    }
+  }, [params, resetHistoryOrder]);
+
+  useEffect(() => {
+    if (queryDebounce) {
+      navigate({
+        pathname: location.pathname,
+        search: createSearchParams({ q: queryDebounce }).toString(),
+      });
+    } else
+      navigate({
+        pathname: location.pathname,
+      });
+  }, [queryDebounce]);
+
+  useEffect(() => {
+    if (status) {
+      navigate({
+        pathname: location.pathname,
+        search: createSearchParams({ status: status.value }).toString(),
+      });
+    } else {
+      reset();
+      navigate({
+        pathname: location.pathname,
+      });
+    }
+  }, [status]);
+
+  return (
+    <div ref={titleRef} className="relative w-full flex flex-col">
+      <h1 className="fixed z-50 bg-gray-100 w-full h-[75px] flex justify-between items-center text-3xl font-bold px-5 border-b">
+        <span>HISTORY</span>
+      </h1>
+      <div className="h-[75px] w-full"></div>
+      <div className="flex w-full justify-end items-center px-5">
+      <form className="w-[38%] flex gap-2 ">
+          <div className="flex-2">
+            {!status && (
+              <InputForm
+                id="q"
+                register={register}
+                errors={errors}
+                fullWith
+                placeholder="Search products by id order"
+              ></InputForm>
+            )}
+          </div>
+          <div className="flex-1 flex items-center h-[78px]">
+            <CustomSelect
+              options={statusOrders}
+              value={status}
+              onChange={(val) => setValue("myCustomSelect", val)}
+              wrapClassname="w-[200px]"
+            ></CustomSelect>
+          </div>
+        </form>
+      </div>
+      <div className="">
+        {orders?.map((el, index) => (
+          <div key={index} className="w-main mx-auto mt-4 mb-12 ">
+            <div
+              className={clsx(
+                "py-2 px-4 mx-auto bg-gray-50  w-main border-t-4",
+                el?.status === "Proccessing" && "border-blue-400",
+                el?.status === "Cancelled" && "border-red-600",
+                el?.status === "Shipping" && "border-yellow-400",
+                el?.status === "Successed" && "border-green-400"
+              )}
+            >
+              <div className="flex items-center justify-between ">
+                <div className="flex gap-2 items-center">
+                  <span className="text-main text-sm font-semibold">
+                    Code Bill:
+                  </span>
+                  <span className="text-sm text-green-600 ">{el?._id}</span>
+                </div>
+
+                <div className="flex flex-col justify-center items-end">
+                  {el?.status === "Proccessing" && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-blue-400 text-sm pr-2 border-r-2">
+                        The seller is preparing the goods
+                      </span>
+                      <span className="text-blue-400 font-semibold">
+                        {el?.status?.toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  {el?.status === "Shipping" && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-yellow-400 text-sm pr-2 border-r-2">
+                        Order is being shipped
+                      </span>
+                      <span className="text-yellow-400 font-semibold">
+                        {el?.status?.toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  {el?.status === "Successed" && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-green-400 text-sm pr-2 border-r-2">
+                        Order is being completed
+                      </span>
+                      <span className="text-green-400 font-semibold">
+                        {el?.status?.toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  {el?.status === "Cancelled" && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-main text-sm pr-2 border-r-2">
+                        Order has been cancelled
+                      </span>
+                      <span className="text-main font-semibold">
+                        {el?.status?.toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <div className="text-sm text-main">{el?.paymentMethods}</div>
+                </div>
+              </div>
+            </div>
+            <div className="py-2 border mx-auto bg-gray-200 w-main">
+              <div className="font-semibold grid grid-cols-11">
+                <span className="col-span-3 w-full text-center">Products</span>
+                <span className="col-span-2 w-full text-center">Type</span>
+                <span className="col-span-2 w-full text-center">
+                  Unit price
+                </span>
+                <span className="col-span-2 w-full text-center"> Quantity</span>
+                <span className="col-span-2 w-full flex items-center justify-end pr-4">
+                  Amount of money
+                </span>
+              </div>
+            </div>
+            <div className="mt-1">
+              {el?.products?.map((e, index) => (
+                <div key={index}>
+                  <div
+                    className=" border-b grid grid-cols-11 w-full py-3 mx-auto bg-gray-50
+                "
+                  >
+                    <span className="col-span-3 w-full text-center flex justify-start pl-4 items-center">
+                      <div className="flex gap-2  items-center ">
+                        <img
+                          src={e?.thumbnail}
+                          alt="thumb"
+                          className="w-10 h-10 object-cover rounded-lg"
+                        ></img>
+                        <div className="flex items-start gap-1 ml-2">
+                          <span className="text-main text-sm">{e?.title}</span>
+                        </div>
+                      </div>
+                    </span>
+                    <span className="col-span-2 text-sm w-full text-center flex justify-center items-center">
+                      {e?.color}
+                    </span>
+                    <span className="col-span-2 text-sm w-full text-center flex justify-center items-center">
+                      {formatMoney(e?.price) + " VND"}
+                    </span>
+                    <span className="col-span-2 text-sm w-full text-center flex justify-center items-center">
+                      {e?.quantity}
+                    </span>
+                    <span className="col-span-2 w-full text-sm flex justify-end pr-4 items-center">
+                      {formatMoney(e?.price * e?.quantity) + " VND"}
+                    </span>
+                  </div>
+                  {el?.status === "Successed" && (
+                    <div className="px-4 flex gap-2">
+                      <Button
+                        style={
+                          "px-1 text-xs  my-1 rounded-md text-white bg-main hover:bg-red-600"
+                        }
+                      >
+                        Reviews
+                      </Button>
+                      <Button
+                        style={
+                          "px-1 text-xs my-1 rounded-md text-white bg-main hover:bg-red-600"
+                        }
+                      >
+                        Repurchase
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-between items-center py-1 px-4 border-t border-dashed mt-[1px] bg-gray-50">
+              <span>
+                <span className="text-sm text-red-500">Transport fee</span>
+              </span>
+              <span className="text-sm text-red-500">
+                {`${formatMoney(el?.transportFee)} VND`}
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center py-1 px-4 border-t border-dashed mt-[1px] bg-gray-50">
+              <span>
+                <span className="text-sm text-red-500">
+                  Total price (
+                  {el?.products?.reduce((sum, el) => +el?.quantity + sum, 0)}{" "}
+                  products)
+                </span>
+              </span>
+              <span className="text-sm text-red-500">
+                {`${formatMoney(el?.totalPriceProducts)} VND`}
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center py-1 px-4 border-t border-dashed bg-gray-50">
+              <span>
+                <span className="text-sm text-red-500">Shop's coupons</span>
+              </span>
+              <span className="text-sm text-red-500">
+                - 2% Discount ({`- ${formatMoney(el?.coupons)} VND`})
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center border-t border-dashed py-1 px-4 bg-gray-50">
+              <span>
+                <span className="text-sm text-red-500">Estimated taxes</span>
+              </span>
+              <span className="text-sm text-red-500">
+                5% Tax ({`${formatMoney(el?.tax)} VND`})
+              </span>
+            </div>
+
+            {/* <div className="flex pl-4 bg-gray-100 outline-dashed outline-1 outline-gray-300 outline-offset-1 py-2">
+              <div className="flex-3 border-r border-dashed mr-4 flex flex-col gap-2">
+                <span className="text-sm">Message:</span>
+                <div className="">
+                  <textarea
+                    onChange={handleTextareaChange}
+                    placeholder="Note to sellers..."
+                    className="bg-gray-200 p-2 text-sm rounded-lg w-[93%] h-[80px]"
+                  ></textarea>
+                </div>
+              </div>
+              <div className="flex-5 flex flex-col gap-2">
+                <div className="flex border-b border-dashed pb-2 mr-4">
+                  <div className="flex-3 text-sm">Shipping unit:</div>
+                  <div className="flex-7 flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm">Fast</p>
+                      <span className="flex gap-2 items-center justify-center">
+                        <span className="line-through text-xs text-gray-500">
+                          60.000 VND
+                        </span>
+                        <span className="text-sm text-main">30.000 VND</span>
+                      </span>
+                    </div>
+                    <p className="text-xs text-green-600">
+                      Guaranteed delivery from April 15 - April 17
+                    </p>
+                    <p className="text-xs text-gray-500 pr-[150px]">
+                      Receive a Voucher worth VND 10,000 if your order is
+                      delivered to you after 11:59 p.m. April 17, 2024.
+                    </p>
+                  </div>
+                </div>
+                <div className="text-sm">Jointly checked.</div>
+              </div>
+            </div> */}
+            <div className="bg-gray-100">
+              <div className="flex gap-4 justify-between items-center">
+                <li className="text-gray-400 text-xs pl-1">
+                  Please rate the product to receive a discount code.
+                </li>
+                <div className="flex gap-2 items-center">
+                  {el?.status === "Proccessing" && (
+                    <Button
+                      handleOnClick={() =>
+                        handleUpdateStatusOrder({
+                          _id: el._id,
+                          status: "Cancelled",
+                        })
+                      }
+                      style={
+                        " text-sm p-2 my-2 rounded-md text-white bg-main hover:bg-red-600"
+                      }
+                    >
+                      Cancel Order
+                    </Button>
+                  )}
+                  <span className="flex gap-4 justify-end items-center p-2">
+                    <span className="text-sm">Total payment:</span>
+                    <span className="text-main  font-semibold">
+                      {`${formatMoney(el?.total)} VND`}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-center items-center w-full">
+        <div className="w-main flex justify-end mb-10">
+          <Pagination totalCount={count}></Pagination>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default memo(History);

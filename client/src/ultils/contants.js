@@ -11,6 +11,7 @@ const {
   MdGroups,
   RiProductHuntLine,
   RiBillLine,
+  FaHeart,
 } = icons;
 
 export const navigation = [
@@ -255,7 +256,7 @@ export const memberSidebar = [
     type: "SINGLE",
     text: "Wislist",
     path: `/${path.MEMBER}/${path.WISLIST}`,
-    icon: <RiBillLine size={20}></RiBillLine>,
+    icon: <FaHeart size={20}></FaHeart>,
   },
 ];
 
@@ -282,3 +283,52 @@ export const blockStatus = [
     value: "Active",
   },
 ];
+
+export const dataFakeBlogs = [
+  {
+    id: 1,
+    title: "The standard Lorem Ipsum passage, used since the 1500s",
+    timeCreated: "Apr 14, 2017",
+    image: "https://digital-world-2.myshopify.com/cdn/shop/articles/blog4.jpg?v=1492594943",
+    content:
+      "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia dolore consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem \n Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo dolore voluptas nulla pariatur ut labore et dolore magnam aliquam quaerat voluptatem",
+  },
+  {
+    id: 2,
+    title:
+      "Section 1.10.33 of de Finibus Bonorum et Malorum, written by Cicero in 45 BC",
+    timeCreated: "Apr 14, 2017",
+    image: "https://digital-world-2.myshopify.com/cdn/shop/articles/blog3.jpg?v=1492594940",
+    content:
+      "Shoe street style leather tote oversized sweatshirt A.P.C. Prada Saffiano crop slipper denim shorts spearmint. Braid skirt round sunglasses seam leather vintage Levi plaited. Flats holographic Acne grunge collarless denim chunky sole cuff tucked t-shirt strong eyebrows. Clutch center part dress dungaree slip dress. Skinny jeans knitwear minimal tortoise-shell sunglasses Céline sandal Cara D. lilac. Black floral 90s oxford chambray bomber powder blue cotton boots print. Cable knit knot ponytail ribbed sneaker sports luxe pastel Paris. Washed out skort white shirt Hermès vintage Givenchy razor pleats.\nTee loafer knot ponytail sandal shoe oversized sweatshirt Maison Martin Margiela chunky sole spearmint. Jil Sander Vasari denim vintage So-Cal envelope clutch gold collar Prada Saffiano Acne. Navy blue flats metallic bandeau skort denim shorts white shirt white. Cotton knitwear slip dress seam Givenchy bandeau maxi.\nLanvin flats seam cotton minimal Saint Laurent midi Céline la marinière. Powder blue playsuit oversized sweatshirt bomber chunky sole street style chignon vintage. Dress Jil Sander Vasari chambray boots luxe. Statement button up navy blue slip dress skinny jeans indigo white shirt.\nMaison Martin Margiela cami texture la marinière ecru envelope clutch So-Cal relaxed silhouette. Cashmere chunky sole center part round sunglasses holographic skirt sneaker Acne bandeau. Leggings Lanvin plaited ribbed sports luxe Paris white metallic cami. Givenchy clutch black Furla navy blue grunge dress luxe. Oversized sweatshirt strong eyebrows knot ponytail indigo playsuit A.P.C. Floral gold collar Maison Martin Margiela vintage relaxed la marinière statement button up tee. Razor pleats chignon boots So-Cal cable knit seam denim chambray flats Prada Saffiano. Leather leather tote neutral denim shorts collarless Cara D. washed out. 90s vintage Levi texture envelope clutch crop ecru skinny jeans. Rings loafer Céline pastel sandal dove grey cotton Hermès.",
+  },
+  {
+    id: 3,
+    title: "Quisque porta felis est ut malesuada lorem dignissim",
+    timeCreated: "Apr 14, 2017",
+    image: "https://digital-world-2.myshopify.com/cdn/shop/articles/blog2.jpg?v=1492594930",
+    content:
+      "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia dolore consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem\nQuis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo dolore voluptas nulla pariatur ut labore et dolore magnam aliquam quaerat voluptatem",
+  },
+];
+
+export const statusOrders = [
+  {
+    label: 'Cancelled',
+    value: "Cancelled",
+  },
+  {
+    label: 'Proccessing',
+    value: "Proccessing",
+  },
+  {
+    label: 'Shipping',
+    value: "Shipping",
+  },
+  {
+    label: 'Successed',
+    value: "Successed",
+  },
+];
+
+

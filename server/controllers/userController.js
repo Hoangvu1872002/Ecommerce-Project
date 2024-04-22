@@ -32,9 +32,11 @@ const { users } = require("../ultils/constant");
 // });
 
 const register = asyncHandler(async (req, res) => {
-  const { email, password, firstname, lastname, mobile } = req.body;
+  const { email, password, firstname, lastname, mobile, address } = req.body;
 
-  if (!email || !password || !lastname || !firstname || !mobile)
+  console.log(req.body);
+
+  if (!email || !password || !lastname || !firstname || !mobile || !address)
     return res.status(400).json({
       success: false,
       mes: "Missing input",
@@ -76,7 +78,6 @@ const finalRegister = asyncHandler(async (req, res) => {
   const currentTime = new Date();
 
   const agoTime = new Date(currentTime - 15 * 60 * 1000);
-  console.log(agoTime);
 
   await cookieModel.deleteMany({
     createdAt: { $lt: agoTime },
@@ -96,6 +97,7 @@ const finalRegister = asyncHandler(async (req, res) => {
     firstname: cookie?.firstname,
     lastname: cookie?.lastname,
     password: cookie?.password,
+    address: cookie?.address,
   });
   const cookieDelete = await cookieModel.deleteOne({ token });
   if (newUser && cookieDelete)
@@ -330,13 +332,13 @@ const deleteUser = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   if (req.file) req.body.avatar = req.file.path;
-  const { firstname, lastname, email, mobile, avatar } = req.body;
+  const { firstname, lastname, email, mobile, avatar, address } = req.body;
   if (!_id || Object.keys(req.body).length === 0)
     throw new Error("Missing inputs");
   const response = await userModel
     .findByIdAndUpdate(
       _id,
-      { firstname, lastname, email, mobile, avatar },
+      { firstname, lastname, email, mobile, avatar, address },
       { new: true }
     )
     .select("-refreshToken -password -role");

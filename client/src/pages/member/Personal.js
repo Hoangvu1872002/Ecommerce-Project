@@ -46,6 +46,7 @@ const Personal = () => {
       lastname: current?.lastname,
       mobile: current?.mobile,
       email: current?.email,
+      address: current?.address,
       avatar: current?.avatar,
     });
   }, [current]);
@@ -88,6 +89,15 @@ const Personal = () => {
               value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
               message: "Email inavalid.",
             },
+          }}
+        />
+        <InputForm
+          label="Address"
+          register={register}
+          errors={errors}
+          id="address"
+          validate={{
+            required: "Need fill this field",
           }}
         />
         <InputForm

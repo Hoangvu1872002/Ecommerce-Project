@@ -5,6 +5,8 @@ import { useSelector } from "react-redux";
 import { formatMoney } from "../../ultils/helper";
 import { ToastContainer } from "react-toastify";
 import OrderItem from "../../components/products/OrderItem";
+import { NavLink } from "react-router-dom";
+import path from "../../ultils/path";
 // import { updateCart } from "../../store/users/userSlide";
 // import { apiUpdateCart } from "../../apis";
 // import { getCurrent } from "../../store/users/asyncAction";
@@ -60,7 +62,9 @@ const DetailCart = () => {
           <span className="text-xs italic">
             Shipping, taxes, and discounts calculated at checkout.
           </span>
-          <Button> Checkout</Button>
+          <NavLink to={`/${path.DETAIL_CHECKOUT}`}>
+          <Button>Checkout</Button>
+          </NavLink>
         </div>
       </div>
 

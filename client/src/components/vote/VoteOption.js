@@ -18,7 +18,7 @@ const VoteOption = ({ nameProduct, handleSubmitVoteOption }) => {
     <div
       onClick={(e) => e.stopPropagation()}
       ref={modalRef}
-      className="bg-white w-[700px] p-4 gap-4 flex flex-col items-center justify-center"
+      className="bg-white w-[700px] p-4 gap-4 flex flex-col items-center justify-center rounded-lg"
     >
       <img
         src={logo}

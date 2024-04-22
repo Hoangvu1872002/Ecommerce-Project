@@ -1,6 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, InputForm, Loading, MarkdownEditor, Select } from "../../components";
+import {
+  Button,
+  InputForm,
+  Loading,
+  MarkdownEditor,
+  Select,
+} from "../../components";
 import { useDispatch, useSelector } from "react-redux";
 import { validate, getBase64 } from "../../ultils/helper";
 import { ToastContainer, toast } from "react-toastify";
@@ -26,7 +32,7 @@ const CreateProduct = () => {
   });
 
   const { categories } = useSelector((state) => state.app);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const { ImBin } = icons;
 
@@ -59,9 +65,11 @@ const CreateProduct = () => {
       if (finalPayload.images) {
         for (let image of finalPayload.images) formData.append("images", image);
       }
-      dispatch(showModal({isShowModal: true, modalChildren: <Loading></Loading>}))
+      dispatch(
+        showModal({ isShowModal: true, modalChildren: <Loading></Loading> })
+      );
       const response = await apiCreateProduct(formData);
-      dispatch(showModal({isShowModal: false, modalChildren: null}))
+      dispatch(showModal({ isShowModal: false, modalChildren: null }));
       if (response.success) {
         toast.success(response.mes, {
           position: toast.POSITION.TOP_RIGHT,
@@ -71,7 +79,7 @@ const CreateProduct = () => {
           thumb: "",
           image: [],
         });
-      }else{
+      } else {
         toast.error(response.mes, {
           position: toast.POSITION.TOP_RIGHT,
         });

@@ -41,7 +41,6 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
   const titleRef = useRef();
 
   const { current, currentCart } = useSelector((state) => state.user);
-  console.log(currentCart);
 
   const [product, setProduct] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -128,7 +127,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
   const handleShowCart = () => {
     return Swal.fire({
       title: "Almost...",
-      text: "You want to open cart?",
+      text: "Products already in the cart. You want to open cart?",
       icon: "info",
       cancelButtonText: "Not now!",
       showCancelButton: true,
@@ -167,6 +166,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
       fetchProductData();
       fetchProducts();
     }
+    
   }, [pid]);
 
   useEffect(() => {
@@ -215,7 +215,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
         className={clsx(
           "bg-white m-auto mt-4 flex",
           isQuickView
-            ? "max-w-[950px]  gap-16 p-4 max-h-[80vh] overflow-y-auto"
+            ? "max-w-[950px] rounded-lg  gap-16 p-4 max-h-[80vh] overflow-y-auto"
             : "w-main"
         )}
       >

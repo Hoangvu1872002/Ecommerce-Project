@@ -14,7 +14,8 @@ import {
   IoShieldHalf,
   IoLogOutOutline,
   IoGiftSharp,
-  IoSettings 
+  IoSettings,
+  IoLocation 
 } from "react-icons/io5";
 import {
   BiSolidStar,
@@ -37,6 +38,7 @@ import { AiOutlineDashboard } from "react-icons/ai";
 import { RiProductHuntLine, RiBillLine } from "react-icons/ri";
 import { ImBin } from "react-icons/im";
 import { TiTick } from "react-icons/ti";
+import { TbExchange } from "react-icons/tb";
 
 const icons = {
   FaPhoneAlt,
@@ -74,7 +76,9 @@ const icons = {
   FaBackward,
   FaPerson,
   TiTick,
-  IoSettings 
+  IoSettings,
+  IoLocation,
+  TbExchange
 };
 
 export default icons;

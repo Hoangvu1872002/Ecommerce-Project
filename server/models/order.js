@@ -4,29 +4,52 @@ const mongoose = require("mongoose"); // Erase if already required
 var orderSchema = new mongoose.Schema({
   products: [
     {
-      product: {
-        type: mongoose.Types.ObjectId,
-        ref: "Product",
-      },
-      count: Number,
+      product: { type: mongoose.Types.ObjectId, ref: "Product" },
+      quantity: Number,
       color: String,
+      price: Number,
+      thumbnail: String,
+      title: String,
     },
   ],
   status: {
     type: String,
     default: "Proccessing",
-    enum: ["Cancelled", "Proccessing", "Successed"],
+    enum: ["Cancelled", "Proccessing", "Shipping", "Successed"],
   },
-  total: Number,
-  coupon: {
-    type: mongoose.Types.ObjectId,
-    ref: "Coupon",
+  totalPriceProducts: {
+    type: Number,
+  },
+  transportFee: {
+    type: Number,
+  },
+  tax: {
+    type: Number,
+  },
+  coupons: {
+    type: Number,
+  },
+  total: {
+    type: Number,
+  },
+  message: {
+    type: String,
+  },
+  paymentMethods: {
+    type: String,
+  },
+  address: {
+    type: String,
   },
   orderBy: {
     type: mongoose.Types.ObjectId,
     ref: "User",
   },
-});
+},
+{
+  timestamps: true,
+}
+);
 
 //Export the model
 module.exports = mongoose.model("Order", orderSchema);

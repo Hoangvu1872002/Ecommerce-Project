@@ -35,7 +35,7 @@ const Cart = ({ dispatch }) => {
         <span>Your Cart</span>
         <span
           onClick={() => dispatch(showCart())}
-          className="cursor-pointer p-2"
+          className="cursor-pointer p-2 hover:text-red-600"
         >
           <BsBackspaceReverseFill size={24}></BsBackspaceReverseFill>
         </span>
@@ -54,9 +54,9 @@ const Cart = ({ dispatch }) => {
                 <img
                   src={e?.thumbnail}
                   alt="thumb"
-                  className="w-16 h-16 object-cover"
+                  className="w-16 h-16 object-cover rounded-lg"
                 ></img>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col">
                   <span className="text-main text-sm">{e.title}</span>
                   <span className=" flex gap-2 justify-start items-center">
                     <span className="text-[10px]">{e?.color}</span>
@@ -101,15 +101,26 @@ const Cart = ({ dispatch }) => {
         <span className="text-center text-gray-400 italic text-xs">
           Shipping, taxes, and discounts calculated at checkout.
         </span>
+        <div className="flex gap-4">
+        <Button
+          handleOnClick={() => {
+            dispatch(showCart());
+            navigate(`/${path.DETAIL_CHECKOUT}`);
+          }}
+          style="rounded-md w-full bg-main py-2 hover:bg-red-600"
+        >
+          Checkout
+        </Button>
         <Button
           handleOnClick={() => {
             dispatch(showCart());
             navigate(`/${path.DETAIL_CART}`);
           }}
-          style="rounded-none w-full bg-main py-2"
+          style="rounded-md w-full bg-main py-2 hover:bg-red-600"
         >
           Shopping Cart
         </Button>
+        </div>
       </div>
       <ToastContainer autoClose={1200} />
     </div>

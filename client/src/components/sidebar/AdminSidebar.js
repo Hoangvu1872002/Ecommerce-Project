@@ -4,6 +4,7 @@ import { adminSidebar } from "../../ultils/contants";
 import { NavLink, Link } from "react-router-dom";
 import clsx from "clsx";
 import icons from "../../ultils/icons";
+import Button from "../buttons/Button";
 
 const activedStyle =
   "px-4 py-2 flex items-center gap-2 bg-blue-400";
@@ -11,7 +12,7 @@ const notActivedStyle =
   "px-4 py-2 flex items-center gap-2  hover:bg-blue-100";
 
 const AdminSidebar = () => {
-  const { IoIosArrowDown, IoIosArrowForward } = icons;
+  const { IoIosArrowDown, IoIosArrowForward, FaBackward } = icons;
 
   const [actived, setActived] = useState([]);
 
@@ -22,7 +23,8 @@ const AdminSidebar = () => {
   };
 
   return (
-    <div className=" bg-white h-full py-4">
+    <div className=" bg-white h-full py-4 flex flex-col justify-between">
+    <div>
       <Link to={"/"} className="flex flex-col justify-center items-center p-4 gap-2">
         <img src={logo} alt="logo" className="w-[200px] object-contain"></img>
         <small>Admin Workspace</small>
@@ -82,6 +84,15 @@ const AdminSidebar = () => {
           </Fragment>
         ))}
       </div>
+    </div>
+      <NavLink to={"/"} className="pl-4">
+        <Button>
+        <div className="flex justify-center items-center gap-2">
+          <FaBackward></FaBackward>
+          <span>Back</span>
+        </div>
+        </Button>
+      </NavLink>
     </div>
   );
 };

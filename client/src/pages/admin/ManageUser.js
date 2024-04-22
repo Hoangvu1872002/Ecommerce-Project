@@ -33,6 +33,7 @@ const ManageUser = () => {
     lastname: "",
     role: "",
     mobile: "",
+    address: "",
     isBocked: "",
   });
 
@@ -98,6 +99,7 @@ const ManageUser = () => {
         lastname: editElm?.lastname,
         role: editElm?.role,
         mobile: editElm?.mobile,
+        address: editElm?.address,
         isBocked: editElm?.isBocked,
       });
   }, [editElm]);
@@ -126,21 +128,22 @@ const ManageUser = () => {
             <thead className="font-bold bg-gray-700 text-[13px]  text-white">
               <tr className="border border-gray-500">
                 <th className="px-4 py-2">#</th>
-                <th className="px-4 py-2">Email address</th>
-                <th className="px-4 py-2">Firstname</th>
-                <th className="px-4 py-2">Lastname</th>
-                <th className="px-4 py-2">Role</th>
-                <th className="px-4 py-2">Phone</th>
-                <th className="px-4 py-2">Status</th>
-                <th className="px-4 py-2">Created At</th>
-                <th className="px-4 py-2">Action</th>
+                <th className="px-1 py-2">Email address</th>
+                <th className="px-1 py-2">Firstname</th>
+                <th className="px-1 py-2">Lastname</th>
+                <th className="px-1 py-2">Role</th>
+                <th className="px-1 py-2">Phone</th>
+                <th className="px-1 py-2">Order address</th>
+                <th className="px-1 py-2">Status</th>
+                <th className="px-1 py-2">Created At</th>
+                <th className="px-1 py-2">Action</th>
               </tr>
             </thead>
             <tbody>
               {users?.users?.map((e, index) => (
                 <tr key={e._id} className="border border-gray-500">
                   <td className="px-4 py-2">{index + 1}</td>
-                  <td className="px-4 py-2 w-[200px] line-clamp-1">
+                  <td className="px-1 py-2 w-[150px] line-clamp-1 truncate">
                     {editElm?._id === e._id ? (
                       <InputForm
                         register={register}
@@ -161,7 +164,7 @@ const ManageUser = () => {
                       <span>{e.email}</span>
                     )}
                   </td>
-                  <td className="px-4 py-2 w-[10%]">
+                  <td className="px-1 py-2 w-[10%]">
                     {editElm?._id === e._id ? (
                       <InputForm
                         register={register}
@@ -175,7 +178,7 @@ const ManageUser = () => {
                       <span>{e.firstname}</span>
                     )}
                   </td>
-                  <td className="px-4 py-2 w-[10%] ">
+                  <td className="px-1 py-2 w-[10%] ">
                     {editElm?._id === e._id ? (
                       <InputForm
                         register={register}
@@ -189,7 +192,7 @@ const ManageUser = () => {
                       <span>{e.lastname}</span>
                     )}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-1 py-2">
                     {editElm?._id === e._id ? (
                       <Select
                         register={register}
@@ -205,7 +208,7 @@ const ManageUser = () => {
                       <span>{e.role}</span>
                     )}
                   </td>
-                  <td className="px-4 py-2 w-[10%]">
+                  <td className="px-1 py-2 w-[10%]">
                     {editElm?._id === e._id ? (
                       <InputForm
                         register={register}
@@ -225,7 +228,23 @@ const ManageUser = () => {
                       <span>{e.mobile}</span>
                     )}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-1 py-2 w-[150px] line-clamp-1 truncate ">
+                    {editElm?._id === e._id ? (
+                      <InputForm
+                        register={register}
+                        fullWith
+                        errors={errors}
+                        id={"address"}
+                        defaultValue={editElm?.address}
+                        validate={{
+                          required: "Required",                         
+                        }}
+                      ></InputForm>
+                    ) : (
+                      <span>{e.address}</span>
+                    )}
+                  </td>
+                  <td className="px-1 py-2">
                     {editElm?._id === e._id ? (
                       <Select
                         register={register}
@@ -241,10 +260,10 @@ const ManageUser = () => {
                       <span>{e.isBocked}</span>
                     )}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-1 py-2">
                     {moment(e.createdAt).format("DD/MM/YY")}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-1 py-2">
                     {editElm?._id === e._id ? (
                       <span className="">
                         <Button

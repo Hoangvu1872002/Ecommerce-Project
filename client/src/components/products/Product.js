@@ -28,6 +28,7 @@ const Product = ({
 }) => {
   const [isShowOption, setIsShowOption] = useState(false);
   const { current } = useSelector((state) => state.user);
+  console.log(current.cart);
 
   const handleClickOptions = async (e, flag) => {
     e.stopPropagation();
@@ -118,7 +119,7 @@ const Product = ({
                 <SelectOption icon={<FaHeart />}></SelectOption>
               </span>
               {current?.cart?.some(
-                (e) => e.product._id === productData?._id
+                (e) => e?.product?._id === productData?._id
               ) ? (
                 <span
                   title="Added to cart"

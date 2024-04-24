@@ -28,7 +28,6 @@ const Product = ({
 }) => {
   const [isShowOption, setIsShowOption] = useState(false);
   const { current } = useSelector((state) => state.user);
-  console.log(current.cart);
 
   const handleClickOptions = async (e, flag) => {
     e.stopPropagation();

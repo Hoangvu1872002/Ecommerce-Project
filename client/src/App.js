@@ -50,8 +50,8 @@ function App() {
   const [resetHistoryOrder, setResetHistoryOrder] = useState(false);
 
   // let socket;
-  const socket = io("http://127.0.0.1:5001/orderStatus");
-  // const socket = io("https://hoangvux-be-ecommerce.onrender.com/orderStatus");
+  // const socket = io("http://127.0.0.1:5001/orderStatus");
+  const socket = io("https://hoangvux-be-ecommerce.onrender.com/orderStatus");
   useEffect(() => {
     // Xử lý các sự kiện từ máy chủ
     socket.on("connect", () => {

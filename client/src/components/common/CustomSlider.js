@@ -2,15 +2,21 @@ import React, { memo } from "react";
 import Slider from "react-slick";
 import Product from "../products/Product";
 
-const settings = {
-  dots: false,
-  infinite: false,
-  speed: 800,
-  slidesToShow: 3,
-  slidesToScroll: 1,
-};
-
-const CustomSlider = ({ products, activeTab, normal }) => {
+const CustomSlider = ({
+  products,
+  activeTab,
+  normal,
+  slidesToShow,
+}) => {
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 1000,
+    slidesToScroll: 1,
+    slidesToShow: slidesToShow,
+    autoplay: true,
+    autoplaySpeed: 4000,
+  };
   return (
     <div className="py-2">
       {products && (

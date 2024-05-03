@@ -70,24 +70,30 @@ const DetailCheckout = ({ navigate, dispatch }) => {
     const response = await apiCreateOrder(data);
     if (response.success) {
       setIsSuccess(true);
-      setTimeout(async() => {
+      setTimeout(async () => {
         Swal.fire("Congrat!", "Order was created!", "success").then(() => {
-           dispatch(getCurrent()); 
+          dispatch(getCurrent());
         });
       }, [500]);
     }
   };
 
-  const handleVnpay = async() => {
-    const response = await apiVnpay(data);
-    window.open(response)
-  }
+  const handleVnpay = async () => {
+    localStorage.setItem(
+      "dataCheckout",
+      JSON.stringify({ dataCheckout: data })
+    );
+    const response = await apiVnpay({ total: totalPayment, locale: "vn" });
+    // navigate(`/${path.CHECKOUT_SUCCESS}`);
+    window.location.href = response;
+    // window.open(response)
+  };
 
   useEffect(() => {
-    if(currentCart.length === 0){
+    if (currentCart.length === 0) {
       navigate(`/${path.MEMBER}/${path.HISTORY}`);
-     }
-  }, [currentCart])
+    }
+  }, [currentCart]);
 
   useEffect(() => {
     titleRef.current.scrollIntoView({ block: "start" });
@@ -168,13 +174,13 @@ const DetailCheckout = ({ navigate, dispatch }) => {
                     {e?.color}
                   </span>
                   <span className="col-span-2 text-sm w-full text-center flex justify-center items-center">
-                    {formatMoney(e?.price) + " VND"}
+                    {formatMoney(e?.price) + " vnd"}
                   </span>
                   <span className="col-span-2 text-sm w-full text-center flex justify-center items-center">
                     {e?.quantity}
                   </span>
                   <span className="col-span-2 w-full text-sm flex justify-end pr-4 items-center">
-                    {formatMoney(e?.price * e?.quantity) + " VND"}
+                    {formatMoney(e?.price * e?.quantity) + " vnd"}
                   </span>
                 </div>
               </div>
@@ -190,7 +196,7 @@ const DetailCheckout = ({ navigate, dispatch }) => {
               </span>
             </span>
             <span className="text-sm text-red-500">
-              {`${formatMoney(totalPrice)} VND`}
+              {`${formatMoney(totalPrice)} vnd`}
             </span>
           </div>
 
@@ -199,7 +205,7 @@ const DetailCheckout = ({ navigate, dispatch }) => {
               <span className="text-sm text-red-500">Shop's Coupons</span>
             </span>
             <span className="text-sm text-red-500">
-              - 2% Discount ({`- ${formatMoney(coupons)} VND`})
+              - 2% Discount ({`- ${formatMoney(coupons)} vnd`})
             </span>
           </div>
 
@@ -208,7 +214,7 @@ const DetailCheckout = ({ navigate, dispatch }) => {
               <span className="text-sm text-red-500">Estimated taxes</span>
             </span>
             <span className="text-sm text-red-500">
-              5% Tax ({`${formatMoney(tax)} VND`})
+              5% Tax ({`${formatMoney(tax)} vnd`})
             </span>
           </div>
 
@@ -231,16 +237,16 @@ const DetailCheckout = ({ navigate, dispatch }) => {
                     <p className="text-sm">Fast</p>
                     <span className="flex gap-2 items-center justify-center">
                       <span className="line-through text-xs text-gray-500">
-                        60.000 VND
+                        60.000 vnd
                       </span>
-                      <span className="text-sm text-main">30.000 VND</span>
+                      <span className="text-sm text-main">30.000 vnd</span>
                     </span>
                   </div>
                   <p className="text-xs text-green-600">
                     Guaranteed delivery from April 15 - April 17
                   </p>
                   <p className="text-xs text-gray-500 pr-[150px]">
-                    Receive a Voucher worth VND 10,000 if your order is
+                    Receive a Voucher worth vnd 10,000 if your order is
                     delivered to you after 11:59 p.m. April 17, 2024.
                   </p>
                 </div>
@@ -252,7 +258,7 @@ const DetailCheckout = ({ navigate, dispatch }) => {
             <span className="flex gap-4 justify-end items-center p-4">
               <span className="text-sm">Total payment:</span>
               <span className="text-main  font-semibold">
-                {`${formatMoney(totalPayment)} VND`}
+                {`${formatMoney(totalPayment)} vnd`}
               </span>
             </span>
           </div>
@@ -302,7 +308,8 @@ const DetailCheckout = ({ navigate, dispatch }) => {
               Clicking "Place Order" means you agree to comply with the Shop
               Terms
             </li>
-            <Button handleOnClick={handleVnpay}
+            <Button
+              handleOnClick={handleVnpay}
               style={
                 " px-4 py-2 my-2 rounded-md text-white bg-gray-400 hover:bg-gray-500"
               }

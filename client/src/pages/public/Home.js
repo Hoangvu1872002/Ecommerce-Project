@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 import icons from "../../ultils/icons";
 import { ToastContainer } from "react-toastify";
 
-const {IoIosArrowForward} = icons
+const { IoIosArrowForward } = icons;
 const Home = () => {
   const { newProducts } = useSelector((state) => state.products);
   const { categories } = useSelector((state) => state.app);
@@ -37,35 +37,49 @@ const Home = () => {
           NEW ARRIVALS
         </h3>
         <div className="mt-4 border">
-          <CustomSlider products={newProducts}></CustomSlider>
+          <CustomSlider
+            products={newProducts}
+            slidesToShow={4}
+          ></CustomSlider>
         </div>
         <div className="my-8 w-full ">
           <h3 className="text-[20px] font-semibold py-[15px] border-b-2 border-main">
             HOT COLLECTIONS
           </h3>
           <div className="flex flex-wrap gap-5 mt-6 ">
-            {categories?.filter(e => e.brand.length > 0)?.map((e) => (
-              <div key={e._id} className="w-[290px] ">
-                <div className="border flex p-4 gap-4 min-h-[270px]">
-                  <img className="w-[144px] h-[129px] flex-1 object-cover" src={e?.image} alt=""></img>
-                  <div className="flex-1 text-gray-700">
-                    <h4 className="font-semibold uppercase">{e.title}</h4>
-                    <ul className="text-sm">
-                      {e.brand?.map((item, index) => (
-                        <span key={index} className="flex gap-1 items-center text-gray-500">
-                        <IoIosArrowForward size={14}/>
-                        <li>{item}</li>
-                        </span>
-                      ))}
-                    </ul>
+            {categories
+              ?.filter((e) => e.brand.length > 0)
+              ?.map((e) => (
+                <div key={e._id} className="w-[290px] ">
+                  <div className="border flex p-4 gap-4 min-h-[270px] shadow-md rounded-lg">
+                    <img
+                      className="w-[144px] h-[129px] flex-1 object-cover"
+                      src={e?.image}
+                      alt=""
+                    ></img>
+                    <div className="flex-1 text-gray-700">
+                      <h4 className="font-semibold uppercase">{e.title}</h4>
+                      <ul className="text-sm">
+                        {e.brand?.map((item, index) => (
+                          <span
+                            key={index}
+                            className="flex gap-1 items-center text-gray-500"
+                          >
+                            <IoIosArrowForward size={14} />
+                            <li>{item}</li>
+                          </span>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
         <div className="my-8 w-full">
-        <h3 className="text-[20px] font-semibold py-[15px] border-b-2 border-main">POSTS</h3>
+          <h3 className="text-[20px] font-semibold py-[15px] border-b-2 border-main">
+            POSTS
+          </h3>
         </div>
       </div>
       <ToastContainer autoClose={1200} />

@@ -12,7 +12,7 @@ const Modal = ({ children }) => {
       }
       className="absolute inset-0 z z-[1000] bg-overlay flex justify-center items-center"
     >
-      {children}
+      <div>{children}</div>
     </div>
   );
 };

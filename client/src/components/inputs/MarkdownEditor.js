@@ -12,7 +12,7 @@ const MarkdownEditor = ({
 }) => {
   return (
     <div className=" flex flex-col">
-      <span className="">{label}</span>
+      <span className="font-medium mb-2 pl-[1px]">{label}:</span>
       <Editor
         apiKey="a5hschxqw4h9r5d7ghdbk7kqrljkrra1s8ct3m7vhk97a2ff"
         init={{

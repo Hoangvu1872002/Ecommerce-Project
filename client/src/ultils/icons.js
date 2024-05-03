@@ -7,6 +7,7 @@ import {
   FaReply,
   FaRegEdit,
   FaBackward,
+  FaBlog,
 } from "react-icons/fa";
 import {
   IoHomeSharp,
@@ -15,7 +16,7 @@ import {
   IoLogOutOutline,
   IoGiftSharp,
   IoSettings,
-  IoLocation 
+  IoLocation,
 } from "react-icons/io5";
 import {
   BiSolidStar,
@@ -23,22 +24,30 @@ import {
   BiStar,
   BiCustomize,
 } from "react-icons/bi";
-import { LiaEyeSolid } from "react-icons/lia";
+import { LiaEyeSolid, LiaTabletAltSolid } from "react-icons/lia";
 import { HiMenu } from "react-icons/hi";
 import { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
-import { TfiMenuAlt } from "react-icons/tfi";
+import { TfiMenuAlt, TfiPrinter } from "react-icons/tfi";
 import { FaTty, FaPerson } from "react-icons/fa6";
 import {
   BsThreeDots,
   BsFillCartPlusFill,
   BsFillCartCheckFill,
   BsBackspaceReverseFill,
+  BsLaptop,
+  BsFillUsbPlugFill
 } from "react-icons/bs";
 import { AiOutlineDashboard } from "react-icons/ai";
 import { RiProductHuntLine, RiBillLine } from "react-icons/ri";
 import { ImBin } from "react-icons/im";
 import { TiTick } from "react-icons/ti";
 import { TbExchange } from "react-icons/tb";
+import { SlScreenSmartphone } from "react-icons/sl";
+import { FiCamera, FiSpeaker } from "react-icons/fi";
+import { PiTelevisionLight } from "react-icons/pi";
+import { GiMoneyStack } from "react-icons/gi";
+import { LuUsers2 } from "react-icons/lu";
+
 
 const icons = {
   FaPhoneAlt,
@@ -78,7 +87,20 @@ const icons = {
   TiTick,
   IoSettings,
   IoLocation,
-  TbExchange
+  TbExchange,
+  FaBlog,
+//
+  SlScreenSmartphone,
+  LiaTabletAltSolid,
+  BsLaptop,
+  FiCamera,
+  TfiPrinter,
+  FiSpeaker,
+  BsFillUsbPlugFill,
+  PiTelevisionLight,
+
+  GiMoneyStack,
+  LuUsers2,
 };
 
 export default icons;

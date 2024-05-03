@@ -2,33 +2,78 @@ const blogModel = require("../models/blog");
 const asyncHandler = require("express-async-handler");
 
 const createNewBlog = asyncHandler(async (req, res) => {
-  const { title, description, category } = req.body;
-  if (!title || !description || !category) throw new Error("Missing inputs.");
+  const { title, description } = req.body;
+  const thumb = req.files?.thumb[0]?.path;
+  if (!title || !description || !thumb) throw new Error("Missing inputs.");
+  if (thumb) req.body.thumb = thumb;
+  console.log(req.body);
   const response = await blogModel.create(req.body);
   return res.json({
     success: response ? true : false,
-    createdBlog: response ? response : " Cannot create new blog .",
+    mes: response ? "Created new blog." : " Cannot create new blog .",
   });
 });
 
 const updateBlog = asyncHandler(async (req, res) => {
   const { bid } = req.params;
+  const files = req?.files;
+  if (files?.thumb) req.body.thumb = files?.thumb[0]?.path;
   if (Object.keys(req.body).length === 0) throw new Error("Missing inputs.");
   const response = await blogModel.findByIdAndUpdate(bid, req.body, {
     new: true,
   });
   return res.json({
     success: response ? true : false,
-    updatedBlog: response ? response : " Cannot update blog.",
+    mes: response ? "Updated blog." : " Cannot update blog.",
   });
 });
 
 const getBlogs = asyncHandler(async (req, res) => {
-  const response = await blogModel.find();
-  return res.json({
-    success: response ? true : false,
-    getBlog: response ? response : " Cannot get blogs.",
-  });
+  const queries = { ...req.query };
+  console.log(queries);
+  // tach ca truong dac biet ra khoi query
+  const excludeFields = ["limit", "sort", "page"];
+  excludeFields.forEach((el) => delete queries[el]);
+  let queryString = JSON.stringify(queries);
+  queryString = queryString.replace(
+    /\b(gte|gt|lt|lte)\b/g,
+    (macthedEl) => `$${macthedEl}`
+  );
+  console.log("a");
+  const formatedQueries = JSON.parse(queryString);
+  console.log("d");
+  let queryObject = {};
+  if (queries?.q) {
+    delete formatedQueries.q;
+    queryObject = {
+      $or: [
+        { color: { $regex: queries?.q, $options: "i" } },
+        { title: { $regex: queries?.q, $options: "i" } },
+        { category: { $regex: queries?.q, $options: "i" } },
+        { brand: { $regex: queries?.q, $options: "i" } },
+      ],
+    };
+  }
+  console.log("b");
+  const queryCommand = blogModel.find(queryObject);
+
+  const page = +req.query.page || 1;
+  const limit = +req.query.limit || process.env.LIMIT_PRODUCT;
+  const skip = (page - 1) * limit;
+  queryCommand.skip(skip).limit(limit);
+  console.log("a");
+  queryCommand
+    .then(async (response) => {
+      const counts = await blogModel.find(queryCommand).countDocuments();
+      return res.status(200).json({
+        success: response ? true : false,
+        counts,
+        blogs: response ? response : "Cannot get blogs.",
+      });
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
 });
 /*
 khi nguoi dung like 1 bai blog thi:
@@ -129,13 +174,14 @@ const dislikeBlog = asyncHandler(async (req, res) => {
 
 const getOneBlog = asyncHandler(async (req, res) => {
   const { bid } = req.params;
+  console.log(bid);
   const blog = await blogModel
     .findByIdAndUpdate(bid, { $inc: { numberViews: 1 } }, { new: true })
-    .populate("likes", "firstname lastname")
-    .populate("dislikes", "firstname lastname");
+    // .populate("likes", "firstname lastname")
+    // .populate("dislikes", "firstname lastname");
   return res.json({
     success: blog ? true : false,
-    getOneBlog: blog ? blog : " Cannot get blogs.",
+    blog: blog ? blog : " Cannot get blogs.",
   });
 });
 
@@ -144,7 +190,7 @@ const deleteBlog = asyncHandler(async (req, res) => {
   const blog = await blogModel.findByIdAndDelete(bid);
   return res.json({
     success: blog ? true : false,
-    deleteBlog: blog ? blog : " Something went wrong. ",
+    mes: blog ? "Deleted blog." : " Something went wrong. ",
   });
 });
 

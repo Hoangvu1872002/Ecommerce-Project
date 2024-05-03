@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
   createSearchParams,
+  useLocation,
   useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
 import {
   Breadcrumbs,
+  InputForm,
   InputSelect,
   Pagination,
   Product,
@@ -16,34 +18,54 @@ import { apiGetProducts } from "../../apis";
 import Masonry from "react-masonry-css";
 import { sorts, limit } from "../../ultils/contants";
 import { ToastContainer } from "react-toastify";
+import { useForm } from "react-hook-form";
+import clsx from "clsx";
+import useDebounce from "../../hooks/useDebounce";
 
-
-const breakpointColumnsObj = {
-  default: 4,
-  1100: 3,
-  700: 2,
-  500: 1,
-};
+// const breakpointColumnsObj = {
+//   default: 4,
+//   1100: 3,
+//   700: 2,
+//   500: 1,
+// };
 
 const Products = () => {
+  const {
+    register,
+    formState: { errors },
+    watch,
+  } = useForm();
+
   const { category } = useParams();
+  const location = useLocation();
 
   const [products, setProducts] = useState();
   const [activeClick, setActiveClick] = useState();
   const [sort, setSort] = useState();
+  const [dataSearch, setDataSearch] = useState();
 
   const [params] = useSearchParams();
 
   const navigate = useNavigate();
 
   const fetchProductsByCategory = async (queries) => {
-    const response = await apiGetProducts({...queries, limit});
+    const response = await apiGetProducts({ ...queries, limit });
     if (response) setProducts(response);
   };
+
+  let que = useDebounce(watch("q"), 800);
 
   useEffect(() => {
     const queries = Object.fromEntries([...params]);
     let priceQuery = {};
+    if (dataSearch !== que) {
+      queries.page = 1;
+      navigate({
+        pathname: location.pathname,
+        search: createSearchParams(queries).toString(),
+      });
+      setDataSearch(que);
+    }
 
     if (queries.to && queries.from) {
       priceQuery = {
@@ -59,15 +81,15 @@ const Products = () => {
     }
     delete queries.to;
     delete queries.from;
-    let q;
+    let qr;
     if (category === ":category") {
-      q = { ...priceQuery, ...queries };
+      qr = { ...priceQuery, ...queries, ...{ que } };
     } else {
-      q = { ...priceQuery, ...queries, ...{ category } };
+      qr = { ...priceQuery, ...queries, ...{ category }, ...{ que } };
     }
-    fetchProductsByCategory(q);
+    fetchProductsByCategory(qr);
     window.scrollTo(0, 0);
-  }, [params]);
+  }, [params, que]);
 
   const changeActiveFitler = useCallback(
     (name) => {
@@ -86,26 +108,39 @@ const Products = () => {
 
   useEffect(() => {
     if (sort) {
+      const queries = Object.fromEntries([...params]);
+      queries.sort = sort;
+      // queries.page = 1;
       navigate({
-        pathname: `/${category}`,
-        search: createSearchParams({
-          sort,
-        }).toString(),
+        pathname: location.pathname,
+        search: createSearchParams(queries).toString(),
       });
     }
+    // if (sort) {
+    //   navigate({
+    //     pathname: `/${category}`,
+    //     search: createSearchParams({
+    //       sort,
+    //     }).toString(),
+    //   });
+    // }
   }, [sort]);
   return (
     <div className="w-full">
       <div className="h-[81px] mt-4 flex justify-center items-center bg-gray-50">
         <div className="w-main">
-          <span className="font-semibold text-[18px] uppercase">{category.slice(1)}</span>
+          <span className="font-semibold text-[18px] uppercase">
+            {category === ":category" ? category.slice(1) : category}
+          </span>
           <div className="mt-2">
-          <Breadcrumbs category={category.slice(1)}></Breadcrumbs>
+            <Breadcrumbs
+              category={category === ":category" ? category.slice(1) : category}
+            ></Breadcrumbs>
           </div>
         </div>
       </div>
-      <div className="w-main border p-4 flex justify-between mt-4 m-auto">
-        <div className="w-4/5 flex-auto flex flex-col gap-3">
+      <div className="w-main border p-4 flex justify-start gap-2 mt-4 m-auto shadow-md rounded-lg">
+        <div className="w-1/5 flex flex-col gap-3">
           <span className="font-semibold text-sm mt-[-7px]">Filter by</span>
           <div className="flex items-center gap-4">
             <SearchItem
@@ -121,6 +156,7 @@ const Products = () => {
             ></SearchItem>
           </div>
         </div>
+
         <div className="w-1/5 flex flex-col gap-3">
           <span className="font-semibold text-sm mt-[-7px]">Sort by</span>
           <div className="w-full ">
@@ -130,6 +166,29 @@ const Products = () => {
               options={sorts}
             ></InputSelect>
           </div>
+        </div>
+        <div className="w-2/5 flex flex-col gap-3">
+          <span className="font-semibold text-sm mt-[-7px]">Search</span>
+          <form className="w-[70%]">
+            {/* <InputForm
+              id="q"
+              register={register}
+              errors={errors}
+              fullWith
+              placeholder="Search products by title"
+            ></InputForm> */}
+            <input
+              id="q"
+              {...register("q")}
+              placeholder="Search products by title"
+              className={clsx(`form-input text-xs border p-3 w-full`)}
+            ></input>
+            {errors["q"] && (
+              <small className="text-xs text-red-500">
+                {errors["q"]?.message}
+              </small>
+            )}
+          </form>
         </div>
       </div>
       <div className="mt-4 w-main m-auto  grid grid-cols-4 gap-4">
@@ -156,7 +215,7 @@ const Products = () => {
               normal={true}
             ></Product>
           </div>
-          ))}
+        ))}
       </div>
       <div className=" w-main m-auto my-4 flex justify-end">
         <Pagination totalCount={products?.counts}></Pagination>

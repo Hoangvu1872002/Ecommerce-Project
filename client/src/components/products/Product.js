@@ -2,6 +2,7 @@ import React, { memo, useState } from "react";
 import { formatMoney } from "../../ultils/helper";
 import label from "../../assets/label.png";
 import labelTrending from "../../assets/labelTrending.png";
+// import discountTrending from "../../assets/discount.png";
 import { renderStarFromNumber } from "../../ultils/helper";
 import SelectOption from "../search/SelectOption";
 import icons from "../../ultils/icons";
@@ -9,7 +10,7 @@ import { Link, createSearchParams } from "react-router-dom";
 import withBase from "../../hocs/withBase";
 import { showModal } from "../../store/app/appSlice";
 import DetailProduct from "../../pages/public/DetailProduct";
-import { apiUpdateCart } from "../../apis";
+import { apiUpdateCart, apiUpdateWishlist } from "../../apis";
 import { getCurrent } from "../../store/users/asyncAction";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
@@ -25,6 +26,7 @@ const Product = ({
   navigate,
   dispatch,
   location,
+  pid,
 }) => {
   const [isShowOption, setIsShowOption] = useState(false);
   const { current } = useSelector((state) => state.user);
@@ -66,7 +68,11 @@ const Product = ({
       }
     }
     if (flag === "WISHLISH") {
-      console.log("wishlist");
+      const response = await apiUpdateWishlist(pid);
+      if (response) {
+        dispatch(getCurrent());
+        toast.success(response.mes);
+      } else toast.error(response.mes);
     }
     if (flag === "VIEW") {
       dispatch(
@@ -88,7 +94,7 @@ const Product = ({
   };
   return (
     <div
-      className="w-full text-base px-[10px]"
+      className="w-full text-base px-[10px] py-[5px]"
       onClick={() =>
         navigate(
           `/${productData?.category?.toLowerCase()}/${productData?._id}/${
@@ -98,7 +104,7 @@ const Product = ({
       }
     >
       <div
-        className="w-full border p-[15px] flex flex-col items-center"
+        className="w-full border p-[15px] flex flex-col items-center shadow-md rounded-lg cursor-pointer hover:shadow-blue-400"
         onMouseEnter={(e) => {
           e.stopPropagation();
           setIsShowOption(true);
@@ -108,14 +114,22 @@ const Product = ({
           setIsShowOption(false);
         }}
       >
-        <div className="w-full relative">
+        <div className="w-full relative flex justify-center items-center">
           {isShowOption && (
             <div className="absolute gap-2 bottom-[-10px] left-0 right-0 flex justify-center animate-silde-top">
               <span
                 title="Add to wishlist"
                 onClick={(e) => handleClickOptions(e, "WISHLISH")}
               >
-                <SelectOption icon={<FaHeart />}></SelectOption>
+                <SelectOption
+                  icon={
+                    <FaHeart
+                      color={
+                        current?.wishlist?.some((i) => i._id === pid) && "red"
+                      }
+                    />
+                  }
+                ></SelectOption>
               </span>
               {current?.cart?.some(
                 (e) => e?.product?._id === productData?._id
@@ -170,24 +184,45 @@ const Product = ({
                   <img
                     src={labelTrending}
                     alt=""
-                    className="absolute top-[-33.5px] left-[-16px] w-[140px] h-[80px] object-cover"
+                    className="absolute top-[-33.5px] left-[-15px] w-[140px] h-[80px] object-cover"
                   ></img>
-                  <span className="font-bold top-[-5px] left-[33px] absolute text-white ">
+                  <span className="font-bold flex z-20 top-[-5px] left-[33px] absolute text-white ">
                     TRENDING
                   </span>
                 </>
               )}
             </div>
           )}
+          <span className="font-semibold top-[33px] p-2 text-sm left-[-15.2px] bg-red-500 shadow-md w-11 h-6 flex justify-center items-center rounded-r-full absolute text-white">
+            -{productData?.discount}%
+          </span>
         </div>
         <div className="flex flex-col mt-[15px] items-start gap gap-1 w-full">
-          <span className="flex h-4">
-            {renderStarFromNumber(productData?.totalRating).map((e, index) => (
-              <span key={index}>{e}</span>
-            ))}
+          <span className="line-clamp-1 font-semibold text-sm">
+            {productData?.title}
           </span>
-          <span className="line-clamp-1">{productData?.title}</span>
-          <span>{`${formatMoney(productData?.price)} VND`}</span>
+          <div className="flex gap-2 justify-start items-center">
+            <span className="font-semibold text-base text-main">{`${formatMoney(
+              Math.ceil(productData?.price)
+            )} vnd`}</span>
+            <span className="font-medium text-sm text-gray-500 line-through">{`${formatMoney(
+              Math.ceil(
+                (productData?.price / (100 - productData?.discount)) * 100
+              )
+            )} vnd`}</span>
+          </div>
+          <div className="flex w-full pr-2 justify-between items-center">
+            <span className="flex">
+              {renderStarFromNumber(productData?.totalRating).map(
+                (e, index) => (
+                  <span key={index}>{e}</span>
+                )
+              )}
+            </span>
+            <span className="text-xs text-main">
+              ( sold {productData?.sold} )
+            </span>
+          </div>
         </div>
       </div>
     </div>

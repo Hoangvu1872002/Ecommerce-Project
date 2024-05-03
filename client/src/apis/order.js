@@ -27,8 +27,9 @@ export const apiGetAllOrders = () =>
     method: "get",
   });
 
-export const apiVnpay = () =>
+export const apiVnpay = (data) =>
   axios({
     url: "/vnpay/create_payment_url",
     method: "post",
+    data
   });

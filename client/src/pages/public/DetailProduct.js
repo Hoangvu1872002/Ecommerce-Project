@@ -166,7 +166,6 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
       fetchProductData();
       fetchProducts();
     }
-    
   }, [pid]);
 
   useEffect(() => {
@@ -283,7 +282,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
           <div className="flex items-center justify-between">
             <h2 className="text-[30px] font-semibold">{`${formatMoney(
               fotmatPrice(currentProduct?.price || product?.price)
-            )} VND`}</h2>
+            )} vnd`}</h2>
             <span className="text-sm text-main ">{`(Warehouse: ${product?.quantity})`}</span>
           </div>
           <div className="flex items-center">
@@ -371,8 +370,8 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
             </div>
             {currentCart?.find(
               (e) =>
-                (e.product._id === pid && e.color === currentProduct?.color) ||
-                (e.product._id === pid && e.color === product?.color)
+                (e.product?._id === pid && e.color === currentProduct?.color) ||
+                (e.product?._id === pid && e.color === product?.color)
             ) ? (
               <Button
                 type="text"
@@ -425,6 +424,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
               <CustomSlider
                 products={relatedProducts}
                 normal={true}
+                slidesToShow= {4}
               ></CustomSlider>
             </div>
           </div>

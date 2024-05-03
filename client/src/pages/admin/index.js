@@ -6,3 +6,6 @@ export { default as ManageProduct } from "./ManageProducts";
 export { default as ManageUser } from "./ManageUser";
 export { default as UpdateProduct } from "./UpdateProduct";
 export { default as CustomizeVarriants } from "./CustomizeVarriants";
+export { default as ManageBlogs } from "./ManageBlogs";
+export { default as CreateBlog } from "./CreateBlog";
+export { default as UpdateBlog } from "./UpdateBlog";

@@ -1,6 +1,7 @@
 export { default as Header } from "./headers/Header";
 export { default as Sidebar } from "./sidebar/Sidebar";
 export { default as Banner } from "./common/Banner";
+export { default as CrOrderVNpay } from "./common/CrOrderVNpay";
 export { default as Navigation } from "./navigation/Navigation";
 export { default as BestSeller } from "./products/BestSeller";
 export { default as Product } from "./products/Product";

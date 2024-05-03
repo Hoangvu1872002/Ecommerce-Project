@@ -5,6 +5,7 @@ const { ObjectId } = require("mongodb");
 
 const createNewOrder = asyncHandler(async (req, res) => {
   const { _id } = req.user;
+  console.log(req.body);
   const {
     address,
     coupons,
@@ -35,7 +36,6 @@ const createNewOrder = asyncHandler(async (req, res) => {
     { cart: [] },
     { new: true }
   );
-  console.log(rsp);
   return res.json({
     success: rsp && rs ? true : false,
     rs: rsp && rs ? rs : " Something went wrong.",

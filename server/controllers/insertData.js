@@ -5,6 +5,19 @@ const slugify = require("slugify");
 const category = require("../data/cate_brand");
 const categoryModel = require("../models/productCategory");
 
+const colors = [
+  "red",
+  "green",
+  "blue",
+  "yellow",
+  "orange",
+  "purple",
+  "brown",
+  "black",
+  "white",
+  "gray",
+];
+
 const fn = async (product) => {
   await productModel.create({
     title: product?.name,
@@ -16,7 +29,9 @@ const fn = async (product) => {
     quantity: Math.round(Math.random() * 1000),
     sold: Math.round(Math.random() * 100),
     images: product?.images,
-    color: product?.variants?.find((e) => e.label === "Color")?.variants[0] || "RED",
+    // color: product?.variants?.find((e) => e.label === "Color")?.variants[0] || "RED",
+    color: colors[Math.floor(Math.random() * colors.length)],
+    discount: Math.round(Math.random() * 36) + 10,
     totalRating: 0,
     thumb: product?.thumb,
   });

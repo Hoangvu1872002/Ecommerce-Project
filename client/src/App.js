@@ -24,6 +24,8 @@ import {
   ManageUser,
   ManageProduct,
   CreateProduct,
+  CreateBlog,
+  ManageBlogs,
 } from "./pages/admin";
 import {
   MemberLayout,
@@ -35,7 +37,7 @@ import {
 } from "./pages/member";
 import { getCategories } from "./store/app/asyncAction";
 import { useDispatch, useSelector } from "react-redux";
-import { Cart, Modal } from "./components";
+import { Cart, CrOrderVNpay, Modal } from "./components";
 import { showCart } from "./store/app/appSlice";
 import io from "socket.io-client";
 
@@ -45,18 +47,18 @@ function App() {
     (state) => state.app
   );
 
-  const [resetHistoryOrder, setResetHistoryOrder] = useState(false)
+  const [resetHistoryOrder, setResetHistoryOrder] = useState(false);
 
   // let socket;
-  // const socket = io("http://127.0.0.1:5001/orderStatus");
-  const socket = io("https://hoangvux-be-ecommerce.onrender.com/orderStatus");
+  const socket = io("http://127.0.0.1:5001/orderStatus");
+  // const socket = io("https://hoangvux-be-ecommerce.onrender.com/orderStatus");
   useEffect(() => {
     // Xử lý các sự kiện từ máy chủ
     socket.on("connect", () => {
       console.log("Connected to server");
     });
     socket.on("updatedStatus", (data) => {
-      setResetHistoryOrder(prev => !prev)
+      setResetHistoryOrder((prev) => !prev);
     });
 
     return () => {
@@ -83,6 +85,10 @@ function App() {
       )}
       {isShowModal && <Modal>{modalChildren}</Modal>}
       <Routes>
+        <Route
+          path={path.CHECKOUT_SUCCESS}
+          element={<CrOrderVNpay></CrOrderVNpay>}
+        />
         <Route path={path.PUBLIC} element={<Public></Public>}>
           <Route path={path.HOME} element={<Home></Home>} />
           <Route path={path.BLOGS} element={<Blog></Blog>} />
@@ -134,11 +140,27 @@ function App() {
             path={path.CREATE_PRODUCTS}
             element={<CreateProduct></CreateProduct>}
           ></Route>
+          <Route
+            path={path.CREATE_BLOGS}
+            element={<CreateBlog></CreateBlog>}
+          ></Route>
+          <Route
+            path={path.MANAGE_BLOGS}
+            element={<ManageBlogs></ManageBlogs>}
+          ></Route>
         </Route>
         <Route path={path.MEMBER} element={<MemberLayout></MemberLayout>}>
           <Route path={path.PERSONAL} element={<Personal></Personal>}></Route>
           <Route path={path.MY_CART} element={<MyCart></MyCart>}></Route>
-          <Route path={path.HISTORY} element={<History resetHistoryOrder={resetHistoryOrder} handleUpdateStatusOrder={handleUpdateStatusOrder}></History>}></Route>
+          <Route
+            path={path.HISTORY}
+            element={
+              <History
+                resetHistoryOrder={resetHistoryOrder}
+                handleUpdateStatusOrder={handleUpdateStatusOrder}
+              ></History>
+            }
+          ></Route>
           <Route path={path.WISLIST} element={<Wishlist></Wishlist>}></Route>
           <Route path={path.CHECKOUT} element={<Checkout></Checkout>}></Route>
         </Route>

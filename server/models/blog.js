@@ -7,18 +7,14 @@ var blogSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    title: {
-      type: String,
-      required: true,
-    },
     description: {
       type: String,
       required: true,
     },
-    category: {
-      type: String,
-      required: true,
-    },
+    // category: {
+    //   type: String,
+    //   required: true,
+    // },
     numberViews: {
       type: Number,
       default: 0,
@@ -43,7 +39,7 @@ var blogSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
-    image: {
+    thumb: {
       type: String,
       default:
         "https://insieutoc.vn/wp-content/uploads/2021/03/cac-mau-logo-dep-nhat.jpg",

@@ -7,14 +7,29 @@ import { ToastContainer } from "react-toastify";
 import OrderItem from "../../components/products/OrderItem";
 import { NavLink } from "react-router-dom";
 import path from "../../ultils/path";
+import Swal from "sweetalert2";
 // import { updateCart } from "../../store/users/userSlide";
 // import { apiUpdateCart } from "../../apis";
 // import { getCurrent } from "../../store/users/asyncAction";
 // import { toast } from "react-toastify";
 
-const DetailCart = () => {
-  const {  currentCart } = useSelector((state) => state.user);
+const DetailCart = ({ navigate }) => {
+  const { currentCart } = useSelector((state) => state.user);
   // console.log(currentCart);
+
+  const handleCheckout = () => {
+    if (currentCart.length === 0) {
+      Swal.fire({
+        text: "Please add products to cart before payment.",
+        cancelButtonText: "Cancel",
+        confirmButtonText: "Go product page",
+        title: "Oops!",
+        showCancelButton: true,
+      }).then((rs) => {
+        if (rs.isConfirmed) navigate(`/${path.PRODUCTS}`);
+      });
+    } else navigate(`/${path.MEMBER}/${path.CHECKOUT}`);
+  };
 
   return (
     <div className="w-full">
@@ -41,30 +56,30 @@ const DetailCart = () => {
 
         {currentCart?.map((e, index) => (
           <div key={index}>
-            <OrderItem
-              e={e}
-              defaultQuantity={e.quantity}
-            ></OrderItem>
+            <OrderItem e={e} defaultQuantity={e.quantity}></OrderItem>
           </div>
         ))}
         <div className="w-main mx-auto flex flex-col gap-3 items-end justify-center mt-4">
           <span className="flex gap-4">
-            <span>Total payment ({currentCart?.reduce((sum, el) => +el?.quantity + sum, 0)} products):</span>
+            <span>
+              Total payment (
+              {currentCart?.reduce((sum, el) => +el?.quantity + sum, 0)}{" "}
+              products):
+            </span>
             <span className="text-main  font-semibold">
               {`${formatMoney(
                 currentCart?.reduce(
                   (sum, el) => +el?.price * el?.quantity + sum,
                   0
                 )
-              )} VND`}
+              )} vnd`}
             </span>
           </span>
           <span className="text-xs italic">
             Shipping, taxes, and discounts calculated at checkout.
           </span>
-          <NavLink to={`/${path.DETAIL_CHECKOUT}`}>
-          <Button>Checkout</Button>
-          </NavLink>
+
+          <Button handleOnClick={handleCheckout}>Checkout</Button>
         </div>
       </div>
 

@@ -5,11 +5,10 @@ const slugify = require("slugify");
 const makeSKU = require("uniqid");
 
 const createProduct = asyncHandler(async (req, res) => {
-  console.log(req.body);
-  const { title, price, description, brand, category, color } = req.body;
+  const { title, price, description, brand, category, color, discount } = req.body;
   const thumb = req.files?.thumb[0]?.path;
   const images = req.files?.images?.map((e) => e.path);
-  if (!(title && price && description && brand && category && color))
+  if (!(title && price && description && brand && category && color && discount))
     throw new Error("Missing inputs");
   req.body.slug = slugify(req.body.title);
   if (thumb) req.body.thumb = thumb;
@@ -51,6 +50,7 @@ const getManyProduct = asyncHandler(async (req, res) => {
     (macthedEl) => `$${macthedEl}`
   );
   const formatedQueries = JSON.parse(queryString);
+  // console.log(formatedQueries);
   let colorQueryObject = {};
 
   //filltering
@@ -79,15 +79,30 @@ const getManyProduct = asyncHandler(async (req, res) => {
       ],
     };
   }
+  delete formatedQueries.que;
 
-  const qr = { ...colorQueryObject, ...formatedQueries, ...queryObject };
+  if (queries?.que && queries?.que !== "") {
+    queryObject = {
+      $or: [{ title: { $regex: queries?.que, $options: "i" } }],
+    };
+    // queryCommand = queryCommand.find(queryObject);
+  }
+
+  const combinedQuery = {
+    $and : [
+      colorQueryObject,
+      queryObject
+    ]
+  }
+
+  // const qr = { ...colorQueryObject, ...formatedQueries, ...queryObject };
+  const qr = { ...combinedQuery, ...formatedQueries,  };
   let queryCommand = productModel.find(qr);
 
   //sorting
   //abc,efg => [abc,efg] => abc efg
   if (req.query.sort) {
     const sortBy = req.query.sort.split(",").join(" ");
-    console.log(sortBy);
     queryCommand = queryCommand.sort(sortBy);
   }
 
@@ -126,8 +141,6 @@ const updateProduct = asyncHandler(async (req, res) => {
   const files = req?.files;
   if (files?.thumb) req.body.thumb = files?.thumb[0]?.path;
   if (files?.images) req.body.images = files?.images?.map((e) => e.path);
-  console.log(req.body.thumb);
-  console.log(req.body.images);
   if (req.body && req.body.title) req.body.slug = slugify(req.body.title);
   const updatedProduct = await productModel.findByIdAndUpdate(pid, req.body, {
     new: true,

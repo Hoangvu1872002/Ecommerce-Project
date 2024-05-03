@@ -142,7 +142,14 @@ const ManageUser = () => {
             <tbody>
               {users?.users?.map((e, index) => (
                 <tr key={e._id} className="border border-gray-500">
-                  <td className="px-4 py-2">{index + 1}</td>
+                  <td className="px-4 py-2">
+                    {index +
+                      (params.get("page") - 1 > 0
+                        ? params.get("page") - 1
+                        : 0) *
+                        limit +
+                      1}
+                  </td>
                   <td className="px-1 py-2 w-[150px] line-clamp-1 truncate">
                     {editElm?._id === e._id ? (
                       <InputForm
@@ -237,7 +244,7 @@ const ManageUser = () => {
                         id={"address"}
                         defaultValue={editElm?.address}
                         validate={{
-                          required: "Required",                         
+                          required: "Required",
                         }}
                       ></InputForm>
                     ) : (

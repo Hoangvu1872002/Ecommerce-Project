@@ -12,6 +12,16 @@ const {
   RiProductHuntLine,
   RiBillLine,
   FaHeart,
+  FaBlog,
+  //
+  SlScreenSmartphone,
+  LiaTabletAltSolid,
+  BsLaptop,
+  FiCamera,
+  TfiPrinter,
+  FiSpeaker,
+  BsFillUsbPlugFill,
+  PiTelevisionLight,
 } = icons;
 
 export const navigation = [
@@ -35,11 +45,11 @@ export const navigation = [
     value: "OUR SERVICES",
     path: `${path.OUR_SERVICES}`,
   },
-  {
-    id: 4,
-    value: "FAQs",
-    path: `${path.FAQS}`,
-  },
+  // {
+  //   id: 4,
+  //   value: "FAQs",
+  //   path: `${path.FAQS}`,
+  // },
 ];
 
 export const productExtrainfoData = [
@@ -227,6 +237,22 @@ export const adminSidebar = [
     path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
     icon: <RiBillLine size={20}></RiBillLine>,
   },
+  {
+    id: 5,
+    type: "PARENT",
+    text: "Manage blogs",
+    icon: <FaBlog size={20}></FaBlog>,
+    submenu: [
+      {
+        text: "Create blogs",
+        path: `/${path.ADMIN}/${path.CREATE_BLOGS}`,
+      },
+      {
+        text: "Manage blogs",
+        path: `/${path.ADMIN}/${path.MANAGE_BLOGS}`,
+      },
+    ],
+  },
 ];
 
 export const memberSidebar = [
@@ -328,6 +354,41 @@ export const statusOrders = [
   {
     label: 'Successed',
     value: "Successed",
+  },
+];
+
+export const iconSidebar = [
+  {
+    id: 1,
+    icon: <SlScreenSmartphone size={20}></SlScreenSmartphone>
+  },
+  {
+    id: 2,
+    icon:<LiaTabletAltSolid size={20}></LiaTabletAltSolid>
+  },
+  {
+    id: 3,
+    icon:<BsLaptop size={20} ></BsLaptop>
+  },
+  {
+    id: 4,
+    icon:<FiCamera size={20}></FiCamera>
+  },
+  {
+    id: 5,
+    icon:<TfiPrinter size={20}></TfiPrinter>
+  },
+  {
+    id: 6,
+    icon:<FiSpeaker size={20}></FiSpeaker>
+  },
+  {
+    id: 7,
+    icon:<BsFillUsbPlugFill size={20}></BsFillUsbPlugFill>
+  },
+  {
+    id: 8,
+    icon:<PiTelevisionLight size={20}></PiTelevisionLight>
   },
 ];
 

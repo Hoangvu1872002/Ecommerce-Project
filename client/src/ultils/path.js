@@ -4,15 +4,16 @@ const path = {
   ALL: "*",
   LOGIN: "login",
   PRODUCTS: ":category",
-  BLOGS: "blogs/:blogs",
+  BLOGS: "blogs/blogs",
   OUR_SERVICES: "services/:services",
   FAQS: "faqs",
   DETAIL_PRODUCT_CATEGORY_PID__TITLE: ":category/:pid/:title",
-  DETAIL_BLOG_TITLE: "blogs/:blogs/:title",
+  DETAIL_BLOG_TITLE: "blogs/blogs/:bid",
   FINAL_REGISTER: "finalregister/:status",
   RESETPASSWORD: "reset-password/:token",
   DETAIL_CART: "my-cart",
   DETAIL_CHECKOUT: "checkout",
+  CHECKOUT_SUCCESS:"success",
 
   //admin
   ADMIN: "admin",
@@ -21,6 +22,8 @@ const path = {
   MANAGE_USER: "manage-user",
   MANAGE_ORDER: "manage-order",
   CREATE_PRODUCTS: "create-products",
+  CREATE_BLOGS: "create-blogs",
+  MANAGE_BLOGS: "manage-blogs",
 
   // member
   MEMBER: "member",

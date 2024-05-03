@@ -97,6 +97,7 @@ const UpdateProduct = ({ editProduct, setEditProduct, render, toast }) => {
       quantity: editProduct?.quantity || "",
       color: editProduct?.color || "",
       category: editProduct?.category || "",
+      discount: editProduct?.discount || "",
       brand: editProduct?.brand?.toLowerCase() || "",
     });
     setPayload({
@@ -181,6 +182,22 @@ const UpdateProduct = ({ editProduct, setEditProduct, render, toast }) => {
               }}
               style="flex-1"
               placeholder="Color of new product"
+            />
+            <InputForm
+              label="Discount"
+              register={register}
+              errors={errors}
+              id="discount"
+              validate={{
+                required: "Required",
+                pattern: {
+                  value: /^(?:[1-9][0-9]?|0)$/,
+                  message: "Invalid discount",
+                },
+              }}
+              style="flex-1"
+              placeholder="Discount of new product"
+              type="number"
             />
           </div>
           <div className="w-full my-6 flex gap-4">

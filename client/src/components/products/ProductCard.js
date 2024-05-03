@@ -3,8 +3,8 @@ import { formatMoney, renderStarFromNumber } from "../../ultils/helper";
 
 const ProductCard = ({ price, thumb, totalRating, title }) => {
   return (
-    <div className="w-1/3 flex-auto flex px-[10px] mb-[20px]">
-      <div className=" flex w-full border">
+    <div className="w-1/3 flex-auto flex px-[10px] mb-[20px] ">
+      <div className=" flex w-full border shadow-md rounded-lg hover:shadow-blue-400 cursor-pointer">
         <img
           src={thumb}
           alt="product"
@@ -19,7 +19,7 @@ const ProductCard = ({ price, thumb, totalRating, title }) => {
               <span key={index}>{e}</span>
             ))}
           </span>
-          <span>{`${formatMoney(price)} VND`}</span>
+          <span>{`${formatMoney(price)} vnd`}</span>
         </div>
       </div>
     </div>

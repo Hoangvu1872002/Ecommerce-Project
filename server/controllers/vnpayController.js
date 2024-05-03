@@ -1,3 +1,4 @@
+
 const asyncHandler = require("express-async-handler");
 
 const moment = require("moment");
@@ -19,6 +20,12 @@ function sortObject(obj) {
 }
 
 const createVnpayOrder = asyncHandler(async (req, res) => {
+  const {
+    total,
+    locale
+  } = req.body;
+  // console.log({total, locale});
+  process.env.TZ = "Asia/Ho_Chi_Minh";
   var ipAddr =
     req.headers["x-forwarded-for"] ||
     req.connection.remoteAddress ||
@@ -34,7 +41,8 @@ const createVnpayOrder = asyncHandler(async (req, res) => {
 
   var date = new Date();
 
-  var createDate = date;
+  var createDate = moment(date).format("YYYYMMDDHHmmss");
+  // console.log(createDate);
   const currentTime = moment();
 
   // Thêm một khoảng thời gian, ví dụ: 30 phút
@@ -43,12 +51,12 @@ const createVnpayOrder = asyncHandler(async (req, res) => {
   // Định dạng thời gian theo định dạng yêu cầu của VNPAY (yyyyMMddHHmmss)
   const formattedExpireTime = expireTime.format("YYYYMMDDHHmmss");
   var orderId = Math.floor(Math.random() * 1000);
-  var amount = 100000;
-  var bankCode = "VNBANK";
+  // var amount = 100000;
+  var bankCode = "NCB";
 
   var orderInfo = "Noi dung thanh toan";
   var orderType = "billpayment";
-  var locale = req.body.language;
+  // var locale = ""
   if (locale === null || locale === "") {
     locale = "vn";
   }
@@ -64,7 +72,10 @@ const createVnpayOrder = asyncHandler(async (req, res) => {
   vnp_Params["vnp_TxnRef"] = orderId;
   vnp_Params["vnp_OrderInfo"] = orderInfo;
   vnp_Params["vnp_OrderType"] = orderType;
-  vnp_Params["vnp_Amount"] = amount * 100;
+  vnp_Params["vnp_Amount"] = Math.ceil(total) * 100;
+
+  // vnp_Params["vnp_Address"] = address;
+
   vnp_Params["vnp_ReturnUrl"] = returnUrl;
   vnp_Params["vnp_IpAddr"] = ipAddr;
   vnp_Params["vnp_CreateDate"] = createDate;
@@ -81,6 +92,7 @@ const createVnpayOrder = asyncHandler(async (req, res) => {
   var signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
   vnp_Params["vnp_SecureHash"] = signed;
   vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
+  console.log(vnpUrl);
   res.json(vnpUrl);
 });
 
@@ -103,23 +115,13 @@ const vnpayReturn = asyncHandler(async (req, res) => {
   var signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
 
   const code = Number(vnp_Params.vnp_ResponseCode);
-  const urlPrams =
-    req.query.vnp_Amount +
-    "-" +
-    req.query.vnp_BankCode +
-    "-" +
-    req.query.vnp_TransactionNo +
-    "-" +
-    req.query.vnp_PayDate +
-    "-" +
-    req.query.vnp_ResponseCode;
   if (code === 0) {
     res.redirect(
-      "http://localhost:5000/pages/checkout/thanhcong" + "/" + urlPrams
+      "http://localhost:3000/success"
     );
   } else {
     res.redirect(
-      "http://localhost:5000/pages/checkout/thatbai" + "/" + urlPrams
+      "http://localhost:3000"
     );
   }
 });

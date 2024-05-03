@@ -47,8 +47,8 @@ module.exports = {
             transform: "translateY(20px);",
           },
           "100%": {
-            "-webkit-transform": "translateY(0px);",
-            transform: "translateY(0px);",
+            "-webkit-transform": "translateY(-15px);",
+            transform: "translateY(-15px);",
           },
         },
         "slide-top-sm": {

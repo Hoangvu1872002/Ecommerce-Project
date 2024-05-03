@@ -32,7 +32,7 @@ const PagiItiem = ({ children }) => {
       className={clsx(
         `w-10 h-10 flex justify-center `,
         !Number(children) && "items-end pb-2",
-        Number(children) && "items-center hover:rounded-full hover:bg-gray-300",
+        Number(children) && "items-center hover:shadow-md hover:rounded-full hover:bg-gray-300",
         +params.get("page") === +children && "rounded-full bg-gray-300",
         !+params.get("page") && +children === 1 && "rounded-full bg-gray-300"
       )}

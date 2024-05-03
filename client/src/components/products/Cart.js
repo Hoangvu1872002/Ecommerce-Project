@@ -10,6 +10,7 @@ import { getCurrent } from "../../store/users/asyncAction";
 import { ToastContainer, toast } from "react-toastify";
 import path from "../../ultils/path";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Cart = ({ dispatch }) => {
   const { BsBackspaceReverseFill, MdDeleteForever } = icons;
@@ -24,6 +25,23 @@ const Cart = ({ dispatch }) => {
       dispatch(getCurrent());
     } else {
       toast.error(response.mes);
+    }
+  };
+
+  const handleCheckout = () => {
+    if (currentCart.length === 0) {
+      Swal.fire({
+        text: "Please add products to cart before payment.",
+        cancelButtonText: "Cancel",
+        confirmButtonText: "Go product page",
+        title: "Oops!",
+        showCancelButton: true,
+      }).then((rs) => {
+        if (rs.isConfirmed) navigate(`/${path.PRODUCTS}`);
+      });
+    } else {
+      dispatch(showCart());
+      navigate(`/${path.DETAIL_CHECKOUT}`);
     }
   };
   return (
@@ -66,7 +84,7 @@ const Cart = ({ dispatch }) => {
                     </span>
                   </span>
                   <span className="text-sm">
-                    {formatMoney(e?.price * e?.quantity) + " VND"}
+                    {formatMoney(e?.price * e?.quantity) + " vnd"}
                   </span>
                 </div>
               </div>
@@ -80,6 +98,11 @@ const Cart = ({ dispatch }) => {
               </span>
             </div>
           ))}
+        {currentCart.length === 0 && (
+          <div className=" text-main text-base text-center h-full flex justify-center items-center">
+            Your shopping cart does not contain any products.
+          </div>
+        )}
       </section>
       <div className="row-span-2 flex flex-col justify-between h-full">
         <div className="flex items-center mt-4 justify-between pt-4 border-t m">
@@ -95,31 +118,28 @@ const Cart = ({ dispatch }) => {
                 (sum, el) => +el?.price * el?.quantity + sum,
                 0
               )
-            )} VND`}
+            )} vnd`}
           </span>
         </div>
         <span className="text-center text-gray-400 italic text-xs">
           Shipping, taxes, and discounts calculated at checkout.
         </span>
         <div className="flex gap-4">
-        <Button
-          handleOnClick={() => {
-            dispatch(showCart());
-            navigate(`/${path.DETAIL_CHECKOUT}`);
-          }}
-          style="rounded-md w-full bg-main py-2 hover:bg-red-600"
-        >
-          Checkout
-        </Button>
-        <Button
-          handleOnClick={() => {
-            dispatch(showCart());
-            navigate(`/${path.DETAIL_CART}`);
-          }}
-          style="rounded-md w-full bg-main py-2 hover:bg-red-600"
-        >
-          Shopping Cart
-        </Button>
+          <Button
+            handleOnClick={handleCheckout}
+            style="rounded-md w-full bg-main py-2 hover:bg-red-600"
+          >
+            Checkout
+          </Button>
+          <Button
+            handleOnClick={() => {
+              dispatch(showCart());
+              navigate(`/${path.DETAIL_CART}`);
+            }}
+            style="rounded-md w-full bg-main py-2 hover:bg-red-600"
+          >
+            Shopping Cart
+          </Button>
         </div>
       </div>
       <ToastContainer autoClose={1200} />

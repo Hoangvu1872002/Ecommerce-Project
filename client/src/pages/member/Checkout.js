@@ -141,7 +141,7 @@ const Checkout = ({ navigate, dispatch }) => {
                       Guaranteed delivery from April 15 - April 17
                     </p>
                     <p className="text-xs text-gray-500">
-                      Receive a Voucher worth VND 10,000 if your order is
+                      Receive a Voucher worth vnd 10,000 if your order is
                       delivered to you after 11:59 p.m. April 17, 2024.
                     </p>
                   </div>
@@ -233,7 +233,7 @@ const Checkout = ({ navigate, dispatch }) => {
                 </div>
                 <span className="mr-2  flex items-center justify-cente">
                   <span className="text-sm">
-                    {formatMoney(e?.price * e?.quantity) + " VND"}
+                    {formatMoney(e?.price * e?.quantity) + " vnd"}
                   </span>
                 </span>
               </div>
@@ -248,13 +248,13 @@ const Checkout = ({ navigate, dispatch }) => {
               <span className="text-lg font-semibold">Total</span>
             </div>
             <div className="flex flex-col gap-2 text-sm items-end">
-              <span>{`${formatMoney(totalPrice)} VND`}</span>
-              <span>30.000 VND</span>
-              <span>{`${formatMoney(tax)} VND`}</span>
-              <span>{`- ${formatMoney(coupons)} VND`}</span>
+              <span>{`${formatMoney(totalPrice)} vnd`}</span>
+              <span>30.000 vnd</span>
+              <span>{`${formatMoney(tax)} vnd`}</span>
+              <span>{`- ${formatMoney(coupons)} vnd`}</span>
               <span className="text-lg text-red-500 font-semibold">{`${formatMoney(
                 totalPayment
-              )} VND`}</span>
+              )} vnd`}</span>
             </div>
           </div>
         </div>

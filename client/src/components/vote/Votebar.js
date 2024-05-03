@@ -18,8 +18,8 @@ const Votebar = ({ number, ratingCount, ratingTotal }) => {
         <BiSolidStar color="orange"></BiSolidStar>
       </div>
       <div className="w-[75%]">
-        <div className="w-full h-[6px] relative bg-gray-200 rounded-l-full rounded-r-full">
-          <div ref={percenRef} className="absolute inset-0 bg-red-500"></div>
+        <div className="w-full h-[8px] relative bg-gray-200 rounded-l-full rounded-r-full">
+          <div ref={percenRef} className="absolute inset-0 rounded-l-full rounded-r-full bg-red-500"></div>
         </div>
       </div>
       <div className="w-[15%] flex justify-end text-xs text-400">

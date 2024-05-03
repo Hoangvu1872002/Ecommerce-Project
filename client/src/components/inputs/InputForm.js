@@ -32,7 +32,7 @@ const InputForm = ({
         {...register(id, validate)}
         disabled={disabled}
         placeholder={placeholder}
-        className={clsx(`form-input rounded-md my-auto`, fullWith && "w-full", style)}
+        className={clsx(`form-input rounded-md my-auto max-h-[41.6px]`, fullWith && "w-full", style)}
         defaultValue={defaultValue}
         readOnly={readOnly}
       ></input>

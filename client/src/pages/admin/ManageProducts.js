@@ -125,7 +125,7 @@ const ManageProducts = () => {
         <table className="table-auto mb-6 text-left w-full ">
           <thead className="font-bold bg-gray-700 text-[13px]  text-white">
             <tr className="border border-gray-500">
-              <th className="px-2 py-2">#</th>
+              <th className="px-4 py-2">#</th>
               <th className="px-2 py-2">Thumb</th>
               <th className="px-2 py-2">Title</th>
               <th className="px-2 py-2">Brand</th>
@@ -149,7 +149,7 @@ const ManageProducts = () => {
                       limit +
                     1}
                 </td>
-                <td className="px-4 py-2">
+                <td className="px-2 py-2">
                   <img
                     src={e.thumb}
                     alt="thumb"

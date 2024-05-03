@@ -46,8 +46,8 @@ const SearchItem = ({
     for (let i of param) queries[i[0]] = i[1];
     if (selected.length > 0) {
       queries.color = selected.join(",");
-      queries.page = 1;   
-    }else delete queries.color
+      queries.page = 1;
+    } else delete queries.color;
     navigate({
       pathname: `/${category}`,
       search: createSearchParams(queries).toString(),
@@ -78,9 +78,9 @@ const SearchItem = ({
     const queries = {};
     for (let i of param) queries[i[0]] = i[1];
     if (Number(price.from) > 0) queries.from = price.from;
-    else delete queries.from
+    else delete queries.from;
     if (Number(price.to) > 0) queries.to = price.to;
-    else delete queries.to
+    else delete queries.to;
     queries.page = 1;
     navigate({
       pathname: `/${category}`,
@@ -145,7 +145,7 @@ const SearchItem = ({
                 <span className="whitespace-nowrap">
                   {`The highest price is ${Number(
                     bestPrice
-                  ).toLocaleString()} VND.`}
+                  ).toLocaleString()} vnd.`}
                 </span>
                 <span
                   className="underline cursor-pointer hover:text-main"

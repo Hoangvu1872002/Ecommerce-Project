@@ -65,8 +65,8 @@ const DealDaily = () => {
     };
   }, [seconds, minutes, hours, expireTime]);
   return (
-    <div className="w-full border flex-auto">
-      <div className="flex items-center justify-between p-4 mt-2 w-full">
+    <div className="w-full border flex-auto shadow-md rounded-lg">
+      <div className="flex items-center justify-between pt-4 pl-4 w-full">
         <span className="flex-1 flex justify-center">
           <BiSolidStar size={20} color="#DD1111"></BiSolidStar>
         </span>
@@ -75,7 +75,7 @@ const DealDaily = () => {
         </span>
         <span className="flex-1"></span>
       </div>
-      <div className="w-full flex flex-col items-center px-4 pt-5 gap-2">
+      <div className="w-full flex flex-col items-center px-4 pt-5 gap-1">
         <img
           src={
             dealDaily?.thumb ||
@@ -84,23 +84,25 @@ const DealDaily = () => {
           alt=""
           className="w-full object-contain"
         ></img>
-        <span className="line-clamp-1 mt-2 text-center">{dealDaily?.title}</span>
-        <span className="flex h-4 mt-1">
+        <span className="line-clamp-1 mt-4 text-center">
+          {dealDaily?.title}
+        </span>
+        <span className="flex mt-1">
           {renderStarFromNumber(dealDaily?.totalRating, 20).map((e, index) => (
             <span key={index}>{e}</span>
           ))}
         </span>
-        <span className="mt-2">{`${formatMoney(dealDaily?.price)} VND`}</span>
+        <span className="mt-1">{`${formatMoney(dealDaily?.price)} vnd`}</span>
       </div>
-      <div className="px-4 mt-6">
-        <div className="flex justify-center gap-2 items-center mb-5">
+      <div className="px-4 mt-3">
+        <div className="flex justify-center gap-2 items-center mb-4">
           <Countdown unit={"Hours"} number={hours}></Countdown>
           <Countdown unit={"Minutes"} number={minutes}></Countdown>
           <Countdown unit={"Seconds"} number={seconds}></Countdown>
         </div>
         <button
           type="button"
-          className="flex gap-2 items-center justify-center w-full bg-main hover:bg-gray-800 text-white font-medium py-2"
+          className="flex mb-2 gap-2 items-center shadow-md rounded-md justify-center w-full bg-main hover:bg-gray-800 text-white font-medium py-2"
         >
           <HiMenu></HiMenu>
           <span>Options</span>

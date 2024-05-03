@@ -17,6 +17,7 @@ const {
   finalRegister,
   createUsers,
   removeProductInCart,
+  updateWishlist,
 } = require("../controllers/userController");
 const { verifyAccessToken, isAdmin } = require("../middlewares/verifyToken");
 const uploadImage = require("../config/cloudinary.config");
@@ -33,6 +34,7 @@ router.post("/forgotpassword", forgotPassword);
 router.put("/resetpassword", resetPassword);
 router.get("/", verifyAccessToken, isAdmin, getUsers);
 router.delete("/:uid", verifyAccessToken, isAdmin, deleteUser);
+router.put("/wishlist/:pid", verifyAccessToken, updateWishlist);
 router.put(
   "/current",
   verifyAccessToken,

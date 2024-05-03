@@ -44,7 +44,6 @@ const OrderItem = ({ e, dispatch, defaultQuantity = 1 }) => {
     }
   };
 
-
   const removeCart = async (pid, color) => {
     const response = await apiRemoveCart(pid, color);
     if (response.success) {
@@ -55,7 +54,7 @@ const OrderItem = ({ e, dispatch, defaultQuantity = 1 }) => {
   };
 
   useEffect(() => {
-      getCount(e.product._id, quantity, e.color, e.price, e.title, e.thumbnail);
+    getCount(e.product._id, quantity, e.color, e.price, e.title, e.thumbnail);
   }, [quantity]);
 
   return (
@@ -74,7 +73,7 @@ const OrderItem = ({ e, dispatch, defaultQuantity = 1 }) => {
         </div>
       </span>
       <span className="col-span-2 w-full text-center text-base flex justify-center items-center">
-        {formatMoney(e?.price) + " VND"}
+        {formatMoney(e?.price) + " vnd"}
       </span>
       <span className="col-span-2 w-full text-center flex justify-center items-center">
         <div className="border">
@@ -86,7 +85,7 @@ const OrderItem = ({ e, dispatch, defaultQuantity = 1 }) => {
         </div>
       </span>
       <span className="col-span-2 w-full text-center flex justify-center items-center">
-        {formatMoney(e?.price * quantity) + " VND"}
+        {formatMoney(e?.price * quantity) + " vnd"}
       </span>
       <span className="col-span-2 w-full text-center flex justify-center items-center">
         <span

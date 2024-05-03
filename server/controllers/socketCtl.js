@@ -2,7 +2,7 @@ const orderModel = require("../models/order");
 
 module.exports = function (io) {
   io.of("/orderStatus").on("connection", (socket) => {
-    console.log("New client connected: " + socket.id);
+    // console.log("New client connected: " + socket.id);
 
     socket.on("update-status-order", async (data) => {
       try {

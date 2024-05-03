@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import { formatMoney } from "../../ultils/helper";
 import clsx from "clsx";
+import moment from "moment";
 
 const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
   const [orders, setOrders] = useState();
@@ -31,7 +32,7 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
     formState: { errors },
     watch,
     setValue,
-    reset
+    reset,
   } = useForm();
 
   const queryDebounce = useDebounce(watch("q"), 800);
@@ -91,28 +92,30 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
         <span>HISTORY</span>
       </h1>
       <div className="h-[75px] w-full"></div>
-      <div className="flex w-full justify-end items-center px-5">
-      <form className="w-[38%] flex gap-2 ">
-          <div className="flex-2">
-            {!status && (
-              <InputForm
-                id="q"
-                register={register}
-                errors={errors}
-                fullWith
-                placeholder="Search products by id order"
-              ></InputForm>
-            )}
-          </div>
-          <div className="flex-1 flex items-center h-[78px]">
-            <CustomSelect
-              options={statusOrders}
-              value={status}
-              onChange={(val) => setValue("myCustomSelect", val)}
-              wrapClassname="w-[200px]"
-            ></CustomSelect>
-          </div>
-        </form>
+      <div className="flex w-full justify-center items-center">
+        <div className="w-main flex justify-end items-center">
+          <form className="w-[38%] flex gap-2 ">
+            <div className="flex-2">
+              {!status && (
+                <InputForm
+                  id="q"
+                  register={register}
+                  errors={errors}
+                  fullWith
+                  placeholder="Search products by id order"
+                ></InputForm>
+              )}
+            </div>
+            <div className="flex-1 flex items-center h-[78px]">
+              <CustomSelect
+                options={statusOrders}
+                value={status}
+                onChange={(val) => setValue("myCustomSelect", val)}
+                wrapClassname="w-[200px]"
+              ></CustomSelect>
+            </div>
+          </form>
+        </div>
       </div>
       <div className="">
         {orders?.map((el, index) => (
@@ -128,10 +131,22 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
             >
               <div className="flex items-center justify-between ">
                 <div className="flex gap-2 items-center">
+                  <span className="text-sm font-semibold">
+                    #{" "}
+                    {index +
+                      (params.get("page") - 1 > 0
+                        ? params.get("page") - 1
+                        : 0) *
+                        limit +
+                      1}
+                  </span>
                   <span className="text-main text-sm font-semibold">
                     Code Bill:
                   </span>
                   <span className="text-sm text-green-600 ">{el?._id}</span>
+                  <span className="text-sm">
+                    ({moment(el?.updatedAt).format("DD/MM/YYYY")})
+                  </span>
                 </div>
 
                 <div className="flex flex-col justify-center items-end">
@@ -207,7 +222,7 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                           className="w-10 h-10 object-cover rounded-lg"
                         ></img>
                         <div className="flex items-start gap-1 ml-2">
-                          <span className="text-main text-sm">{e?.title}</span>
+                          <span className=" text-sm">{e?.title}</span>
                         </div>
                       </div>
                     </span>
@@ -215,13 +230,13 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                       {e?.color}
                     </span>
                     <span className="col-span-2 text-sm w-full text-center flex justify-center items-center">
-                      {formatMoney(e?.price) + " VND"}
+                      {formatMoney(e?.price) + " vnd"}
                     </span>
                     <span className="col-span-2 text-sm w-full text-center flex justify-center items-center">
                       {e?.quantity}
                     </span>
                     <span className="col-span-2 w-full text-sm flex justify-end pr-4 items-center">
-                      {formatMoney(e?.price * e?.quantity) + " VND"}
+                      {formatMoney(e?.price * e?.quantity) + " vnd"}
                     </span>
                   </div>
                   {el?.status === "Successed" && (
@@ -251,7 +266,7 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                 <span className="text-sm text-red-500">Transport fee</span>
               </span>
               <span className="text-sm text-red-500">
-                {`${formatMoney(el?.transportFee)} VND`}
+                {`${formatMoney(el?.transportFee)} vnd`}
               </span>
             </div>
 
@@ -264,7 +279,7 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                 </span>
               </span>
               <span className="text-sm text-red-500">
-                {`${formatMoney(el?.totalPriceProducts)} VND`}
+                {`${formatMoney(el?.totalPriceProducts)} vnd`}
               </span>
             </div>
 
@@ -273,7 +288,7 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                 <span className="text-sm text-red-500">Shop's coupons</span>
               </span>
               <span className="text-sm text-red-500">
-                - 2% Discount ({`- ${formatMoney(el?.coupons)} VND`})
+                - 2% Discount ({`- ${formatMoney(el?.coupons)} vnd`})
               </span>
             </div>
 
@@ -282,7 +297,7 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                 <span className="text-sm text-red-500">Estimated taxes</span>
               </span>
               <span className="text-sm text-red-500">
-                5% Tax ({`${formatMoney(el?.tax)} VND`})
+                5% Tax ({`${formatMoney(el?.tax)} vnd`})
               </span>
             </div>
 
@@ -305,16 +320,16 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                       <p className="text-sm">Fast</p>
                       <span className="flex gap-2 items-center justify-center">
                         <span className="line-through text-xs text-gray-500">
-                          60.000 VND
+                          60.000 vnd
                         </span>
-                        <span className="text-sm text-main">30.000 VND</span>
+                        <span className="text-sm text-main">30.000 vnd</span>
                       </span>
                     </div>
                     <p className="text-xs text-green-600">
                       Guaranteed delivery from April 15 - April 17
                     </p>
                     <p className="text-xs text-gray-500 pr-[150px]">
-                      Receive a Voucher worth VND 10,000 if your order is
+                      Receive a Voucher worth vnd 10,000 if your order is
                       delivered to you after 11:59 p.m. April 17, 2024.
                     </p>
                   </div>
@@ -324,9 +339,12 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
             </div> */}
             <div className="bg-gray-100">
               <div className="flex gap-4 justify-between items-center">
-                <li className="text-gray-400 text-xs pl-1">
-                  Please rate the product to receive a discount code.
-                </li>
+                {el?.status === "Successed" && (
+                  <li className="text-gray-400 text-xs pl-1">
+                    Please rate the product to receive a discount code.
+                  </li>
+                )}
+                <div></div>
                 <div className="flex gap-2 items-center">
                   {el?.status === "Proccessing" && (
                     <Button
@@ -346,7 +364,7 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                   <span className="flex gap-4 justify-end items-center p-2">
                     <span className="text-sm">Total payment:</span>
                     <span className="text-main  font-semibold">
-                      {`${formatMoney(el?.total)} VND`}
+                      {`${formatMoney(el?.total)} vnd`}
                     </span>
                   </span>
                 </div>

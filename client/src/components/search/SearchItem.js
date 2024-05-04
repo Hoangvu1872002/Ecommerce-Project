@@ -90,7 +90,7 @@ const SearchItem = ({
 
   return (
     <div
-      className="relative p-3  cursor-pointer text-gray-500 text-xs gap-4 border border-gray-800 flex items-center justify-between"
+      className="relative p-3  cursor-pointer text-gray-500 text-xs gap-4 rounded-md border border-gray-800 flex items-center justify-between"
       onClick={() => changeActiveFitler(name)}
     >
       <span className="capitalize">{name}</span>

@@ -181,7 +181,7 @@ const Products = () => {
               id="q"
               {...register("q")}
               placeholder="Search products by title"
-              className={clsx(`form-input text-xs border p-3 w-full`)}
+              className={clsx(`form-input text-xs border p-3 w-full rounded-md`)}
             ></input>
             {errors["q"] && (
               <small className="text-xs text-red-500">

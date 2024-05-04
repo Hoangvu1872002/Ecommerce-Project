@@ -20,7 +20,7 @@ const InputForm = ({
   //   setDefaultValueNew(defaultValue)
   // }
   return (
-    <div className={clsx(`flex flex-col h-[78px] gap-2`, style)}>
+    <div className={clsx(`flex flex-col h-[78px] gap-2 rounded-md`, style)}>
       {label && (
         <label className="font-medium" htmlFor={id}>
           {label + ":"}

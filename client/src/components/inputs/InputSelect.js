@@ -3,7 +3,7 @@ import React, { memo } from "react";
 const InputSelect = ({ value, changeValue, options }) => {
   return (
     <select
-      className="form-select text-xs p-3 w-4/5"
+      className="form-select text-xs p-3 w-4/5 rounded-md"
       value={value}
       onChange={(e) => changeValue(e.target.value)}
     >

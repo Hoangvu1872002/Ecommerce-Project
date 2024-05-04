@@ -232,10 +232,10 @@ const uploadImagesProduct = asyncHandler(async (req, res) => {
 
 const addVarriants = asyncHandler(async (req, res) => {
   const { pid } = req.params;
-  const { title, price, color } = req.body;
+  const { title, price, color, quantity } = req.body;
   const thumb = req.files?.thumb[0]?.path;
   const images = req.files?.images?.map((e) => e.path);
-  if (!(title && price && color)) throw new Error("Missing inputs");
+  if (!(title && price && color && quantity)) throw new Error("Missing inputs");
   const response = await productModel.findByIdAndUpdate(
     pid,
     {
@@ -246,6 +246,7 @@ const addVarriants = asyncHandler(async (req, res) => {
           thumb,
           images,
           title,
+          quantity,
           sku: makeSKU().toString().toUpperCase(),
         },
       },

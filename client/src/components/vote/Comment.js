@@ -15,7 +15,7 @@ const Comment = ({
         <img
           src={image}
           alt="avatar"
-          className="w-[25px] h-[25px] object-cover rounded-full"
+          className="w-[30px] h-[30px] object-cover rounded-full border"
         ></img>
       </div>
       <div className="flex flex-col flex-auto ">
@@ -23,7 +23,7 @@ const Comment = ({
           <h3 className="font-semibold">{name}</h3>
           <span className="text-xs italic">{moment(updateAt)?.fromNow()}</span>
         </div>
-        <div className="flex flex-col gap-2 pl-4 text-sm mt-4 border border-gray-300 py-2 bg-gray-100">
+        <div className="flex flex-col gap-2 pl-4 text-sm mt-4 border shadow-md rounded-lg border-gray-300 py-2 bg-gray-100">
           <span className="flex items-center gap-1">
             <span className="font-semibold">Evaluate:</span>
             <span className="flex items-center gap-1">

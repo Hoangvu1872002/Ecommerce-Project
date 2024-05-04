@@ -89,6 +89,7 @@ const CustomizeVarriants = ({
       title: customizeVarriant?.title,
       color: customizeVarriant?.color,
       price: customizeVarriant?.price,
+      quantity: customizeVarriant?.quantity,
     });
   }, [customizeVarriant]);
 
@@ -157,6 +158,18 @@ const CustomizeVarriants = ({
             }}
             fullWith
             placeholder="Color of new varriant"
+            style="flex-auto"
+          />
+          <InputForm
+            label="Quantity varriant"
+            register={register}
+            errors={errors}
+            id="quantity"
+            validate={{
+              required: "Need fill this field",
+            }}
+            fullWith
+            placeholder="Quantity of new varriant"
             style="flex-auto"
           />
         </div>

@@ -62,7 +62,7 @@ const ProductInfo = ({ totalRating, ratings, nameProduct, pid, rerender }) => {
       <div className="flex items-center gap-2 relative bottom-[-1px]">
         {productInfoTabs.map((e) => (
           <span
-            className={`py-2 cursor-pointer ${
+            className={`py-2 cursor-pointer rounded-t-md ${
               activedTab === +e.id
                 ? "bg-white border border-b-0"
                 : "bg-gray-200"
@@ -74,17 +74,17 @@ const ProductInfo = ({ totalRating, ratings, nameProduct, pid, rerender }) => {
           </span>
         ))}
       </div>
-      <div className="w-full border p-4">
+      <div className="w-full border p-4 shadow-md rounded-b-lg">
         {productInfoTabs.some((e) => e.id === activedTab) &&
           productInfoTabs.find((e) => e.id === activedTab)?.content}
       </div>
       <div className="">
-        <div className="flex flex-col w-main my-8 p-2 border">
+        <div className="flex flex-col w-main my-8 p-2 border shadow-md rounded-lg">
           <span className={`py-1 cursor-pointerbg-white px-4 font-semibold`}>
             CUSTOMER REVIEW
           </span>
-          <div className="flex">
-            <div className="flex-4 border flex-col border-red-500 flex items-center justify-center">
+          <div className="flex shadow-md rounded-lg">
+            <div className="flex-4 border flex-col rounded-l-lg border-red-500 flex items-center justify-center">
               <span className="font-semibold text-3xl">{`${totalRating}/5`}</span>
               <span className="flex items-center gap-1">
                 {renderStarFromNumber(totalRating)?.map((e, index) => (
@@ -93,7 +93,7 @@ const ProductInfo = ({ totalRating, ratings, nameProduct, pid, rerender }) => {
               </span>
               <span className="text-sm">{`${ratings?.length} reviewers and commentors`}</span>
             </div>
-            <div className="flex-6 border p-4 flex gap-2 flex-col">
+            <div className="flex-6 border rounded-r-lg p-4 flex gap-2 flex-col">
               {Array.from(Array(5).keys())
                 .reverse()
                 .map((e) => (

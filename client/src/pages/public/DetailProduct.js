@@ -54,6 +54,8 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
       title: "",
       thumb: "",
       price: "",
+      sold: "",
+      quantity: "",
       images: [],
       color: "",
     },
@@ -67,6 +69,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
     }
     // console.log(responese.productData);
   };
+  console.log(product);
   const category = params?.category || data?.category;
 
   const fetchProducts = async () => {
@@ -173,6 +176,12 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
       title: product?.varriants?.find((e) => e.sku === varriant)?.title || "",
       color: product?.varriants?.find((e) => e.sku === varriant)?.color || "",
       price: product?.varriants?.find((e) => e.sku === varriant)?.price || "",
+      sold:
+        product?.varriants?.find((e) => e.sku === varriant)?.sold === 0
+          ? 0
+          : "",
+      quantity:
+        product?.varriants?.find((e) => e.sku === varriant)?.quantity || "",
       images: product?.varriants?.find((e) => e.sku === varriant)?.images || [],
       thumb: product?.varriants?.find((e) => e.sku === varriant)?.thumb || "",
     });
@@ -181,6 +190,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
         product.thumb
     );
   }, [varriant]);
+  // console.log(currentProduct);
 
   // useEffect(() => {
   //   modalRefQuickView.current.scrollIntoView({
@@ -224,7 +234,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
             isQuickView ? "w-1/2" : "w-2/5"
           )}
         >
-          <div className="h-[458px] w-[458px] object-cover flex items-center justify-center border">
+          <div className="h-[458px] w-[458px] object-cover flex items-center justify-center border shadow-md">
             {/* <div className="h-[458px] w-[458px] overflow-hidden border"> */}
             <ReactImageMagnify
               {...{
@@ -245,15 +255,15 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
               }}
             />
           </div>
-          <div className="w-[458px]">
+          <div className="w-[458px] shadow-md rounded-b-lg">
             <Slider className="image-slider" {...settings}>
               {currentProduct?.images?.length === 0 &&
                 product?.images?.map((e, index) => (
-                  <div className="flex w-full gap-2" key={index}>
+                  <div className="flex w-full" key={index}>
                     <img
                       src={e}
                       alt="err"
-                      className="h-[143px] w-[143px] object-cover border cursor-pointer"
+                      className="h-[152.67px] w-[152.67px] object-cover border cursor-pointer"
                       onClick={(el) => handleClickImage(el, e)}
                     ></img>
                   </div>
@@ -265,7 +275,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
                     <img
                       src={e}
                       alt="err"
-                      className="h-[143px] w-[143px] object-cover border cursor-pointer"
+                      className="h-[143px] w-[143px] object-cover border cursor-pointer "
                       onClick={(el) => handleClickImage(el, e)}
                     ></img>
                   </div>
@@ -273,138 +283,171 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
             </Slider>
           </div>
         </div>
-        <div
-          className={clsx(
-            " flex flex-col gap-4 pr-[24px]",
-            isQuickView ? "w-1/2" : "w-2/5"
-          )}
-        >
-          <div className="flex items-center justify-between">
-            <h2 className="text-[30px] font-semibold">{`${formatMoney(
-              fotmatPrice(currentProduct?.price || product?.price)
-            )} vnd`}</h2>
-            <span className="text-sm text-main ">{`(Warehouse: ${product?.quantity})`}</span>
-          </div>
-          <div className="flex items-center">
-            {renderStarFromNumber(product?.totalRating)?.map((e, index) => (
-              <span key={index}>{e}</span>
-            ))}
-            <span className="text-sm text-main italic pl-2">{`(Sold: ${product?.sold} pieces)`}</span>
-          </div>
-          <ul className=" list-square text-sm text-gray-500 pl-4 mb-8">
-            {product?.description?.length > 1 &&
-              product?.description?.map((e, index) => (
-                <li className=" leading-6" key={index}>
-                  {e}
-                </li>
-              ))}
-
-            {product?.description?.length === 1 && (
-              <li
-                className="leading-6 line-clamp-[15]"
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(product?.description[0]),
-                }}
-              ></li>
+        <div className={clsx("flex", isQuickView ? "w-1/2" : "w-3/5")}>
+          <div
+            className={clsx(
+              " flex flex-col gap-4 pr-[24px]",
+              isQuickView ? "w-full" : "w-3/5"
             )}
-          </ul>
-          <div className="my-2 flex gap-4 justify-center items-center">
-            <span className="font-bold">Color:</span>
-            <div className="flex flex-wrap gap-4 items-center w-full">
-              <div
-                onClick={() => {
-                  setVarriant(null);
-                  setQuantity(1);
-                }}
-                className={clsx(
-                  `flex items-center gap-2 p-2 border cursor-pointer`,
-                  !varriant && "border-red-500"
+          >
+            <div className="flex items-end justify-start gap-4">
+              <span className="text-[30px] text-main font-semibold">{`${formatMoney(
+                fotmatPrice(currentProduct?.price || product?.price)
+              )} vnd`}</span>
+              <h3 className="font-semibold pb-[6.1px] text-base text-gray-500 line-through">{`${formatMoney(
+                Math.ceil(
+                  ((currentProduct?.price || product?.price) /
+                    (100 - product?.discount)) *
+                    100
+                )
+              )} vnd`}</h3>
+              {/* <span className="text-xs text-main ">{`(Warehouse: ${product?.quantity})`}</span> */}
+            </div>
+            <div className="flex items-center">
+              {renderStarFromNumber(product?.totalRating)?.map((e, index) => (
+                <span key={index}>{e}</span>
+              ))}
+              <span className="text-xs text-main pl-2">{`( ${
+                product?.ratings?.length
+              } reviews / ${
+                currentProduct?.sold || currentProduct?.sold === 0
+                  ? 0
+                  : false || product?.sold
+              } sales )`}</span>
+            </div>
+            <div className=" py-2 px-4 border shadow-md rounded-lg flex flex-col">
+              <span className="text-main font-semibold mb-2">
+                Outstanding Features
+              </span>
+              <ul className=" list-square text-sm text-gray-500 pl-4">
+                {product?.description?.length > 1 &&
+                  product?.description?.map((e, index) => (
+                    <li className=" leading-6" key={index}>
+                      {e}
+                    </li>
+                  ))}
+
+                {product?.description?.length === 1 && (
+                  <li
+                    className="leading-6 line-clamp-[15]"
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(product?.description[0]),
+                    }}
+                  ></li>
                 )}
-              >
-                <img
-                  src={product?.thumb}
-                  alt="thumb"
-                  className="w-8 h-8 rounded-md object-cover"
-                ></img>
-                <span className="flex flex-col">
-                  <span>{product?.color}</span>
-                  <span className="text-sm">
-                    {formatMoney(product?.price)} vnd
-                  </span>
-                </span>
-              </div>
-              {product?.varriants?.map((e, index) => (
+              </ul>
+            </div>
+            <div className="my-2 flex gap-4 justify-center items-center">
+              <span className="font-bold">Color:</span>
+              <div className="flex flex-wrap gap-4 items-center w-full">
                 <div
-                  key={index}
                   onClick={() => {
-                    setVarriant(e?.sku);
+                    setVarriant(null);
                     setQuantity(1);
                   }}
                   className={clsx(
-                    `flex items-center gap-2 p-2 border cursor-pointer`,
-                    varriant === e?.sku && "border-red-500"
+                    `flex items-center gap-2 p-2 border cursor-pointer shadow-md rounded-lg`,
+                    !varriant && "border-red-500"
                   )}
                 >
                   <img
-                    src={e?.thumb}
+                    src={product?.thumb}
                     alt="thumb"
                     className="w-8 h-8 rounded-md object-cover"
                   ></img>
                   <span className="flex flex-col">
-                    <span>{e?.color}</span>
-                    <span className="text-sm">{formatMoney(e?.price)} vnd</span>
+                    <span>{product?.color}</span>
+                    <span className="text-sm">
+                      {formatMoney(product?.price)} vnd
+                    </span>
                   </span>
                 </div>
-              ))}
+                {product?.varriants?.map((e, index) => (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      setVarriant(e?.sku);
+                      setQuantity(1);
+                    }}
+                    className={clsx(
+                      `flex items-center gap-2 p-2 border cursor-pointer shadow-md rounded-lg`,
+                      varriant === e?.sku && "border-red-500"
+                    )}
+                  >
+                    <img
+                      src={e?.thumb}
+                      alt="thumb"
+                      className="w-8 h-8 rounded-md object-cover"
+                    ></img>
+                    <span className="flex flex-col">
+                      <span>{e?.color}</span>
+                      <span className="text-sm">
+                        {formatMoney(e?.price)} vnd
+                      </span>
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div className="flex flex-col gap-8">
-            <div className="flex items-center gap-4">
-              <span className="font-semibold">Quantity:</span>
-              <SelectQuantity
-                quantity={quantity}
-                handleQuantity={handleQuantity}
-                handleChangeQuantity={handleChangeQuantity}
-              ></SelectQuantity>
-            </div>
-            {currentCart?.find(
-              (e) =>
-                (e.product?._id === pid && e.color === currentProduct?.color) ||
-                (e.product?._id === pid && e.color === product?.color)
-            ) ? (
-              <Button
-                type="text"
-                handleOnClick={handleShowCart}
-                style={`px-4 py-2 my-2 rounded-md text-white bg-gray-600 text-seminold w-full`}
-              >
-                Added to cart
-              </Button>
-            ) : (
-              <Button handleOnClick={handleAddtoCart} fw>
-                Add to cart
-              </Button>
-            )}
-            {/* <Button handleOnClick={handleAddtoCart} fw>
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center gap-4">
+                <span className="font-semibold">Quantity:</span>
+                <span className=" shadow-md border">
+                  <SelectQuantity
+                    quantity={quantity}
+                    handleQuantity={handleQuantity}
+                    handleChangeQuantity={handleChangeQuantity}
+                  ></SelectQuantity>
+                </span>
+                <span className="text-xs text-main ">{`(Warehouse: ${
+                  currentProduct?.quantity || product?.quantity
+                })`}</span>
+              </div>
+              <div>
+                {currentCart?.find(
+                  (e) =>
+                    (e.product?._id === pid &&
+                      e.color === currentProduct?.color) ||
+                    (e.product?._id === pid && e.color === product?.color)
+                ) ? (
+                  <Button
+                    type="text"
+                    handleOnClick={handleShowCart}
+                    style={`px-4 py-2 my-2 rounded-md shadow-md text-white bg-gray-600 text-seminold w-full`}
+                  >
+                    Added to cart
+                  </Button>
+                ) : (
+                  <Button handleOnClick={handleAddtoCart} fw>
+                    Add to cart
+                  </Button>
+                )}
+                <span className="text-main flex justify-center items-center text-xs">
+                  Fast delivery from two hours for pick up from the store.
+                </span>
+              </div>
+              {/* <Button handleOnClick={handleAddtoCart} fw>
               Add to cart
             </Button> */}
+            </div>
           </div>
+          {!isQuickView && (
+            <div className=" w-2/5">
+              {productExtrainfoData.map((e) => (
+                <ProductExtrainfo
+                  key={e.id}
+                  title={e.title}
+                  icon={e.icon}
+                  sub={e.sub}
+                ></ProductExtrainfo>
+              ))}
+            </div>
+          )}
         </div>
-        {!isQuickView && (
-          <div className=" w-1/5">
-            {productExtrainfoData.map((e) => (
-              <ProductExtrainfo
-                key={e.id}
-                title={e.title}
-                icon={e.icon}
-                sub={e.sub}
-              ></ProductExtrainfo>
-            ))}
-          </div>
-        )}
       </div>
       {!isQuickView && (
-        <div className="w-main m-auto mt-8">
+        <div className="w-main m-auto mt-8 ">
           <ProductInfo
             totalRating={product?.totalRating}
             ratings={product?.ratings}
@@ -424,7 +467,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
               <CustomSlider
                 products={relatedProducts}
                 normal={true}
-                slidesToShow= {4}
+                slidesToShow={4}
               ></CustomSlider>
             </div>
           </div>

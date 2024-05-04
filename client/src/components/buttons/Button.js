@@ -7,7 +7,7 @@ const Button = ({ children, handleOnClick, style, fw, type ='button' }) => {
       className={
         style
           ? style
-          : `px-4 py-2 my-2 rounded-md text-white bg-main hover:bg-red-600 text-semibold ${
+          : `px-4 py-2 my-2 rounded-md shadow-md text-white bg-main hover:bg-red-600 text-semibold ${
               fw ? "w-full" : "w-fit"
             }`
       }

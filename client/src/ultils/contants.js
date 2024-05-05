@@ -161,32 +161,32 @@ export const sorts = [
   },
   {
     id: 2,
-    value: "-title",
+    value: "title",
     text: "Alphabetically, A-Z",
   },
   {
     id: 3,
-    value: "title",
+    value: "-title",
     text: "Alphabetically, Z-A",
   },
   {
     id: 4,
-    value: "-price",
+    value: "price",
     text: "Price, low to high",
   },
   {
     id: 5,
-    value: "price",
+    value: "-price",
     text: "Price, high to low",
   },
   {
     id: 6,
-    value: "-createAt",
+    value: "createAt",
     text: "Date, old to new",
   },
   {
     id: 7,
-    value: "createAt",
+    value: "-createAt",
     text: "Date, new to old",
   },
 ];
@@ -315,7 +315,8 @@ export const dataFakeBlogs = [
     id: 1,
     title: "The standard Lorem Ipsum passage, used since the 1500s",
     timeCreated: "Apr 14, 2017",
-    image: "https://digital-world-2.myshopify.com/cdn/shop/articles/blog4.jpg?v=1492594943",
+    image:
+      "https://digital-world-2.myshopify.com/cdn/shop/articles/blog4.jpg?v=1492594943",
     content:
       "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia dolore consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem \n Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo dolore voluptas nulla pariatur ut labore et dolore magnam aliquam quaerat voluptatem",
   },
@@ -324,7 +325,8 @@ export const dataFakeBlogs = [
     title:
       "Section 1.10.33 of de Finibus Bonorum et Malorum, written by Cicero in 45 BC",
     timeCreated: "Apr 14, 2017",
-    image: "https://digital-world-2.myshopify.com/cdn/shop/articles/blog3.jpg?v=1492594940",
+    image:
+      "https://digital-world-2.myshopify.com/cdn/shop/articles/blog3.jpg?v=1492594940",
     content:
       "Shoe street style leather tote oversized sweatshirt A.P.C. Prada Saffiano crop slipper denim shorts spearmint. Braid skirt round sunglasses seam leather vintage Levi plaited. Flats holographic Acne grunge collarless denim chunky sole cuff tucked t-shirt strong eyebrows. Clutch center part dress dungaree slip dress. Skinny jeans knitwear minimal tortoise-shell sunglasses Céline sandal Cara D. lilac. Black floral 90s oxford chambray bomber powder blue cotton boots print. Cable knit knot ponytail ribbed sneaker sports luxe pastel Paris. Washed out skort white shirt Hermès vintage Givenchy razor pleats.\nTee loafer knot ponytail sandal shoe oversized sweatshirt Maison Martin Margiela chunky sole spearmint. Jil Sander Vasari denim vintage So-Cal envelope clutch gold collar Prada Saffiano Acne. Navy blue flats metallic bandeau skort denim shorts white shirt white. Cotton knitwear slip dress seam Givenchy bandeau maxi.\nLanvin flats seam cotton minimal Saint Laurent midi Céline la marinière. Powder blue playsuit oversized sweatshirt bomber chunky sole street style chignon vintage. Dress Jil Sander Vasari chambray boots luxe. Statement button up navy blue slip dress skinny jeans indigo white shirt.\nMaison Martin Margiela cami texture la marinière ecru envelope clutch So-Cal relaxed silhouette. Cashmere chunky sole center part round sunglasses holographic skirt sneaker Acne bandeau. Leggings Lanvin plaited ribbed sports luxe Paris white metallic cami. Givenchy clutch black Furla navy blue grunge dress luxe. Oversized sweatshirt strong eyebrows knot ponytail indigo playsuit A.P.C. Floral gold collar Maison Martin Margiela vintage relaxed la marinière statement button up tee. Razor pleats chignon boots So-Cal cable knit seam denim chambray flats Prada Saffiano. Leather leather tote neutral denim shorts collarless Cara D. washed out. 90s vintage Levi texture envelope clutch crop ecru skinny jeans. Rings loafer Céline pastel sandal dove grey cotton Hermès.",
   },
@@ -332,7 +334,8 @@ export const dataFakeBlogs = [
     id: 3,
     title: "Quisque porta felis est ut malesuada lorem dignissim",
     timeCreated: "Apr 14, 2017",
-    image: "https://digital-world-2.myshopify.com/cdn/shop/articles/blog2.jpg?v=1492594930",
+    image:
+      "https://digital-world-2.myshopify.com/cdn/shop/articles/blog2.jpg?v=1492594930",
     content:
       "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia dolore consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem\nQuis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo dolore voluptas nulla pariatur ut labore et dolore magnam aliquam quaerat voluptatem",
   },
@@ -340,19 +343,19 @@ export const dataFakeBlogs = [
 
 export const statusOrders = [
   {
-    label: 'Cancelled',
+    label: "Cancelled",
     value: "Cancelled",
   },
   {
-    label: 'Proccessing',
+    label: "Proccessing",
     value: "Proccessing",
   },
   {
-    label: 'Shipping',
+    label: "Shipping",
     value: "Shipping",
   },
   {
-    label: 'Successed',
+    label: "Successed",
     value: "Successed",
   },
 ];
@@ -360,36 +363,170 @@ export const statusOrders = [
 export const iconSidebar = [
   {
     id: 1,
-    icon: <SlScreenSmartphone size={20}></SlScreenSmartphone>
+    icon: <SlScreenSmartphone size={20}></SlScreenSmartphone>,
   },
   {
     id: 2,
-    icon:<LiaTabletAltSolid size={20}></LiaTabletAltSolid>
+    icon: <LiaTabletAltSolid size={20}></LiaTabletAltSolid>,
   },
   {
     id: 3,
-    icon:<BsLaptop size={20} ></BsLaptop>
+    icon: <BsLaptop size={20}></BsLaptop>,
   },
   {
     id: 4,
-    icon:<FiCamera size={20}></FiCamera>
+    icon: <FiCamera size={20}></FiCamera>,
   },
   {
     id: 5,
-    icon:<TfiPrinter size={20}></TfiPrinter>
+    icon: <TfiPrinter size={20}></TfiPrinter>,
   },
   {
     id: 6,
-    icon:<FiSpeaker size={20}></FiSpeaker>
+    icon: <FiSpeaker size={20}></FiSpeaker>,
   },
   {
     id: 7,
-    icon:<BsFillUsbPlugFill size={20}></BsFillUsbPlugFill>
+    icon: <BsFillUsbPlugFill size={20}></BsFillUsbPlugFill>,
   },
   {
     id: 8,
-    icon:<PiTelevisionLight size={20}></PiTelevisionLight>
+    icon: <PiTelevisionLight size={20}></PiTelevisionLight>,
   },
 ];
 
-
+export const addressStore = [
+  {
+    phone: "02871000218",
+    address: "218-220 Trần Quang Khải, Phường Tân Định, Quận 1",
+  },
+  {
+    phone: "02871066159",
+    address: "157-159 Nguyễn Thị Minh Khai, P. Phạm Ngũ Lão, Q. 1",
+  },
+  {
+    phone: "02871083355",
+    address: "55B Trần Quang Khải, P. Tân Định, Q. 1",
+  },
+  {
+    phone: "02871000132",
+    address: "134 Nguyễn Thái Học, P. Phạm Ngũ Lão, Q.1, TP HCM",
+  },
+  {
+    phone: "02871010190",
+    address: "190 Nguyễn Thị Định, khu phố 2, phường An Phú, quận 2",
+  },
+  {
+    phone: "02871000571",
+    address: "571 Huỳnh Tấn Phát, P. Tân Thuận Đông, Quận 7, TP. HCM",
+  },
+  {
+    phone: "02871000435",
+    address: "435 Nguyễn Thị Thập, P. Tân Phong, Q.7, TP. HCM",
+  },
+  {
+    phone: "02871088248",
+    address: "248 Nguyễn Thị Thập, P. Tân Quy, Q. 7",
+  },
+  {
+    phone: "02871001579",
+    address: "579 Dương Bá Trạc, phường 1, Quận 8",
+  },
+  {
+    phone: "02871088241",
+    address: "241-243, Đỗ Xuân Hợp, P. Phước Long B, Quận 9",
+  },
+  {
+    phone: "02871061125",
+    address: "125 Lê Văn Việt, P. Hiệp Phú, Q. 9",
+  },
+  {
+    phone: "02871000241",
+    address: "241 Lê Văn Việt, P. Hiệp Phú, Q.9",
+  },
+  {
+    phone: "02871066288",
+    address: "288 Đường 3/2, P. 12, Q. 10",
+  },
+  {
+    phone: "02871000347",
+    address: "347 Nguyễn Tri Phương, Phường 5, Quận 10, TP. HCM",
+  },
+  {
+    phone: "02871000457",
+    address: "457B Lê Đại Hành, P.11, Quận 11",
+  },
+  {
+    phone: "02871012017",
+    address: "17 Phan Văn Hớn, P. Tân Thới Nhất, Q.12, TP. HCM",
+  },
+  {
+    phone: "02871088001",
+    address:
+      "1A Nguyễn Ảnh Thủ, khu phố 1, phường Hiệp Thành, Quận 12, TP. HCM",
+  },
+  {
+    phone: "02871000093",
+    address: "93/8C Nguyễn Ảnh Thủ, Q.12",
+  },
+  {
+    phone: "02871000632",
+    address: "632A Kha Vạn Cân, P. Linh Đông, TP. Thủ Đức, TP. HCM",
+  },
+  {
+    phone: "02871097939",
+    address: "18 Võ Văn Ngân, P. Trường Thọ, Q. Thủ Đức",
+  },
+  {
+    phone: "02871088439",
+    address: "4/39 Quang Trung, Thới Tam Thôn, Huyện Hóc Môn",
+  },
+  {
+    phone: "02871000312",
+    address: "C3/1A Phạm Hùng, Xã Bình Hưng, Huyện Bình Chánh, TP. HCM",
+  },
+  {
+    phone: "02871061716",
+    address: "1716/1 Huỳnh Tấn Phát, thị trấn Nhà Bè, Huyện Nhà Bè, TP. HCM",
+  },
+  {
+    phone: "02871000193",
+    address: "193 Tỉnh Lộ 8, Khu phố 3, Thị trấn Củ Chi, Huyện Củ Chi, TP. HCM",
+  },
+  {
+    phone: "02871000190",
+    address: "190B Hoàng Văn Thụ, P4, Quận Tân Bình",
+  },
+  {
+    phone: "02871015359",
+    address: "359 Cộng Hòa, Phường 13, Quận Tân Bình",
+  },
+  {
+    phone: "02871000956",
+    address: "956 Âu Cơ, P.14, Quận Tân Bình",
+  },
+  {
+    phone: "02871000272",
+    address: "272 Nguyễn Oanh, Phường 17, Q. Gò Vấp",
+  },
+  {
+    phone: "02871088059",
+    address: "59 Quang Trung, P. 10, Q. Gò Vấp",
+  },
+  {
+    phone: "02871000229",
+    address: "127 Nguyễn Thị Tú, P. Bình Hưng Hoà B, Q. Bình Tân",
+  },
+  {
+    phone: "02871068880",
+    address: "888 Tỉnh Lộ 10, P. Bình Trị Đông A, Q. Bình Tân",
+  },
+  {
+    phone: "02871016161",
+    address: "161 Nguyễn Sơn, P. Phú Thạnh, Q. Tân Phú",
+  },
+  {
+    phone: "02871000449",
+    address: "449 - 451 Tân Kỳ Tân Quý, P. Tân Quý, Q. Tân Phú",
+  },
+];

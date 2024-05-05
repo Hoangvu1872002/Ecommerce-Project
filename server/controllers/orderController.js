@@ -2,10 +2,10 @@ const orderModel = require("../models/order");
 const userModel = require("../models/user");
 const asyncHandler = require("express-async-handler");
 const { ObjectId } = require("mongodb");
+const productModel = require("../models/product");
 
 const createNewOrder = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  console.log(req.body);
   const {
     address,
     coupons,
@@ -17,6 +17,41 @@ const createNewOrder = asyncHandler(async (req, res) => {
     transportFee,
     paymentMethods,
   } = req.body;
+
+  // console.log(products);
+
+  for (let product of products) {
+    console.log("a");
+    const updateQuantityProduct = await productModel.updateOne(
+      { _id: new ObjectId(product.product._id), color: product.color }, // Điều kiện tìm kiếm sản phẩm dựa trên ID
+      { $inc: { quantity: -product.quantity, sold: product.quantity } },
+      { new: true } // Giảm số lượng sản phẩm đi product.quantity
+    );
+    console.log(updateQuantityProduct);
+    if (updateQuantityProduct.modifiedCount === 0) {
+      console.log(product.color);
+      const updateQuantityVarriant = await productModel.updateOne(
+        {
+          _id: new ObjectId(product.product._id),
+          varriants: { $elemMatch: { color: product.color } },
+        },
+        {
+          $inc: {
+            "varriants.$.quantity": -product.quantity,
+            "varriants.$.sold": product.quantity,
+          },
+        },
+        { new: true }
+      );
+      console.log(updateQuantityVarriant.modifiedCount === 0);
+      if (updateQuantityVarriant.modifiedCount === 0) {
+        return res.json({
+          success: false,
+          rs: "Don't update quantity.",
+        });
+      }
+    }
+  }
 
   const rs = await orderModel.create({
     address,
@@ -184,7 +219,9 @@ const getAdminOrders = asyncHandler(async (req, res) => {
 });
 
 const getAllOrders = asyncHandler(async (req, res) => {
-  const response = await orderModel.find().select("products status total updatedAt");
+  const response = await orderModel
+    .find()
+    .select("products status total updatedAt");
   return res.status(200).json({
     success: response ? true : false,
     order: response ? response : "err",

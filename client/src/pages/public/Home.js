@@ -10,6 +10,7 @@ import {
 import { useSelector } from "react-redux";
 import icons from "../../ultils/icons";
 import { ToastContainer } from "react-toastify";
+import Blogs from "../../components/blogs/Blogs";
 
 const { IoIosArrowForward } = icons;
 const Home = () => {
@@ -36,7 +37,7 @@ const Home = () => {
         <h3 className="text-[20px] font-semibold py-[15px] border-b-2 border-main">
           NEW ARRIVALS
         </h3>
-        <div className="mt-4 border">
+        <div className="mt-4 border rounded-lg">
           <CustomSlider
             products={newProducts}
             slidesToShow={4}
@@ -76,10 +77,13 @@ const Home = () => {
               ))}
           </div>
         </div>
-        <div className="my-8 w-full">
+        <div className="my-8 w-full mb-[100px]">
           <h3 className="text-[20px] font-semibold py-[15px] border-b-2 border-main">
             POSTS
           </h3>
+          <div className="mt-4">
+            <Blogs></Blogs>
+          </div>
         </div>
       </div>
       <ToastContainer autoClose={1200} />

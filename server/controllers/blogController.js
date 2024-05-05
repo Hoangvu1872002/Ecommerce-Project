@@ -39,29 +39,31 @@ const getBlogs = asyncHandler(async (req, res) => {
     /\b(gte|gt|lt|lte)\b/g,
     (macthedEl) => `$${macthedEl}`
   );
-  console.log("a");
+  // console.log("a");
   const formatedQueries = JSON.parse(queryString);
-  console.log("d");
+  // console.log("d");
   let queryObject = {};
   if (queries?.q) {
     delete formatedQueries.q;
     queryObject = {
       $or: [
-        { color: { $regex: queries?.q, $options: "i" } },
+        // { color: { $regex: queries?.q, $options: "i" } },
         { title: { $regex: queries?.q, $options: "i" } },
-        { category: { $regex: queries?.q, $options: "i" } },
-        { brand: { $regex: queries?.q, $options: "i" } },
+        // { category: { $regex: queries?.q, $options: "i" } },
+        // { brand: { $regex: queries?.q, $options: "i" } },
       ],
     };
   }
-  console.log("b");
+  // console.log("b");
   const queryCommand = blogModel.find(queryObject);
+
+  queryCommand.sort("-createdAt");
 
   const page = +req.query.page || 1;
   const limit = +req.query.limit || process.env.LIMIT_PRODUCT;
   const skip = (page - 1) * limit;
   queryCommand.skip(skip).limit(limit);
-  console.log("a");
+  // console.log("a");
   queryCommand
     .then(async (response) => {
       const counts = await blogModel.find(queryCommand).countDocuments();
@@ -175,10 +177,13 @@ const dislikeBlog = asyncHandler(async (req, res) => {
 const getOneBlog = asyncHandler(async (req, res) => {
   const { bid } = req.params;
   console.log(bid);
-  const blog = await blogModel
-    .findByIdAndUpdate(bid, { $inc: { numberViews: 1 } }, { new: true })
-    // .populate("likes", "firstname lastname")
-    // .populate("dislikes", "firstname lastname");
+  const blog = await blogModel.findByIdAndUpdate(
+    bid,
+    { $inc: { numberViews: 1 } },
+    { new: true }
+  );
+  // .populate("likes", "firstname lastname")
+  // .populate("dislikes", "firstname lastname");
   return res.json({
     success: blog ? true : false,
     blog: blog ? blog : " Cannot get blogs.",

@@ -11,7 +11,7 @@ import {
 } from "../../components";
 import Slider from "react-slick";
 import ReactImageMagnify from "react-image-magnify";
-import { productExtrainfoData } from "../../ultils/contants";
+import { addressStore, productExtrainfoData } from "../../ultils/contants";
 import {
   formatMoney,
   fotmatPrice,
@@ -27,6 +27,7 @@ import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { getCurrent } from "../../store/users/asyncAction";
 import { showCart } from "../../store/app/appSlice";
+import icons from "../../ultils/icons";
 
 const settings = {
   dots: false,
@@ -39,6 +40,8 @@ const settings = {
 const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
   const params = useParams();
   const titleRef = useRef();
+
+  const { FaPhoneAlt, IoLocation } = icons;
 
   const { current, currentCart } = useSelector((state) => state.user);
 
@@ -69,7 +72,6 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
     }
     // console.log(responese.productData);
   };
-  console.log(product);
   const category = params?.category || data?.category;
 
   const fetchProducts = async () => {
@@ -171,14 +173,21 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
     }
   }, [pid]);
 
+  // console.log( product?.varriants?.find((e) => e.sku === varriant));
+  // console.log(currentProduct);
+
   useEffect(() => {
     setCurentProduct({
       title: product?.varriants?.find((e) => e.sku === varriant)?.title || "",
       color: product?.varriants?.find((e) => e.sku === varriant)?.color || "",
       price: product?.varriants?.find((e) => e.sku === varriant)?.price || "",
       sold:
-        product?.varriants?.find((e) => e.sku === varriant)?.sold === 0
+        product?.varriants?.find((e) => e.sku === varriant)?.sold === 1
+          ? 1
+          : 0 || product?.varriants?.find((e) => e.sku === varriant)?.sold === 0
           ? 0
+          : product?.varriants?.find((e) => e.sku === varriant)?.sold > 1
+          ? product?.varriants?.find((e) => e.sku === varriant)?.sold
           : "",
       quantity:
         product?.varriants?.find((e) => e.sku === varriant)?.quantity || "",
@@ -189,6 +198,10 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
       product?.varriants?.find((e) => e.sku === varriant)?.thumb ||
         product.thumb
     );
+    if (params && params.pid) {
+      titleRef.current.scrollIntoView({ block: "start" });
+    }
+    // titleRef.current.scrollIntoView({ block: "start" });
   }, [varriant]);
   // console.log(currentProduct);
 
@@ -310,9 +323,13 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
               <span className="text-xs text-main pl-2">{`( ${
                 product?.ratings?.length
               } reviews / ${
-                currentProduct?.sold || currentProduct?.sold === 0
+                currentProduct?.sold === 0
                   ? 0
-                  : false || product?.sold
+                  : currentProduct?.sold === 1
+                  ? 1
+                  : currentProduct?.sold > 1
+                  ? currentProduct?.sold
+                  : "" || product.sold
               } sales )`}</span>
             </div>
             <div className=" py-2 px-4 border shadow-md rounded-lg flex flex-col">
@@ -409,7 +426,9 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
                   (e) =>
                     (e.product?._id === pid &&
                       e.color === currentProduct?.color) ||
-                    (e.product?._id === pid && e.color === product?.color)
+                    (e.product?._id === pid &&
+                      e.color === product?.color &&
+                      currentProduct?.color === "")
                 ) ? (
                   <Button
                     type="text"
@@ -433,15 +452,55 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
             </div>
           </div>
           {!isQuickView && (
-            <div className=" w-2/5">
-              {productExtrainfoData.map((e) => (
-                <ProductExtrainfo
-                  key={e.id}
-                  title={e.title}
-                  icon={e.icon}
-                  sub={e.sub}
-                ></ProductExtrainfo>
-              ))}
+            <div className=" w-2/5 flex flex-col gap-3">
+              <div>
+                {productExtrainfoData.map((e) => (
+                  <ProductExtrainfo
+                    key={e.id}
+                    title={e.title}
+                    icon={e.icon}
+                    sub={e.sub}
+                  ></ProductExtrainfo>
+                ))}
+              </div>
+              <div className="flex flex-col gap-1">
+                <div className="pl-1 text-sm">
+                  Available at
+                  <span className="font-bold text-base text-main ">
+                    {" "}
+                    33
+                  </span>{" "}
+                  stores.
+                </div>
+
+                <div
+                  id="custom-scrollbar"
+                  className="flex border rounded-lg shadow-md px-1 py-2 flex-col gap-2 max-h-[280px] overflow-y-auto"
+                >
+                  {addressStore?.map((e, index) => (
+                    <div
+                      key={index}
+                      className={clsx(
+                        "flex flex-col py-1 px-2 gap-1 rounded-md shadow",
+                        +index % 2 === 0 ? "bg-gray-100" : ""
+                      )}
+                    >
+                      <span className="text-xs flex gap-2 justify-start items-center text-main font-semibold">
+                        <span>
+                          <FaPhoneAlt></FaPhoneAlt>
+                        </span>
+                        <span>{e.phone}</span>
+                      </span>
+                      <span className="text-xs flex gap-2 justify-start items-start text-blue-500 font-medium">
+                        <span className="mt-[1px]">
+                          <IoLocation></IoLocation>
+                        </span>
+                        <span>{e.address}</span>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </div>

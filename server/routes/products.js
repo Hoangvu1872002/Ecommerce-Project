@@ -9,6 +9,7 @@ const {
   rating,
   uploadImagesProduct,
   addVarriants,
+  deleteVarriants,
 } = require("../controllers/productController");
 const { verifyAccessToken, isAdmin } = require("../middlewares/verifyToken");
 const uploadImage = require("../config/cloudinary.config");
@@ -54,7 +55,7 @@ router.put(
   ]),
   updateProduct
 );
-
+router.delete("/varriant/:pid/:color", verifyAccessToken, isAdmin, deleteVarriants);
 router.delete("/:pid", verifyAccessToken, isAdmin, deleteProduct);
 router.get("/:pid", getProduct);
 

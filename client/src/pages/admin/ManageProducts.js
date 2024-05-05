@@ -63,6 +63,11 @@ const ManageProducts = () => {
       setCout(response.counts);
       setProducts(response.products);
     }
+    if (customizeVarriant) {
+      setCustomizeVarriant(
+        response?.products?.find((e) => e._id === customizeVarriant._id)
+      );
+    }
   };
 
   const queryDebounce = useDebounce(watch("q"), 800);
@@ -102,8 +107,7 @@ const ManageProducts = () => {
             customizeVarriant={customizeVarriant}
             setCustomizeVarriant={setCustomizeVarriant}
             render={render}
-          >
-          </CustomizeVarriants>
+          ></CustomizeVarriants>
         </div>
       )}
       <h1 className="fixed z-10 bg-gray-100 w-full h-[75px] flex justify-between items-center text-3xl font-bold px-5 border-b">
@@ -164,7 +168,9 @@ const ManageProducts = () => {
                 <td className="px-2 py-2">{e.sold}</td>
                 <td className="px-2 max-w-[70px] py-2">{e.color}</td>
                 <td className="px-1 text-center py-2">{e.totalRating}</td>
-                <td className="px-2 text-center py-2">{e.varriants.length || 0}</td>
+                <td className="px-2 text-center py-2">
+                  {e.varriants.length || 0}
+                </td>
                 <td className="px-2 py-2">
                   {moment(e.createAt).format("DD/MM/YYYY")}
                 </td>

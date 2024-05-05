@@ -5,10 +5,13 @@ const slugify = require("slugify");
 const makeSKU = require("uniqid");
 
 const createProduct = asyncHandler(async (req, res) => {
-  const { title, price, description, brand, category, color, discount } = req.body;
+  const { title, price, description, brand, category, color, discount } =
+    req.body;
   const thumb = req.files?.thumb[0]?.path;
   const images = req.files?.images?.map((e) => e.path);
-  if (!(title && price && description && brand && category && color && discount))
+  if (
+    !(title && price && description && brand && category && color && discount)
+  )
     throw new Error("Missing inputs");
   req.body.slug = slugify(req.body.title);
   if (thumb) req.body.thumb = thumb;
@@ -89,14 +92,11 @@ const getManyProduct = asyncHandler(async (req, res) => {
   }
 
   const combinedQuery = {
-    $and : [
-      colorQueryObject,
-      queryObject
-    ]
-  }
+    $and: [colorQueryObject, queryObject],
+  };
 
   // const qr = { ...colorQueryObject, ...formatedQueries, ...queryObject };
-  const qr = { ...combinedQuery, ...formatedQueries,  };
+  const qr = { ...combinedQuery, ...formatedQueries };
   let queryCommand = productModel.find(qr);
 
   //sorting
@@ -259,6 +259,27 @@ const addVarriants = asyncHandler(async (req, res) => {
   });
 });
 
+const deleteVarriants = asyncHandler(async (req, res) => {
+  const { pid, color } = req.params;
+  console.log({pid, color});
+  if (!color) throw new Error("Missing inputs");
+  const response = await productModel.findByIdAndUpdate(
+    pid,
+    {
+      $pull: {
+        varriants: {
+          color,
+        },
+      },
+    },
+    { new: true }
+  );
+  return res.status(200).json({
+    success: response ? true : false,
+    mes: response ? "Deleted varriant." : "Cannot delete varriant.",
+  });
+});
+
 module.exports = {
   createProduct,
   getProduct,
@@ -268,4 +289,5 @@ module.exports = {
   rating,
   uploadImagesProduct,
   addVarriants,
+  deleteVarriants,
 };

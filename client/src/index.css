@@ -113,3 +113,13 @@ code {
   height: 458px;
   width: 458px;
 }
+
+#custom-scrollbar::-webkit-scrollbar {
+  width: 5px; /* Độ rộng của thanh cuộn */
+}
+
+#custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #888; /* Màu nền của nút trượt */
+  border-radius: 5px; /* Đường viền cong của nút trượt */
+}
+

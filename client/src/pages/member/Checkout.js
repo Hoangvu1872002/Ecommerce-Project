@@ -6,7 +6,7 @@ import icons from "../../ultils/icons";
 import Button from "../../components/buttons/Button";
 import withBase from "../../hocs/withBase";
 import path from "../../ultils/path";
-import { apiCreateOrder } from "../../apis";
+import { apiCreateOrder, apiVnpay } from "../../apis";
 import { getCurrent } from "../../store/users/asyncAction";
 import Swal from "sweetalert2";
 import Congrat from "../../components/common/Congrat";
@@ -30,6 +30,7 @@ const Checkout = ({ navigate, dispatch }) => {
       setTextareaValue(event.target.value);
     }, 500);
   };
+  
 
   const totalPayment =
     currentCart?.reduce((sum, el) => +el?.price * el?.quantity + sum, 0) +
@@ -76,6 +77,17 @@ const Checkout = ({ navigate, dispatch }) => {
         });
       }, [500]);
     }
+  };
+
+  const handleVnpay = async () => {
+    localStorage.setItem(
+      "dataCheckout",
+      JSON.stringify({ dataCheckout: data })
+    );
+    const response = await apiVnpay({ total: totalPayment, locale: "vn" });
+    // navigate(`/${path.CHECKOUT_SUCCESS}`);
+    window.location.href = response;
+    // window.open(response)
   };
 
   useEffect(() => {
@@ -195,6 +207,7 @@ const Checkout = ({ navigate, dispatch }) => {
                   Terms
                 </li>
                 <Button
+                  handleOnClick={handleVnpay}
                   style={
                     "px-1 py-2 my-2 rounded-md text-white bg-gray-400 hover:bg-gray-500"
                   }

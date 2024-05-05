@@ -17,7 +17,7 @@ import moment from "moment";
 const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
   const [orders, setOrders] = useState();
   const [count, setCout] = useState(0);
-  const [scroll, setScroll] = useState(() => resetHistoryOrder);
+  // const [scroll, setScroll] = useState(() => resetHistoryOrder);
 
   const titleRef = useRef();
 
@@ -55,10 +55,15 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
   useEffect(() => {
     const searchParams = Object.fromEntries([...params]);
     fetchOrder(searchParams);
-    if (scroll === resetHistoryOrder) {
-      titleRef.current.scrollIntoView({ block: "start" });
-    }
+    // if (scroll === resetHistoryOrder) {
+    //   titleRef.current.scrollIntoView({ block: "start" });
+    // }
   }, [params, resetHistoryOrder]);
+
+  useEffect(() => {
+    titleRef.current.scrollIntoView({ block: "start" });
+  }, [params]);
+
 
   useEffect(() => {
     if (queryDebounce) {

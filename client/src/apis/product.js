@@ -46,3 +46,9 @@ export const apiAddVarriant = (data, pid) =>
     method: "put",
     data,
   });
+
+export const apiDeleteVarriant = (color, pid) =>
+  axios({
+    url: "/products/varriant/" + pid + "/" + color,
+    method: "delete",
+  });

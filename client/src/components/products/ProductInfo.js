@@ -74,7 +74,7 @@ const ProductInfo = ({ totalRating, ratings, nameProduct, pid, rerender }) => {
           </span>
         ))}
       </div>
-      <div className="w-full border p-4 shadow-md rounded-b-lg">
+      <div className="w-full border p-4 shadow-md rounded-b-lg rounded-r-lg">
         {productInfoTabs.some((e) => e.id === activedTab) &&
           productInfoTabs.find((e) => e.id === activedTab)?.content}
       </div>

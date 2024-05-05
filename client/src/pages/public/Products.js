@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   createSearchParams,
   useLocation,
@@ -15,7 +15,7 @@ import {
   SearchItem,
 } from "../../components";
 import { apiGetProducts } from "../../apis";
-import Masonry from "react-masonry-css";
+// import Masonry from "react-masonry-css";
 import { sorts, limit } from "../../ultils/contants";
 import { ToastContainer } from "react-toastify";
 import { useForm } from "react-hook-form";
@@ -30,6 +30,8 @@ import useDebounce from "../../hooks/useDebounce";
 // };
 
 const Products = () => {
+  const titleRef = useRef();
+
   const {
     register,
     formState: { errors },
@@ -88,7 +90,8 @@ const Products = () => {
       qr = { ...priceQuery, ...queries, ...{ category }, ...{ que } };
     }
     fetchProductsByCategory(qr);
-    window.scrollTo(0, 0);
+    // window.scrollTo(0, 0);
+    titleRef.current.scrollIntoView({ block: "start" });
   }, [params, que]);
 
   const changeActiveFitler = useCallback(
@@ -124,10 +127,11 @@ const Products = () => {
     //     }).toString(),
     //   });
     // }
+  
   }, [sort]);
   return (
     <div className="w-full">
-      <div className="h-[81px] mt-4 flex justify-center items-center bg-gray-50">
+      <div ref={titleRef} className="h-[81px] mt-4 flex justify-center items-center bg-gray-50">
         <div className="w-main">
           <span className="font-semibold text-[18px] uppercase">
             {category === ":category" ? category.slice(1) : category}

@@ -67,7 +67,7 @@ const OrderItem = ({ e, dispatch, defaultQuantity = 1 }) => {
             className="w-14 h-14 object-cover"
           ></img>
           <div className="flex flex-col items-start gap-1 ml-2">
-            <span className="text-main text-sm">{e?.title}</span>
+            <span className="text-sm">{e?.title}</span>
             <span className="text-[10px]">{e?.color}</span>
           </div>
         </div>

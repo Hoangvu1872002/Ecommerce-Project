@@ -5,7 +5,7 @@ const { MdEmail } = icons;
 const Footer = () => {
   return (
     <div className="w-full ">
-      <div className="flex items-center w-full h-[103px] bg-main justify-center">
+      <div className="flex items-center w-full h-[80px] bg-main justify-center">
         <div className="w-main flex items-center justify-between">
           <div className="flex flex-col flex-1">
             <span className="text-[20px] text-gray-100">

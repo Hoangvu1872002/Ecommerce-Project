@@ -35,7 +35,10 @@ const ManageBlogs = ({ navigate }) => {
   const [params] = useSearchParams();
 
   const fetchBlogs = async (params) => {
-    const response = await apiGetBlogs({ ...params, limit });
+    const response = await apiGetBlogs({
+      ...params,
+      limit,
+    });
     if (response.success) {
       setCout(response.blogs.length);
       setBlogs(response.blogs);
@@ -134,14 +137,14 @@ const ManageBlogs = ({ navigate }) => {
                   <img
                     src={e.thumb}
                     alt="thumb"
-                    className="w-16 h16 object-cover"
+                    className="w-16 h-16 object-cover"
                   ></img>
                 </td>
                 <td className="px-4 py-2 max-w-[130px]">{e.title}</td>
-                <td className="px-2  py-2">{e.likes.length || 0}</td>
-                <td className="px-2  py-2">{e.dislikes.length || 0}</td>
+                <td className="px-2 py-2">{e.likes.length || 0}</td>
+                <td className="px-2 py-2">{e.dislikes.length || 0}</td>
                 <td className="px-2 py-2">
-                  {moment(e.createAt).format("DD/MM/YYYY")}
+                  {moment(e.createdAt).format("DD/MM/YYYY")}
                 </td>
                 <td className="px-2 py-2  h-full">
                   <div className="flex gap-4 justify-start items-center h-full">

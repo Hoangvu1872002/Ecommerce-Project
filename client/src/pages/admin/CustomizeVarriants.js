@@ -1,11 +1,16 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import { Button, InputForm, Loading } from "../../components";
 import { useForm } from "react-hook-form";
 import { getBase64, validate } from "../../ultils/helper";
 import Swal from "sweetalert2";
 import withBase from "../../hocs/withBase";
 import { showModal } from "../../store/app/appSlice";
-import { apiAddVarriant } from "../../apis";
+import { apiAddVarriant, apiDeleteVarriant } from "../../apis";
+import { useSearchParams } from "react-router-dom";
+import { limit } from "../../ultils/contants";
+import moment from "moment";
+import icons from "../../ultils/icons";
+import { ToastContainer } from "react-toastify";
 
 const CustomizeVarriants = ({
   customizeVarriant,
@@ -14,6 +19,10 @@ const CustomizeVarriants = ({
   toast,
   dispatch,
 }) => {
+  const { MdDeleteForever } = icons;
+
+  const titleRef = useRef();
+
   const {
     register,
     formState: { errors },
@@ -22,13 +31,34 @@ const CustomizeVarriants = ({
     watch,
   } = useForm();
 
+  // console.log(customizeVarriant);
+
+  const [params] = useSearchParams();
+
   const [preview, setPreview] = useState({
     thumb: null,
     images: [],
   });
 
+  const handleDeleteBlog = (data) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Are you sure remove this product",
+      icon: "warning",
+      showCancelButton: true,
+    }).then(async (rs) => {
+      if (rs.isConfirmed) {
+        const response = await apiDeleteVarriant(data, customizeVarriant._id);
+        if (response.success) toast.success(response.mes);
+        else toast.error(response.mes);
+        render();
+        titleRef.current.scrollIntoView({ block: "start" });
+      }
+    });
+  };
+
   const handleAddvarriant = async (data) => {
-    console.log(customizeVarriant);
+    // console.log(customizeVarriant);
     if (
       data.color === customizeVarriant.color ||
       customizeVarriant.varriants.find((e) => e.color === data.color)
@@ -56,6 +86,8 @@ const CustomizeVarriants = ({
           thumb: null,
           images: [],
         });
+        render();
+        titleRef.current.scrollIntoView({ block: "start" });
       } else {
         toast.error(response.mes, {
           position: toast.POSITION.TOP_RIGHT,
@@ -104,7 +136,7 @@ const CustomizeVarriants = ({
   }, [watch("images")]);
 
   return (
-    <div className="w-full">
+    <div ref={titleRef} className="w-full">
       <div className="flex w-full">
         <h1 className="fixed z-50 bg-gray-100 w-full h-[75px] flex justify-between items-center text-3xl font-bold px-5 border-b">
           <span>Customize Varriants </span>
@@ -116,6 +148,59 @@ const CustomizeVarriants = ({
         </div>
       </div>
       <div className="h-[75px] w-full"></div>
+      <div className="px-4 mt-8">
+        {customizeVarriant?.varriants.length > 0 && (
+          <div className="flex flex-col gap-2">
+            <div className="font-medium">Product variation table:</div>
+            <table className="table-auto mb-6 text-left w-full ">
+              <thead className="font-bold bg-gray-700 text-[13px]  text-white">
+                <tr className="border border-gray-500">
+                  <th className="px-4 py-2">#</th>
+                  <th className="px-2 py-2">Thumb</th>
+                  <th className="px-4 py-2">Title</th>
+                  <th className="px-2 py-2">Color</th>
+                  <th className="px-2 py-2">Quantity</th>
+                  <th className="px-2 py-2">Sold</th>
+                  <th className="px-2 py-2">Active</th>
+                </tr>
+              </thead>
+              <tbody>
+                {customizeVarriant?.varriants?.map((e, index) => (
+                  <tr key={e._id} className="border border-gray-500">
+                    <td className="px-4 py-2">
+                      {index +
+                        (params.get("page") - 1 > 0
+                          ? params.get("page") - 1
+                          : 0) *
+                          limit +
+                        1}
+                    </td>
+                    <td className="px-2 py-2">
+                      <img
+                        src={e.thumb}
+                        alt="thumb"
+                        className="w-8 h-8 object-cover"
+                      ></img>
+                    </td>
+                    <td className="px-4 py-2 max-w-[130px]">{e.title}</td>
+                    <td className="px-2 py-2">{e.color}</td>
+                    <td className="px-2 py-2">{e.quantity}</td>
+                    <td className="px-2 py-2">{e.sold}</td>
+                    <td className="px-2 py-2  h-full">
+                      <span
+                        onClick={() => handleDeleteBlog(e.color)}
+                        className=" inline-block text-blue-500 hover:text-orange-600 cursor-pointer"
+                      >
+                        <MdDeleteForever size={20}></MdDeleteForever>
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
       <form
         onSubmit={handleSubmit(handleAddvarriant)}
         className="p-4 w-full flex flex-col gap-4"
@@ -229,6 +314,7 @@ const CustomizeVarriants = ({
         )}
         <Button type="submit">Add varriant</Button>
       </form>
+      <ToastContainer autoClose={1200} />
     </div>
   );
 };

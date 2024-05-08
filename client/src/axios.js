@@ -1,21 +1,21 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://127.0.0.1:5001",
-  // baseURL: 'https://hoangvux-be-ecommerce.onrender.com',
+  // baseURL: "http://127.0.0.1:5001",
+  baseURL: "https://hoangvux-be-ecommerce.onrender.com",
 });
 // Thêm một bộ đón chặn request
 instance.interceptors.request.use(
   function (config) {
     // Làm gì đó trước khi request dược gửi đi
     let localStorageData = window.localStorage.getItem("persist:shop/user");
-    
+
     if (localStorageData && typeof localStorageData === "string") {
       localStorageData = JSON.parse(localStorageData);
       const accessToken = JSON.parse(localStorageData?.token);
-      config.headers = { authorization: `Bearer ${accessToken}` }
-      return config
-    }else return config
+      config.headers = { authorization: `Bearer ${accessToken}` };
+      return config;
+    } else return config;
   },
   function (error) {
     // Làm gì đó với lỗi request

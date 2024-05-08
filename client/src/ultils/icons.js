@@ -35,7 +35,7 @@ import {
   BsFillCartCheckFill,
   BsBackspaceReverseFill,
   BsLaptop,
-  BsFillUsbPlugFill
+  BsFillUsbPlugFill,
 } from "react-icons/bs";
 import { AiOutlineDashboard } from "react-icons/ai";
 import { RiProductHuntLine, RiBillLine } from "react-icons/ri";
@@ -47,7 +47,7 @@ import { FiCamera, FiSpeaker } from "react-icons/fi";
 import { PiTelevisionLight } from "react-icons/pi";
 import { GiMoneyStack } from "react-icons/gi";
 import { LuUsers2 } from "react-icons/lu";
-
+import { VscDebugBreakpointDataUnverified } from "react-icons/vsc";
 
 const icons = {
   FaPhoneAlt,
@@ -89,7 +89,7 @@ const icons = {
   IoLocation,
   TbExchange,
   FaBlog,
-//
+  //
   SlScreenSmartphone,
   LiaTabletAltSolid,
   BsLaptop,
@@ -101,6 +101,8 @@ const icons = {
 
   GiMoneyStack,
   LuUsers2,
+
+  VscDebugBreakpointDataUnverified,
 };
 
 export default icons;

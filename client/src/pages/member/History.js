@@ -64,7 +64,6 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
     titleRef.current.scrollIntoView({ block: "start" });
   }, [params]);
 
-
   useEffect(() => {
     if (queryDebounce) {
       navigate({
@@ -200,14 +199,21 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
               </div>
             </div>
             <div className="py-2 border mx-auto bg-gray-200 w-main">
-              <div className="font-semibold grid grid-cols-11">
-                <span className="col-span-3 w-full text-center">Products</span>
-                <span className="col-span-2 w-full text-center">Type</span>
-                <span className="col-span-2 w-full text-center">
+              <div className="font-semibold flex">
+                <span className="px-4 flex-1 w-full text-center">#</span>
+                <span className="px-4 flex-8 w-full text-center">Products</span>
+                <span className="px-4 flex-4 w-full text-center">Color</span>
+                <span className="px-4 flex-6 w-full text-center">
                   Unit price
                 </span>
-                <span className="col-span-2 w-full text-center"> Quantity</span>
-                <span className="col-span-2 w-full flex items-center justify-end pr-4">
+                <span className="px-4 flex-6 w-full text-center">
+                  Original price
+                </span>
+                <span className="px-4 flex-4 w-full text-center">
+                  {" "}
+                  Quantity
+                </span>
+                <span className="px-4 flex-6 w-full text-center">
                   Amount of money
                 </span>
               </div>
@@ -216,11 +222,14 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
               {el?.products?.map((e, index) => (
                 <div key={index}>
                   <div
-                    className=" border-b grid grid-cols-11 w-full py-3 mx-auto bg-gray-50
+                    className=" border-b flex w-full py-3 mx-auto bg-gray-50
                 "
                   >
-                    <span className="col-span-3 w-full text-center flex justify-start pl-4 items-center">
-                      <div className="flex gap-2  items-center ">
+                    <span className="px-4 flex-1 w-full text-center flex items-center justify-center">
+                      {index}
+                    </span>
+                    <span className="px-4 flex-8 w-full text-center flex justify-start items-center">
+                      <div className="flex gap-2 pl-8  items-center ">
                         <img
                           src={e?.thumbnail}
                           alt="thumb"
@@ -231,16 +240,24 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                         </div>
                       </div>
                     </span>
-                    <span className="col-span-2 text-sm w-full text-center flex justify-center items-center">
+                    <span className="px-4 flex-4 text-sm w-full text-center flex justify-center items-center">
                       {e?.color}
                     </span>
-                    <span className="col-span-2 text-sm w-full text-center flex justify-center items-center">
+                    <span className="px-4 flex-6 text-sm text-main w-full text-center flex justify-center items-center">
                       {formatMoney(e?.price) + " vnd"}
                     </span>
-                    <span className="col-span-2 text-sm w-full text-center flex justify-center items-center">
+
+                    <span className="px-4 flex-6 w-full text-center text-sm text-gray-500 line-through flex justify-center items-center">
+                      {formatMoney(
+                        Math.ceil((e?.price / (100 - (e.discount || 0))) * 100)
+                      )}{" "}
+                      vnd
+                    </span>
+
+                    <span className="px-4 flex-4 text-sm w-full text-center flex justify-center items-center">
                       {e?.quantity}
                     </span>
-                    <span className="col-span-2 w-full text-sm flex justify-end pr-4 items-center">
+                    <span className="px-4 flex-6 w-full text-sm flex justify-end pr-4 items-center">
                       {formatMoney(e?.price * e?.quantity) + " vnd"}
                     </span>
                   </div>

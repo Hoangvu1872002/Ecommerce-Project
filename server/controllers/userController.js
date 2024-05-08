@@ -10,6 +10,8 @@ const sendMail = require("../ultils/sendMail");
 const crypto = require("crypto");
 const makeToken = require("uniqid");
 const { users } = require("../ultils/constant");
+const productModel = require("../models/product");
+const { ObjectId } = require("mongodb");
 
 // const register = asyncHandler(async (req, res) => {
 //   const { email, password, firstname, lastname, mobile } = req.body;
@@ -156,7 +158,8 @@ const getCurrent = asyncHandler(async (req, res) => {
         path: "product",
         select: "title thumb price",
       },
-    }).populate("wishlist", "totalRating title thumb price color _id discount");
+    })
+    .populate("wishlist", "totalRating title thumb price color _id discount");
   return res.status(200).json({
     success: user ? true : false,
     rs: user ? user : "User not found!",
@@ -378,45 +381,156 @@ const updateUserAddress = asyncHandler(async (req, res) => {
 
 const updateCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  const { pid, quantity = 1, color, price, thumbnail, title } = req.body;
+  const {
+    pid,
+    quantity = 1,
+    color,
+    price,
+    thumbnail,
+    title,
+    discount,
+  } = req.body;
+  console.log(discount);
   if (!pid || !color) throw new Error("Missing inputs");
   const user = await userModel.findById(_id).select("cart");
   const alreadyProduct = user?.cart.find(
     (el) => el.product.toString() === pid && el.color === color
   );
   if (alreadyProduct) {
-    const response = await userModel.updateOne(
-      {
-        cart: { $elemMatch: alreadyProduct },
-      },
-      {
-        $set: {
-          "cart.$.quantity": quantity,
-          "cart.$.price": price,
-          "cart.$.thumbnail": thumbnail,
-          "cart.$.title": title,
-        },
-      },
-      { new: true }
-    );
-    return res.status(200).json({
-      success: response ? true : false,
-      mes: response ? "Updated your cart." : "Some thing went wrong.",
+    const findProduct = await productModel.findOne({
+      _id: new ObjectId(pid),
+      color: color,
     });
+
+    let findVarriant = null;
+    if (!findProduct) {
+      findVarriant = await productModel.findOne({
+        _id: new ObjectId(pid),
+        varriants: { $elemMatch: { color: color } },
+      });
+    }
+
+    let checkQuantity = false;
+    let checkQuantityClear0 = false;
+    if (findProduct) {
+      if (findProduct.quantity === 0) {
+        await userModel.findByIdAndUpdate(
+          _id,
+          {
+            $pull: {
+              cart: { product: pid, color },
+            },
+          },
+          { new: true }
+        );
+        checkQuantityClear0 = true;
+      } else if (findProduct.quantity >= quantity) checkQuantity = true;
+    } else if (findVarriant) {
+      if (
+        findVarriant.varriants.find((e) => e.color === color).quantity === 0
+      ) {
+        await userModel.findByIdAndUpdate(
+          _id,
+          {
+            $pull: {
+              cart: { product: pid, color },
+            },
+          },
+          { new: true }
+        );
+        checkQuantityClear0 = true;
+      } else if (
+        findVarriant.varriants.find((e) => e.color === color).quantity >=
+        quantity
+      )
+        checkQuantity = true;
+    }
+
+    // console.log(checkQuantity);
+
+    if (checkQuantity) {
+      const response = await userModel.updateOne(
+        {
+          cart: { $elemMatch: alreadyProduct },
+        },
+        {
+          $set: {
+            "cart.$.quantity": quantity,
+            "cart.$.price": price,
+            // "cart.$.thumbnail": thumbnail,
+            // "cart.$.title": title,
+          },
+        },
+        { new: true }
+      );
+      return res.status(200).json({
+        success: response ? true : false,
+        mes: response ? "Updated your cart." : "Some thing went wrong.",
+      });
+    } else {
+      return res.status(200).json({
+        success: false,
+        notEnough: true,
+        checkQuantityClear0,
+        mes: checkQuantityClear0
+          ? `Product quantity of ${title} color ${color}  is out of stock.`
+          : `Product quantity of ${title} color ${color}  is not enough.`,
+      });
+    }
   } else {
-    const response = await userModel.findByIdAndUpdate(
-      _id,
-      {
-        $push: {
-          cart: { product: pid, quantity, color, price, thumbnail, title },
-        },
-      },
-      { new: true }
-    );
-    return res.status(200).json({
-      success: response ? true : false,
-      mes: response ? "Updated your cart." : "Some thing went wrong.",
+    const findProduct = await productModel.findOne({
+      _id: new ObjectId(pid),
+      color: color,
     });
+
+    let findVarriant = null;
+    if (!findProduct) {
+      findVarriant = await productModel.findOne({
+        _id: new ObjectId(pid),
+        varriants: { $elemMatch: { color: color } },
+      });
+    }
+
+    let checkQuantity = false;
+    if (findProduct) {
+      if (findProduct.quantity >= quantity) checkQuantity = true;
+    } else if (findVarriant) {
+      if (
+        findVarriant.varriants.find((e) => e.color === color).quantity >=
+        quantity
+      )
+        checkQuantity = true;
+    }
+
+    if (checkQuantity) {
+      const response = await userModel.findByIdAndUpdate(
+        _id,
+        {
+          $push: {
+            cart: {
+              product: pid,
+              quantity,
+              color,
+              price,
+              thumbnail,
+              title,
+              discount,
+            },
+          },
+        },
+        { new: true }
+      );
+      return res.status(200).json({
+        success: response ? true : false,
+        mes: response ? "Updated your cart." : "Some thing went wrong.",
+      });
+    } else {
+      return res.status(401).json({
+        success: false,
+        notEnough: true,
+        mes: `Product quantity of ${title} color ${color}  is not enough.`,
+      });
+    }
   }
 });
 

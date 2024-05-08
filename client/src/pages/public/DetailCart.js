@@ -43,20 +43,28 @@ const DetailCart = ({ navigate }) => {
       </div>
       <div className="w-main mx-auto mt-4 my-8">
         <div className="py-4 border mx-auto bg-gray-200 w-main">
-          <div className="font-semibold grid grid-cols-11">
-            <span className="col-span-3 w-full text-center">Products</span>
-            <span className="col-span-2 w-full text-center">Unit price</span>
-            <span className="col-span-2 w-full text-center"> Quantity</span>
-            <span className="col-span-2 w-full text-center">
+          <div className="font-semibold flex">
+            <span className="px-4 flex-1 w-full text-center">#</span>
+            <span className="px-4 flex-8 w-full text-center">Products</span>
+            <span className="px-4 flex-6 w-full text-center">Unit price</span>
+            <span className="px-4 flex-6 w-full text-center">
+              Original price
+            </span>
+            <span className="px-4 flex-4 w-full text-center"> Quantity</span>
+            <span className="px-4 flex-6 w-full text-center">
               Amount of money
             </span>
-            <span className="col-span-2 w-full text-center">Action</span>
+            <span className="px-4 flex-4 w-full text-center">Action</span>
           </div>
         </div>
 
         {currentCart?.map((e, index) => (
           <div key={index}>
-            <OrderItem e={e} defaultQuantity={e.quantity}></OrderItem>
+            <OrderItem
+              e={e}
+              defaultQuantity={e.quantity}
+              index={index}
+            ></OrderItem>
           </div>
         ))}
         <div className="w-main mx-auto flex flex-col gap-3 items-end justify-center mt-4">
@@ -84,7 +92,7 @@ const DetailCart = ({ navigate }) => {
       </div>
 
       {/* <div className="h-[50px] w-full"></div> */}
-      <ToastContainer autoClose={1200} />
+      <ToastContainer autoClose={3200} />
     </div>
   );
 };

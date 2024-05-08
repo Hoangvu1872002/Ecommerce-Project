@@ -24,11 +24,12 @@ const FeaturedProducts = () => {
       <div className="flex flex-wrap mt-5 mx-[-10px]">
         {products?.map((e) => (
           <ProductCard
-            key={e._id}
-            thumb={e.thumb}
-            title={e.title}
-            totalRating={e.totalRating}
-            price={e.price}
+            e={e}
+            // key={e._id}
+            // thumb={e.thumb}
+            // title={e.title}
+            // totalRating={e.totalRating}
+            // price={e.price}
           ></ProductCard>
         ))}
       </div>

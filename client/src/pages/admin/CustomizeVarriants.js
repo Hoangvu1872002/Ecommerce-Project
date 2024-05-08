@@ -1,15 +1,15 @@
 import React, { memo, useEffect, useRef, useState } from "react";
 import { Button, InputForm, Loading } from "../../components";
 import { useForm } from "react-hook-form";
-import { getBase64, validate } from "../../ultils/helper";
+import { formatMoney, getBase64, validate } from "../../ultils/helper";
 import Swal from "sweetalert2";
 import withBase from "../../hocs/withBase";
-import { showModal } from "../../store/app/appSlice";
-import { apiAddVarriant, apiDeleteVarriant } from "../../apis";
+// import { showModal } from "../../store/app/appSlice";
+import { apiAddVarriant, apiDeleteVarriant, apiEditVarriant } from "../../apis";
 import { useSearchParams } from "react-router-dom";
 import { limit } from "../../ultils/contants";
-import moment from "moment";
-import icons from "../../ultils/icons";
+// import moment from "moment";
+// import icons from "../../ultils/icons";
 import { ToastContainer } from "react-toastify";
 
 const CustomizeVarriants = ({
@@ -19,9 +19,8 @@ const CustomizeVarriants = ({
   toast,
   dispatch,
 }) => {
-  const { MdDeleteForever } = icons;
-
   const titleRef = useRef();
+  // console.log(customizeVarriant);
 
   const {
     register,
@@ -29,6 +28,13 @@ const CustomizeVarriants = ({
     reset,
     handleSubmit,
     watch,
+  } = useForm();
+
+  const {
+    register: register2,
+    formState: { errors: errors2 },
+    reset: reset2,
+    handleSubmit: handleSubmit2,
   } = useForm();
 
   // console.log(customizeVarriant);
@@ -39,6 +45,8 @@ const CustomizeVarriants = ({
     thumb: null,
     images: [],
   });
+
+  const [editElm, setEditElm] = useState({});
 
   const handleDeleteBlog = (data) => {
     Swal.fire({
@@ -96,6 +104,34 @@ const CustomizeVarriants = ({
     }
   };
 
+  const handleUpdate = async (data) => {
+    // console.log(data);
+    if (
+      data.color === customizeVarriant.color ||
+      customizeVarriant.varriants
+        .filter((e) => e.color !== editElm.color)
+        .find((e) => e.color === data.colorTable)
+    )
+      Swal.fire("Oops!", "Color not changed", "info");
+    else {
+      const response = await apiEditVarriant(data, customizeVarriant._id);
+      //dispatch(showModal({ isShowModal: false, modalChildren: null }));
+      if (response.success) {
+        toast.success(response.mes, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+        // reset();
+        setEditElm(null);
+        render();
+        titleRef.current.scrollIntoView({ block: "start" });
+      } else {
+        toast.error(response.mes, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      }
+    }
+  };
+
   const handlePreviewImages = async (files) => {
     const imagesPreview = [];
     for (let file of files) {
@@ -125,6 +161,23 @@ const CustomizeVarriants = ({
     });
   }, [customizeVarriant]);
 
+  // console.log(editElm);
+
+  useEffect(() => {
+    // console.log("b");
+    // console.log(editElm);
+    // console.log(editElm.isBocked);
+    if (editElm) {
+      // console.log("a");
+      reset2({
+        titleTable: editElm?.title,
+        colorTable: editElm?.color,
+        priceTable: editElm?.price,
+        quantityTable: editElm?.quantity,
+      });
+    }
+  }, [editElm]);
+
   useEffect(() => {
     if (watch("thumb") instanceof FileList && watch("thumb").length > 0)
       handlePreviewThumb(watch("thumb")[0]);
@@ -152,56 +205,144 @@ const CustomizeVarriants = ({
         {customizeVarriant?.varriants.length > 0 && (
           <div className="flex flex-col gap-2">
             <div className="font-medium">Product variation table:</div>
-            <table className="table-auto mb-6 text-left w-full ">
-              <thead className="font-bold bg-gray-700 text-[13px]  text-white">
-                <tr className="border border-gray-500">
-                  <th className="px-4 py-2">#</th>
-                  <th className="px-2 py-2">Thumb</th>
-                  <th className="px-4 py-2">Title</th>
-                  <th className="px-2 py-2">Color</th>
-                  <th className="px-2 py-2">Quantity</th>
-                  <th className="px-2 py-2">Sold</th>
-                  <th className="px-2 py-2">Active</th>
-                </tr>
-              </thead>
-              <tbody>
-                {customizeVarriant?.varriants?.map((e, index) => (
-                  <tr key={e._id} className="border border-gray-500">
-                    <td className="px-4 py-2">
-                      {index +
-                        (params.get("page") - 1 > 0
-                          ? params.get("page") - 1
-                          : 0) *
-                          limit +
-                        1}
-                    </td>
-                    <td className="px-2 py-2">
-                      <img
-                        src={e.thumb}
-                        alt="thumb"
-                        className="w-8 h-8 object-cover"
-                      ></img>
-                    </td>
-                    <td className="px-4 py-2 max-w-[130px]">{e.title}</td>
-                    <td className="px-2 py-2">{e.color}</td>
-                    <td className="px-2 py-2">{e.quantity}</td>
-                    <td className="px-2 py-2">{e.sold}</td>
-                    <td className="px-2 py-2  h-full">
-                      <span
-                        onClick={() => handleDeleteBlog(e.color)}
-                        className=" inline-block text-blue-500 hover:text-orange-600 cursor-pointer"
-                      >
-                        <MdDeleteForever size={20}></MdDeleteForever>
-                      </span>
-                    </td>
+            <form key={1} onSubmit={handleSubmit2(handleUpdate)}>
+              <table className="table-auto mb-6 text-left w-full ">
+                <thead className="font-bold bg-gray-700 text-[13px]  text-white">
+                  <tr className="border border-gray-500">
+                    <th className="px-4 py-2">#</th>
+                    <th className="px-2 py-2">Thumb</th>
+                    <th className="px-4 py-2">Title</th>
+                    <th className="px-2 py-2">Color</th>
+                    <th className="px-2 py-2">Price</th>
+                    <th className="px-2 py-2">Quantity</th>
+                    <th className="px-2 py-2">Sold</th>
+                    <th className="px-2 py-2">Active</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {customizeVarriant?.varriants?.map((e, index) => (
+                    <tr key={e._id} className="border border-gray-500">
+                      <td className="px-4 py-2">
+                        {index +
+                          (params.get("page") - 1 > 0
+                            ? params.get("page") - 1
+                            : 0) *
+                            limit +
+                          1}
+                      </td>
+                      <td className="px-2 py-2">
+                        <img
+                          src={e.thumb}
+                          alt="thumb"
+                          className="w-8 h-8 object-cover"
+                        ></img>
+                      </td>
+                      <td className="px-4 py-2 max-w-[110px]">
+                        {editElm?._id === e._id ? (
+                          <InputForm
+                            register={register2}
+                            fullWith
+                            errors={errors2}
+                            id={"titleTable"}
+                            defaultValue={editElm?.title}
+                            validate={{ required: "Required" }}
+                          ></InputForm>
+                        ) : (
+                          <span>{e.title}</span>
+                        )}
+                      </td>
+                      <td className="px-2 py-2 max-w-[60px]">
+                        {editElm?._id === e._id ? (
+                          <InputForm
+                            register={register2}
+                            fullWith
+                            errors={errors2}
+                            id={"colorTable"}
+                            defaultValue={editElm?.color}
+                            validate={{ required: "Required" }}
+                          ></InputForm>
+                        ) : (
+                          <span>{e.color}</span>
+                        )}
+                      </td>
+                      <td className="px-2 py-2 max-w-[100px]">
+                        {editElm?._id === e._id ? (
+                          <InputForm
+                            register={register2}
+                            fullWith
+                            errors={errors2}
+                            id={"priceTable"}
+                            defaultValue={editElm?.price}
+                            validate={{ required: "Required" }}
+                          ></InputForm>
+                        ) : (
+                          <span>{formatMoney(e.price)}</span>
+                        )}
+                      </td>
+                      <td className="px-2 py-2 max-w-[50px]">
+                        {editElm?._id === e._id ? (
+                          <InputForm
+                            register={register2}
+                            fullWith
+                            errors={errors2}
+                            id={"quantityTable"}
+                            defaultValue={editElm?.quantity}
+                            validate={{ required: "Required" }}
+                          ></InputForm>
+                        ) : (
+                          <span>{e.quantity}</span>
+                        )}
+                      </td>
+                      <td className="px-2 py-2">{e.sold}</td>
+                      <td className="px-2 py-2  h-full max-w-[100px]">
+                        {editElm?._id === e._id ? (
+                          <span className="">
+                            <Button
+                              type="submit"
+                              style="px-2 py-1 mr-1 my-2 rounded-md text-white bg-main text-seminold"
+                            >
+                              Update
+                            </Button>
+                          </span>
+                        ) : (
+                          <span
+                            onClick={() => {
+                              // console.log(e);
+                              setEditElm(e);
+                            }}
+                            className="pr-2 text-orange-600 hover:underline cursor-pointer"
+                          >
+                            Edit
+                          </span>
+                        )}
+                        {editElm?._id === e._id ? (
+                          <span className="">
+                            <Button
+                              handleOnClick={() => setEditElm(null)}
+                              style="px-1 py-1 my-2 rounded-md text-white bg-black text-seminold"
+                            >
+                              Back
+                            </Button>
+                          </span>
+                        ) : (
+                          <span
+                            onClick={() => handleDeleteBlog(e.color)}
+                            className="pl-1 text-orange-600 hover:underline cursor-pointer"
+                          >
+                            Delete
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </form>
           </div>
         )}
       </div>
       <form
+        key={2}
         onSubmit={handleSubmit(handleAddvarriant)}
         className="p-4 w-full flex flex-col gap-4"
       >

@@ -63,6 +63,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
       color: "",
     },
   ]);
+  const [resetQuantity, setResetQuantity] = useState();
 
   const fetchProductData = async () => {
     const responese = await apiGetProduct(pid);
@@ -86,6 +87,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
 
   const handleQuantity = useCallback(
     (number) => {
+      setResetQuantity(quantity);
       if (!Number(number) || Number(number) < 1) {
         return;
       } else setQuantity(number);
@@ -119,13 +121,21 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
       price: currentProduct?.price || product?.price,
       thumbnail: currentProduct?.thumb || product?.thumb,
       title: currentProduct?.title || product?.title,
+      discount: product?.discount,
     });
     if (response.success) {
       toast.success(response.mes);
       setQuantity(1);
       dispatch(getCurrent());
     } else {
-      toast.error(response.mes);
+      // toast.error(response.mes);
+      if (response.notEnough) {
+        Swal.fire("Oops!", response.mes, "error").then(() => {
+          setQuantity(resetQuantity);
+        });
+      } else {
+        toast.error(response.mes);
+      }
     }
   };
 
@@ -162,6 +172,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
   }, [data, params]);
 
   const handleChangeQuantity = (flag) => {
+    setResetQuantity(quantity);
     if (flag === "minus" && quantity === 1) return;
     if (flag === "minus") setQuantity((prev) => +prev - 1);
     if (flag === "plus") setQuantity((prev) => +prev + 1);
@@ -190,7 +201,14 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
           ? product?.varriants?.find((e) => e.sku === varriant)?.sold
           : "",
       quantity:
-        product?.varriants?.find((e) => e.sku === varriant)?.quantity || "",
+        product?.varriants?.find((e) => e.sku === varriant)?.quantity === 1
+          ? 1
+          : 0 ||
+            product?.varriants?.find((e) => e.sku === varriant)?.quantity === 0
+          ? 0
+          : product?.varriants?.find((e) => e.sku === varriant)?.quantity > 1
+          ? product?.varriants?.find((e) => e.sku === varriant)?.quantity
+          : "",
       images: product?.varriants?.find((e) => e.sku === varriant)?.images || [],
       thumb: product?.varriants?.find((e) => e.sku === varriant)?.thumb || "",
     });
@@ -203,6 +221,8 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
     }
     // titleRef.current.scrollIntoView({ block: "start" });
   }, [varriant]);
+
+  // console.log(currentProduct.quantity);
   // console.log(currentProduct);
 
   // useEffect(() => {
@@ -243,7 +263,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
       >
         <div
           className={clsx(
-            " flex flex-col gap-4 ",
+            " flex flex-col gap-2 ",
             isQuickView ? "w-1/2" : "w-2/5"
           )}
         >
@@ -268,7 +288,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
               }}
             />
           </div>
-          <div className="w-[458px] shadow-md rounded-b-lg">
+          <div className="w-[458px] shadow-md rounded-lg border pt-[8px] pb-[1px] bg-gray-100">
             <Slider className="image-slider" {...settings}>
               {currentProduct?.images?.length === 0 &&
                 product?.images?.map((e, index) => (
@@ -305,7 +325,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
           >
             <div className="flex items-end justify-start gap-4">
               <span className="text-[30px] text-main font-semibold">{`${formatMoney(
-                fotmatPrice(currentProduct?.price || product?.price)
+                currentProduct?.price || product?.price
               )} vnd`}</span>
               <h3 className="font-semibold pb-[6.1px] text-base text-gray-500 line-through">{`${formatMoney(
                 Math.ceil(
@@ -417,30 +437,49 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
                     handleChangeQuantity={handleChangeQuantity}
                   ></SelectQuantity>
                 </span>
-                <span className="text-xs text-main ">{`(Warehouse: ${
-                  currentProduct?.quantity || product?.quantity
-                })`}</span>
+                <span className="text-xs text-main ">
+                  {`(Warehouse: ${
+                    currentProduct?.quantity === 0
+                      ? 0
+                      : currentProduct?.quantity === 1
+                      ? 1
+                      : currentProduct?.quantity > 1
+                      ? currentProduct?.quantity
+                      : "" || product?.quantity
+                  })`}
+                </span>
               </div>
               <div>
-                {currentCart?.find(
-                  (e) =>
-                    (e.product?._id === pid &&
-                      e.color === currentProduct?.color) ||
-                    (e.product?._id === pid &&
-                      e.color === product?.color &&
-                      currentProduct?.color === "")
-                ) ? (
+                {currentProduct?.quantity === 0 || product?.quantity === 0 ? (
                   <Button
                     type="text"
-                    handleOnClick={handleShowCart}
                     style={`px-4 py-2 my-2 rounded-md shadow-md text-white bg-gray-600 text-seminold w-full`}
                   >
-                    Added to cart
+                    The product is out of stock
                   </Button>
                 ) : (
-                  <Button handleOnClick={handleAddtoCart} fw>
-                    Add to cart
-                  </Button>
+                  <div>
+                    {currentCart?.find(
+                      (e) =>
+                        (e.product?._id === pid &&
+                          e.color === currentProduct?.color) ||
+                        (e.product?._id === pid &&
+                          e.color === product?.color &&
+                          currentProduct?.color === "")
+                    ) ? (
+                      <Button
+                        type="text"
+                        handleOnClick={handleShowCart}
+                        style={`px-4 py-2 my-2 rounded-md shadow-md text-white bg-gray-600 text-seminold w-full`}
+                      >
+                        Added to cart
+                      </Button>
+                    ) : (
+                      <Button handleOnClick={handleAddtoCart} fw>
+                        Add to cart
+                      </Button>
+                    )}
+                  </div>
                 )}
                 <span className="text-main flex justify-center items-center text-xs">
                   Fast delivery from two hours for pick up from the store.
@@ -475,13 +514,13 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
 
                 <div
                   id="custom-scrollbar"
-                  className="flex border rounded-lg shadow-md px-1 py-2 flex-col gap-2 max-h-[280px] overflow-y-auto"
+                  className="flex border rounded-lg shadow-md py-1 flex-col max-h-[280px] overflow-y-auto"
                 >
                   {addressStore?.map((e, index) => (
                     <div
                       key={index}
                       className={clsx(
-                        "flex flex-col py-1 px-2 gap-1 rounded-md shadow",
+                        "flex flex-col py-2 px-2",
                         +index % 2 === 0 ? "bg-gray-100" : ""
                       )}
                     >

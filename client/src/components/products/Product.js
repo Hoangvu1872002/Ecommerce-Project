@@ -52,6 +52,7 @@ const Product = ({
             });
         });
       }
+      console.log(productData);
       const response = await apiUpdateCart({
         pid: productData?._id,
         quantity: 1,
@@ -59,6 +60,7 @@ const Product = ({
         price: productData?.price,
         thumbnail: productData?.thumb,
         title: productData?.title,
+        discount: productData?.discount,
       });
       if (response.success) {
         toast.success(response.mes);
@@ -193,9 +195,18 @@ const Product = ({
               )}
             </div>
           )}
-          <span className="font-semibold top-[33px] p-2 text-sm left-[-15.2px] bg-red-500 shadow-md w-11 h-6 flex justify-center items-center rounded-r-full absolute text-white">
+          <span className="font-semibold top-[33px] p-2 text-sm left-[-15.2px] bg-red-500 shadow-md h-6 flex justify-center items-center rounded-r-full absolute text-white">
             -{productData?.discount}%
           </span>
+          {productData?.quantity === 0 ? (
+            <span className="font-semibold top-[62px] p-2 text-sm left-[-15.2px] bg-black shadow-md  h-6 flex justify-center items-center rounded-r-full absolute text-white">
+              Out of stock
+            </span>
+          ) : (
+            <span className="font-semibold top-[62px] p-2 text-sm left-[-15.2px] bg-red-500 shadow-md  h-6 flex justify-center items-center rounded-r-full absolute text-white">
+              Stocking
+            </span>
+          )}
         </div>
         <div className="flex flex-col mt-[15px] items-start gap gap-1 w-full">
           <span className="line-clamp-1 font-semibold text-sm">

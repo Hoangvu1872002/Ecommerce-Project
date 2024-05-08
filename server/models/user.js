@@ -41,7 +41,8 @@ var userSchema = new mongoose.Schema(
         color: String,
         price: Number,
         thumbnail: String,
-        title: String
+        title: String,
+        discount: String,
       },
     ],
     address: {

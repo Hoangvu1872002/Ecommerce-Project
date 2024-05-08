@@ -7,14 +7,18 @@ import withBase from "../../hocs/withBase";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { getCurrent } from "../../store/users/asyncAction";
+import Swal from "sweetalert2";
 
-const OrderItem = ({ e, dispatch, defaultQuantity = 1 }) => {
+const OrderItem = ({ e, dispatch, defaultQuantity = 1, index }) => {
   const { MdDeleteForever } = icons;
 
   const [quantity, setQuantity] = useState(() => defaultQuantity);
+  const [resetQuantity, setResetQuantity] = useState(() => 1);
 
   const handleQuantity = useCallback(
     (number) => {
+      // console.log("abc");
+      setResetQuantity(quantity);
       if (!Number(number) || Number(number) < 1) {
         return;
       } else setQuantity(number);
@@ -23,12 +27,22 @@ const OrderItem = ({ e, dispatch, defaultQuantity = 1 }) => {
   );
 
   const handleChangeQuantity = (flag) => {
+    // console.log(quantity);
+    setResetQuantity(quantity);
     if (flag === "minus" && quantity === 1) return;
     if (flag === "minus") setQuantity((prev) => +prev - 1);
     if (flag === "plus") setQuantity((prev) => +prev + 1);
   };
 
-  const getCount = async (pid, quantity, color, price, title, thumbnail) => {
+  const getCount = async (
+    pid,
+    quantity,
+    color,
+    price,
+    title,
+    thumbnail,
+    discount
+  ) => {
     const response = await apiUpdateCart({
       pid,
       quantity,
@@ -36,11 +50,28 @@ const OrderItem = ({ e, dispatch, defaultQuantity = 1 }) => {
       price,
       thumbnail,
       title,
+      discount,
     });
     if (response.success) {
       dispatch(getCurrent());
     } else {
-      toast.error(response.mes);
+      // if (response.notEnough) {
+      //   Swal.fire("Oops!", response.mes, "error").then(() => {
+      //     console.log(resetQuantity);
+      //     setQuantity(resetQuantity);
+      //   });
+      // } else {
+      //   toast.error(response.mes);
+      // }
+      if (response.notEnough && response.checkQuantityClear0) {
+        toast.error(response.mes);
+        dispatch(getCurrent());
+      } else if (response.notEnough && !response.checkQuantityClear0) {
+        toast.error(response.mes);
+        setQuantity(resetQuantity);
+      } else {
+        toast.error(response.mes);
+      }
     }
   };
 
@@ -54,28 +85,44 @@ const OrderItem = ({ e, dispatch, defaultQuantity = 1 }) => {
   };
 
   useEffect(() => {
-    getCount(e.product._id, quantity, e.color, e.price, e.title, e.thumbnail);
+    getCount(
+      e.product._id,
+      quantity,
+      e.color,
+      e.price,
+      e.title,
+      e.thumbnail,
+      e.discount
+    );
   }, [quantity]);
 
   return (
-    <div className="border grid grid-cols-11 w-full mt-1 py-3 mx-auto">
-      <span className="col-span-3 w-full text-center flex justify-start pl-8 items-center">
-        <div className="flex gap-2  items-center ">
+    <div className="border flex w-full mt-1 py-3 mx-auto">
+      <span className="px-4 flex-1 w-full text-center flex items-center justify-center">
+        {index}
+      </span>
+      <span className="px-4 flex-8 w-full text-center flex justify-start items-center">
+        <div className="flex gap-2 pl-6 items-center ">
           <img
             src={e?.thumbnail}
             alt="thumb"
             className="w-14 h-14 object-cover"
           ></img>
           <div className="flex flex-col items-start gap-1 ml-2">
-            <span className="text-sm">{e?.title}</span>
+            <span className="text-sm flex text-start">{e?.title}</span>
             <span className="text-[10px]">{e?.color}</span>
           </div>
         </div>
       </span>
-      <span className="col-span-2 w-full text-center text-base flex justify-center items-center">
+      <span className="px-4 flex-6 w-full text-center text-base flex justify-center items-center">
         {formatMoney(e?.price) + " vnd"}
       </span>
-      <span className="col-span-2 w-full text-center flex justify-center items-center">
+
+      <span className="px-4 flex-6 w-full text-center text-gray-500 line-through text-base flex justify-center items-center">
+        {formatMoney(Math.ceil((e?.price / (100 - e?.discount)) * 100))} vnd
+      </span>
+
+      <span className="px-4 flex-4 w-full text-center flex justify-center items-center">
         <div className="border">
           <SelectQuantity
             quantity={quantity}
@@ -84,10 +131,10 @@ const OrderItem = ({ e, dispatch, defaultQuantity = 1 }) => {
           ></SelectQuantity>
         </div>
       </span>
-      <span className="col-span-2 w-full text-center flex justify-center items-center">
+      <span className="px-4 flex-6 w-full text-center flex justify-center items-center">
         {formatMoney(e?.price * quantity) + " vnd"}
       </span>
-      <span className="col-span-2 w-full text-center flex justify-center items-center">
+      <span className="px-4 flex-4 w-full text-center flex justify-center items-center">
         <span
           onClick={() => {
             removeCart(e?.product?._id, e?.color);

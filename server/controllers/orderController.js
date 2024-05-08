@@ -20,37 +20,94 @@ const createNewOrder = asyncHandler(async (req, res) => {
 
   // console.log(products);
 
+  let checkQuantity = false;
   for (let product of products) {
-    console.log("a");
-    const updateQuantityProduct = await productModel.updateOne(
-      { _id: new ObjectId(product.product._id), color: product.color }, // Điều kiện tìm kiếm sản phẩm dựa trên ID
-      { $inc: { quantity: -product.quantity, sold: product.quantity } },
-      { new: true } // Giảm số lượng sản phẩm đi product.quantity
-    );
-    console.log(updateQuantityProduct);
-    if (updateQuantityProduct.modifiedCount === 0) {
-      console.log(product.color);
-      const updateQuantityVarriant = await productModel.updateOne(
-        {
-          _id: new ObjectId(product.product._id),
-          varriants: { $elemMatch: { color: product.color } },
-        },
-        {
-          $inc: {
-            "varriants.$.quantity": -product.quantity,
-            "varriants.$.sold": product.quantity,
+    // console.log("a");
+    const findProduct = await productModel.findOne({
+      _id: new ObjectId(product.product._id),
+      color: product.color,
+    });
+
+    let findVarriant = null;
+    if (!findProduct) {
+      findVarriant = await productModel.findOne({
+        _id: new ObjectId(product.product._id),
+        varriants: { $elemMatch: { color: product.color } },
+      });
+    }
+
+    if (findProduct) {
+      if (findProduct.quantity === 0) {
+        await userModel.findByIdAndUpdate(
+          _id,
+          {
+            $pull: {
+              cart: { product: product.product._id, color: product.color },
+            },
           },
-        },
-        { new: true }
-      );
-      console.log(updateQuantityVarriant.modifiedCount === 0);
-      if (updateQuantityVarriant.modifiedCount === 0) {
-        return res.json({
-          success: false,
-          rs: "Don't update quantity.",
-        });
+          { new: true }
+        );
+      } else if (findProduct.quantity >= product.quantity) checkQuantity = true;
+    } else if (findVarriant) {
+      if (
+        findVarriant.varriants.find((e) => e.color === product.color)
+          .quantity === 0
+      ) {
+        await userModel.findByIdAndUpdate(
+          _id,
+          {
+            $pull: {
+              cart: { product: product.product._id, color: product.color },
+            },
+          },
+          { new: true }
+        );
+      } else if (
+        findVarriant.varriants.find((e) => e.color === product.color)
+          .quantity >= product.quantity
+      ) {
+        checkQuantity = true;
       }
     }
+    if (checkQuantity) {
+      const updateQuantityProduct = await productModel.updateOne(
+        { _id: new ObjectId(product.product._id), color: product.color }, // Điều kiện tìm kiếm sản phẩm dựa trên ID
+        { $inc: { quantity: -product.quantity, sold: product.quantity } },
+        { new: true } // Giảm số lượng sản phẩm đi product.quantity
+      );
+      // console.log(updateQuantityProduct);
+      if (updateQuantityProduct.modifiedCount === 0) {
+        // console.log(product.color);
+        const updateQuantityVarriant = await productModel.updateOne(
+          {
+            _id: new ObjectId(product.product._id),
+            varriants: { $elemMatch: { color: product.color } },
+          },
+          {
+            $inc: {
+              "varriants.$.quantity": -product.quantity,
+              "varriants.$.sold": product.quantity,
+            },
+          },
+          { new: true }
+        );
+        // console.log(updateQuantityVarriant.modifiedCount === 0);
+        if (updateQuantityVarriant.modifiedCount === 0) {
+          return res.json({
+            success: false,
+            rs: "Don't update quantity.",
+          });
+        }
+      }
+    }
+  }
+
+  if (!checkQuantity) {
+    return res.status(401).json({
+      success: false,
+      notEnough: true,
+      mes: `Product quantity is not enough.`,
+    });
   }
 
   const rs = await orderModel.create({
@@ -110,8 +167,9 @@ const getUserOrders = asyncHandler(async (req, res) => {
         .find(qr)
         .populate("orderBy", "firstname lastname mobile");
     } else {
+      qr = { orderBy: _id };
       queryCommand = orderModel
-        .find({ orderBy: _id })
+        .find(qr)
         .populate("orderBy", "firstname lastname mobile");
     }
 
@@ -133,6 +191,7 @@ const getUserOrders = asyncHandler(async (req, res) => {
 
     //execute query
     //so luong san pham thoa man dieu kien !== so luong sp tra ve 1 lan goi api
+    console.log(qr);
     queryCommand
       .then(async (response) => {
         const counts = await orderModel.find(qr).countDocuments();

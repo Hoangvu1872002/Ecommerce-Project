@@ -101,7 +101,8 @@ const SearchItem = ({
             <div className="w-[150px]">
               <div className="py-4 items-center flex justify-between gap-8 border-b">
                 <span className="whitespace-nowrap">
-                  {`${selected.length} Selected`}
+                  <span className="text-main font-semibold text-sm">{`${selected.length} `}</span>
+                  Selected.
                 </span>
                 <span
                   className="underline cursor-pointer hover:text-main"
@@ -143,9 +144,11 @@ const SearchItem = ({
             <div onClick={(e) => e.stopPropagation()}>
               <div className="py-4 items-center flex justify-between gap-8 border-b">
                 <span className="whitespace-nowrap">
-                  {`The highest price is ${Number(
+                  The highest price is{" "}
+                  <span className="text-main text-sm font-semibold">{` ${Number(
                     bestPrice
-                  ).toLocaleString()} vnd.`}
+                  ).toLocaleString()}`}</span>{" "}
+                  vnd.
                 </span>
                 <span
                   className="underline cursor-pointer hover:text-main"
@@ -160,9 +163,9 @@ const SearchItem = ({
               </div>
               <div className="flex items-center p-2 gap-2 ">
                 <div className="flex items-center gap-2 mr-4 ">
-                  <label htmlFor="from">From</label>
+                  <label htmlFor="from">From:</label>
                   <input
-                    className="form-input border p-2"
+                    className="form-input border p-2 rounded-md"
                     type="number"
                     id="from"
                     value={price.from}
@@ -172,9 +175,9 @@ const SearchItem = ({
                   ></input>
                 </div>
                 <div className="flex items-center gap-2">
-                  <label htmlFor="from">To</label>
+                  <label htmlFor="from">To:</label>
                   <input
-                    className="form-input border p-2"
+                    className="form-input border p-2 rounded-md"
                     type="number"
                     id="from"
                     value={price.to}

@@ -3,6 +3,7 @@ const productModel = require("../models/product");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
 const makeSKU = require("uniqid");
+const { ObjectId } = require("mongodb");
 
 const createProduct = asyncHandler(async (req, res) => {
   const { title, price, description, brand, category, color, discount } =
@@ -259,9 +260,40 @@ const addVarriants = asyncHandler(async (req, res) => {
   });
 });
 
+const editVarriants = asyncHandler(async (req, res) => {
+  const { pid } = req.params;
+  const { titleTable, priceTable, colorTable, quantityTable } = req.body;
+  console.log({ titleTable, priceTable, colorTable, quantityTable });
+  // if (!(titleTable && priceTable && colorTable && quantityTable ))
+  //   throw new Error("Missing inputs");
+  const response = await productModel.updateOne(
+    {
+      _id: new ObjectId(pid),
+      varriants: { $elemMatch: { color: colorTable } },
+    },
+    {
+      $set: {
+        "varriants.$.title": titleTable,
+        "varriants.$.price": priceTable,
+        "varriants.$.color": colorTable,
+        "varriants.$.quantity": quantityTable,
+      },
+    },
+    { new: true }
+  );
+  console.log(response);
+  return res.status(200).json({
+    success: response.modifiedCount !== 0 ? true : false,
+    mes:
+      response.modifiedCount !== 0
+        ? "Updated varriant."
+        : "Cannot update varriant.",
+  });
+});
+
 const deleteVarriants = asyncHandler(async (req, res) => {
   const { pid, color } = req.params;
-  console.log({pid, color});
+  console.log({ pid, color });
   if (!color) throw new Error("Missing inputs");
   const response = await productModel.findByIdAndUpdate(
     pid,
@@ -289,5 +321,6 @@ module.exports = {
   rating,
   uploadImagesProduct,
   addVarriants,
+  editVarriants,
   deleteVarriants,
 };

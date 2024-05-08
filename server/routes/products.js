@@ -10,6 +10,7 @@ const {
   uploadImagesProduct,
   addVarriants,
   deleteVarriants,
+  editVarriants,
 } = require("../controllers/productController");
 const { verifyAccessToken, isAdmin } = require("../middlewares/verifyToken");
 const uploadImage = require("../config/cloudinary.config");
@@ -35,6 +36,7 @@ router.put(
   uploadImage.array("images", 10),
   uploadImagesProduct
 );
+router.post("/varriant/edit/:pid", verifyAccessToken, isAdmin, editVarriants);
 router.put(
   "/varriant/:pid",
   verifyAccessToken,
@@ -55,7 +57,12 @@ router.put(
   ]),
   updateProduct
 );
-router.delete("/varriant/:pid/:color", verifyAccessToken, isAdmin, deleteVarriants);
+router.delete(
+  "/varriant/:pid/:color",
+  verifyAccessToken,
+  isAdmin,
+  deleteVarriants
+);
 router.delete("/:pid", verifyAccessToken, isAdmin, deleteProduct);
 router.get("/:pid", getProduct);
 

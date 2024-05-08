@@ -47,6 +47,13 @@ export const apiAddVarriant = (data, pid) =>
     data,
   });
 
+export const apiEditVarriant = (data, pid) =>
+  axios({
+    url: "/products/varriant/edit/" + pid,
+    method: "post",
+    data,
+  });
+
 export const apiDeleteVarriant = (color, pid) =>
   axios({
     url: "/products/varriant/" + pid + "/" + color,

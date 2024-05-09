@@ -381,7 +381,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
               </ul>
             </div>
             <div className="my-2 flex gap-4 justify-center items-center">
-              <span className="font-bold">Color:</span>
+              <span className="font-semibold">Color:</span>
               <div className="flex flex-wrap gap-4 items-center w-full">
                 <div
                   onClick={() => {

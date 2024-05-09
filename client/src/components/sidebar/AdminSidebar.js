@@ -75,7 +75,8 @@ const AdminSidebar = () => {
                             )
                           }
                         >
-                          {item.text}
+                          <span>{item.icon}</span>
+                          <span>{item.text}</span>
                         </NavLink>
                       ))}
                     </div>

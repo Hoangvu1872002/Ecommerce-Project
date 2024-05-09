@@ -89,7 +89,7 @@ const ManageProducts = () => {
     fetchProduct(searchParams);
   }, [params, update]);
   return (
-    <div className="w-full flex flex-col gap-3 relative">
+    <div className="w-full flex flex-col gap-3 relative mb-[100px]">
       {editProduct && (
         <div className="absolute z-20 insert-0 min-h-full min-w-full bg-gray-100">
           <UpdateProduct
@@ -202,7 +202,7 @@ const ManageProducts = () => {
           </tbody>
         </table>
       </div>
-      <div className="w-full flex justify-end mb-10 px-5">
+      <div className="w-full flex justify-end px-5">
         <Pagination totalCount={count}></Pagination>
       </div>
       <ToastContainer autoClose={1200} />

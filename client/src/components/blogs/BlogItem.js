@@ -3,8 +3,11 @@ import moment from "moment";
 import React, { memo } from "react";
 import withBase from "../../hocs/withBase";
 import path from "../../ultils/path";
+import icons from "../../ultils/icons";
 
 const BlogItem = ({ blogData, navigate }) => {
+  const { BiSolidDislike, BiSolidLike } = icons;
+
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <div
@@ -19,8 +22,18 @@ const BlogItem = ({ blogData, navigate }) => {
       >
         {blogData?.title.toUpperCase()}
       </div>
-      <div className="flex items-center justify-center text-xs mt-2 text-gray-400">
-        {moment(blogData.createdAt).format("DD/MM/YYYY")}
+      <div className="flex gap-4 items-center justify-center text-xs mt-2 text-gray-400">
+        <span className="flex items-center justify-center gap-2">
+          <span className="flex items-center justify-center gap-1">
+            <span>{blogData?.likes.length}</span>
+            <BiSolidLike></BiSolidLike>
+          </span>
+          <span className="flex items-center justify-center gap-1">
+            <span>{blogData?.dislikes.length}</span>{" "}
+            <BiSolidDislike></BiSolidDislike>
+          </span>
+        </span>
+        <span>{moment(blogData?.createdAt).format("DD/MM/YYYY")}</span>
       </div>
       <div className=" w-[395px] mt-2 text-center text-sm line-clamp-[3]">
         <div

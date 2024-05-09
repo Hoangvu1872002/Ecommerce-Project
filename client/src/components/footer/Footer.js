@@ -27,7 +27,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className=" h-[407px] w-full bg-zinc-900 flex items-center justify-center text-white text-[13px]">
+      <div className=" h-[300px] w-full bg-zinc-900 flex items-center justify-center text-white text-[13px]">
         <div className="w-main flex">
           <div className="flex-2 flex flex-col gap-2">
             <h3 className="mb-[20px] text-[15px] font-medium border-l-4 border-main pl-[15px]">
@@ -96,6 +96,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
+      <div className="h-[50px] w-full bg-black"></div>
     </div>
   );
 };

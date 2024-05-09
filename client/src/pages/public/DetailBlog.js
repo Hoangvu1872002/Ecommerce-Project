@@ -1,23 +1,30 @@
 import React, { memo, useEffect, useRef, useState } from "react";
 import withBase from "../../hocs/withBase";
 import { useParams } from "react-router-dom";
-import { Breadcrumbs } from "../../components";
-import { dataFakeBlogs } from "../../ultils/contants";
-import path from "../../ultils/path";
-import { apiGetBlogs, apiGetOneBlog } from "../../apis";
+import { Breadcrumbs, Button } from "../../components";
+import { apiDislikeBlog, apiGetOneBlog, apiLikeBlog } from "../../apis";
 import moment from "moment";
 import DOMPurify from "dompurify";
+import icons from "../../ultils/icons";
+import { ToastContainer, toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
-const DetailBlog = ({ navigate }) => {
+const DetailBlog = () => {
   const titleRef = useRef();
 
-  const { bid, blogs } = useParams();
+  const { bid } = useParams();
 
   const [dataBlog, setDataBlog] = useState();
 
   // const dataBlog = dataFakeBlogs.find(
   //   (e) => e.title === title.replace(/-/g, " ")
   // );
+
+  const { BiSolidDislike, BiSolidLike, VscDebugBreakpointDataUnverified } =
+    icons;
+
+  const { current } = useSelector((state) => state.user);
+  console.log(current);
 
   const fetchBlogs = async () => {
     const response = await apiGetOneBlog(bid);
@@ -26,9 +33,29 @@ const DetailBlog = ({ navigate }) => {
     }
   };
 
+  const handleLike = async () => {
+    const response = await apiLikeBlog(bid);
+    if (response.success) {
+      toast.success(response.mes);
+      fetchBlogs();
+    } else {
+      toast.error(response.mes);
+    }
+  };
+
+  const handleDislike = async () => {
+    const response = await apiDislikeBlog(bid);
+    if (response.success) {
+      toast.success(response.mes);
+      fetchBlogs();
+    } else {
+      toast.error(response.mes);
+    }
+  };
+
   useEffect(() => {
-    fetchBlogs();
     titleRef.current.scrollIntoView({ block: "start" });
+    fetchBlogs();
   }, []);
 
   return (
@@ -50,9 +77,22 @@ const DetailBlog = ({ navigate }) => {
         </div>
       </div>
       <div className="my-4 w-main mx-auto flex flex-col gap-4">
-        <li className="text-gray-500 text-sm">
-          {moment(dataBlog?.createAt).format("DD/MM/YYYY")}
-        </li>
+        <div className="flex gap-4 items-center text-sm  text-gray-500">
+          <VscDebugBreakpointDataUnverified></VscDebugBreakpointDataUnverified>
+          <span className="flex items-center justify-center gap-2">
+            <span className="flex items-center justify-center gap-1">
+              <span>{dataBlog?.likes.length}</span>
+              Likes
+            </span>
+            <span className="flex items-center justify-center gap-1">
+              <span>{dataBlog?.dislikes.length}</span> Dislikes
+            </span>
+          </span>
+          <span className="flex items-center justify-center gap-1">
+            <span>{dataBlog?.numberViews}</span> Views
+          </span>
+          <span>{moment(dataBlog?.createdAt).format("DD/MM/YYYY")}</span>
+        </div>
         <div className="w-full">
           <img className="w-full" src={dataBlog?.thumb} alt="image"></img>
         </div>
@@ -64,15 +104,49 @@ const DetailBlog = ({ navigate }) => {
           }}
         ></div>
 
-        {/* <div
-          className="flex justify-end my-4"
-          onClick={() => navigate(`/${path.BLOGS}`)}
-        >
-          <span className="text-gray-700 hover:text-red-500 cursor-pointer">
-            BACK TO RIGHT SIDEBAR
-          </span>
-        </div> */}
+        <div className="flex justify-end my-4 gap-1">
+          <Button
+            style={
+              "px-4 py-2 my-2 rounded-md shadow-md text-white bg-red-600 hover:bg-red-700 text-semibold flex gap-2  items-center justify-center font-medium"
+            }
+            handleOnClick={handleLike}
+          >
+            {dataBlog?.likes.find((e) => e === current._id) ? (
+              <>
+                <BiSolidLike color="rgb(56 189 248)" size={20}></BiSolidLike>
+                <span>Remove Like</span>
+              </>
+            ) : (
+              <>
+                <BiSolidLike color="white" size={20}></BiSolidLike>
+                <span>Like</span>
+              </>
+            )}
+          </Button>
+          <Button
+            style={
+              "px-4 py-2 my-2 rounded-md shadow-md text-white bg-gray-600 hover:bg-gray-800 text-semibold flex gap-2  items-center justify-center font-medium"
+            }
+            handleOnClick={handleDislike}
+          >
+            {dataBlog?.dislikes.find((e) => e === current._id) ? (
+              <>
+                <BiSolidDislike
+                  color="rgb(56 189 248)"
+                  size={20}
+                ></BiSolidDislike>
+                <span>Remove Dislike</span>
+              </>
+            ) : (
+              <>
+                <BiSolidDislike color="white" size={20}></BiSolidDislike>
+                <span>Dislike</span>
+              </>
+            )}
+          </Button>
+        </div>
       </div>
+      <ToastContainer autoClose={1200} />
     </div>
   );
 };

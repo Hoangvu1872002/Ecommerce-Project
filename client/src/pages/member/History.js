@@ -10,7 +10,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import { formatMoney } from "../../ultils/helper";
+import { formatMoney, getColorClass } from "../../ultils/helper";
 import clsx from "clsx";
 import moment from "moment";
 
@@ -225,7 +225,7 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                     className=" border-b flex w-full py-3 mx-auto bg-gray-50
                 "
                   >
-                    <span className="px-4 flex-1 w-full text-center flex items-center justify-center">
+                    <span className="px-4 text-sm flex-1 w-full text-center flex items-center justify-center">
                       {index}
                     </span>
                     <span className="px-4 flex-8 w-full text-center flex justify-start items-center">
@@ -241,15 +241,25 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                       </div>
                     </span>
                     <span className="px-4 flex-4 text-sm w-full text-center flex justify-center items-center">
-                      {e?.color}
+                      <span className="flex gap-3 items-center justify-start">
+                        <span>
+                          {e?.color?.slice(0, 1).toUpperCase() +
+                            e?.color?.slice(1)}
+                        </span>
+                        <span
+                          className={`w-3 h-3 ${getColorClass(
+                            e?.color
+                          )} border rounded-lg`}
+                        ></span>
+                      </span>
                     </span>
-                    <span className="px-4 flex-6 text-sm text-main w-full text-center flex justify-center items-center">
+                    <span className="px-4  flex-6 text-sm text-main w-full text-center flex justify-center items-center">
                       {formatMoney(e?.price) + " vnd"}
                     </span>
 
-                    <span className="px-4 flex-6 w-full text-center text-sm text-gray-500 line-through flex justify-center items-center">
+                    <span className="px-4  flex-6 w-full text-center text-sm text-gray-500 line-through flex justify-center items-center">
                       {formatMoney(
-                        Math.ceil((e?.price / (100 - (e.discount || 0))) * 100)
+                        Math.ceil((e?.price / (100 - (e?.discount || 0))) * 100)
                       )}{" "}
                       vnd
                     </span>
@@ -257,7 +267,7 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                     <span className="px-4 flex-4 text-sm w-full text-center flex justify-center items-center">
                       {e?.quantity}
                     </span>
-                    <span className="px-4 flex-6 w-full text-sm flex justify-end pr-4 items-center">
+                    <span className="px-4 text-main font-semibold flex-6 w-full text-sm flex justify-end pr-4 items-center">
                       {formatMoney(e?.price * e?.quantity) + " vnd"}
                     </span>
                   </div>

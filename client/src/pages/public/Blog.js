@@ -80,12 +80,15 @@ const Blog = ({ navigate }) => {
           ))}
         </div>
         <div className="w-[22%] flex flex-col">
-          <div className="border">
-            <div className="p-2 pl-4 font-semibold text-lg bg-red-500 text-white">
+          <div className="border rounded-md shadow-md">
+            <div className="p-2 rounded-t-md pl-4 font-semibold text-lg bg-red-500 text-white">
               RECENT ARTICLES
             </div>
-            <div className="flex flex-col gap-4 my-4 ml-4">
-              {dataFakeBlogs.map((e) => (
+            <div
+              id="custom-scrollbar"
+              className="flex flex-col gap-4 my-4 ml-4 max-h-[400px] overflow-y-auto"
+            >
+              {dataBlogs?.map((e) => (
                 <div key={e.id} className="flex flex-col">
                   <span
                     className="font-medium text-sm hover:text-red-500 cursor-pointer"

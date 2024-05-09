@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from "react";
-import { Button, InputForm, Loading } from "../../components";
+import { Button, InputForm, Loading, Select } from "../../components";
 import { useForm } from "react-hook-form";
 import { formatMoney, getBase64, validate } from "../../ultils/helper";
 import Swal from "sweetalert2";
@@ -7,7 +7,7 @@ import withBase from "../../hocs/withBase";
 // import { showModal } from "../../store/app/appSlice";
 import { apiAddVarriant, apiDeleteVarriant, apiEditVarriant } from "../../apis";
 import { useSearchParams } from "react-router-dom";
-import { limit } from "../../ultils/contants";
+import { colors, limit } from "../../ultils/contants";
 // import moment from "moment";
 // import icons from "../../ultils/icons";
 import { ToastContainer } from "react-toastify";
@@ -114,7 +114,10 @@ const CustomizeVarriants = ({
     )
       Swal.fire("Oops!", "Color not changed", "info");
     else {
-      const response = await apiEditVarriant(data, customizeVarriant._id);
+      const response = await apiEditVarriant(
+        { ...data, vid: editElm._id },
+        customizeVarriant._id
+      );
       //dispatch(showModal({ isShowModal: false, modalChildren: null }));
       if (response.success) {
         toast.success(response.mes, {
@@ -253,14 +256,17 @@ const CustomizeVarriants = ({
                       </td>
                       <td className="px-2 py-2 max-w-[60px]">
                         {editElm?._id === e._id ? (
-                          <InputForm
+                          <Select
+                            options={colors?.map((e) => ({
+                              value: e,
+                            }))}
                             register={register2}
-                            fullWith
-                            errors={errors2}
                             id={"colorTable"}
-                            defaultValue={editElm?.color}
-                            validate={{ required: "Required" }}
-                          ></InputForm>
+                            validate={{ required: "Need fill this field" }}
+                            style="flex-auto"
+                            errors={errors}
+                            fullwidth
+                          ></Select>
                         ) : (
                           <span>{e.color}</span>
                         )}
@@ -374,7 +380,7 @@ const CustomizeVarriants = ({
             type="number"
             style="flex-auto"
           />
-          <InputForm
+          {/* <InputForm
             label="Color varriant"
             register={register}
             errors={errors}
@@ -385,7 +391,19 @@ const CustomizeVarriants = ({
             fullWith
             placeholder="Color of new varriant"
             style="flex-auto"
-          />
+          /> */}
+          <Select
+            label="Color (Optional varriant)"
+            options={colors?.map((e) => ({
+              value: e,
+            }))}
+            register={register}
+            id={"color"}
+            validate={{ required: "Need fill this field" }}
+            style="flex-auto"
+            errors={errors}
+            fullwidth
+          ></Select>
           <InputForm
             label="Quantity varriant"
             register={register}

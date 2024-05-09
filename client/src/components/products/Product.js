@@ -8,7 +8,7 @@ import SelectOption from "../search/SelectOption";
 import icons from "../../ultils/icons";
 import { Link, createSearchParams } from "react-router-dom";
 import withBase from "../../hocs/withBase";
-import { showModal } from "../../store/app/appSlice";
+import { showCart, showModal } from "../../store/app/appSlice";
 import DetailProduct from "../../pages/public/DetailProduct";
 import { apiUpdateCart, apiUpdateWishlist } from "../../apis";
 import { getCurrent } from "../../store/users/asyncAction";
@@ -31,6 +31,25 @@ const Product = ({
   const [isShowOption, setIsShowOption] = useState(false);
   const { current } = useSelector((state) => state.user);
 
+  const handleShowCart = (e) => {
+    e.stopPropagation();
+    return Swal.fire({
+      title: "Almost...",
+      text: "Products already in the cart. You want to open cart?",
+      icon: "info",
+      cancelButtonText: "Not now!",
+      showCancelButton: true,
+      confirmButtonText: "Open cart.",
+    }).then((rs) => {
+      if (rs.isConfirmed) dispatch(showCart());
+    });
+  };
+
+  const handleOutStock = (e) => {
+    e.stopPropagation();
+    Swal.fire("Oops!", "This product is currently out of stock.", "info");
+  };
+
   const handleClickOptions = async (e, flag) => {
     e.stopPropagation();
     if (flag === "CART") {
@@ -52,7 +71,7 @@ const Product = ({
             });
         });
       }
-      console.log(productData);
+      // console.log(productData);
       const response = await apiUpdateCart({
         pid: productData?._id,
         quantity: 1,
@@ -106,7 +125,7 @@ const Product = ({
       }
     >
       <div
-        className="w-full border p-[15px] flex flex-col items-center shadow-md rounded-lg cursor-pointer hover:shadow-blue-400"
+        className="w-full border p-[15px] relative flex flex-col items-center shadow-md rounded-lg cursor-pointer hover:shadow-blue-400"
         onMouseEnter={(e) => {
           e.stopPropagation();
           setIsShowOption(true);
@@ -116,6 +135,21 @@ const Product = ({
           setIsShowOption(false);
         }}
       >
+        <span className="font-semibold z-20 top-[50px] p-2 text-sm left-[0px] bg-main shadow-md h-6 flex justify-center items-center rounded-r-full absolute text-white">
+          -{productData?.discount}%
+        </span>
+        {(productData?.quantity === 0 && productData?.varriants.length === 0) ||
+        (productData?.quantity === 0 &&
+          productData?.varriants.length > 0 &&
+          productData?.varriants.filter((e) => e.quantity > 0).length === 0) ? (
+          <span className="font-semibold z-20 top-[80px] p-2 text-sm left-[0px] bg-black shadow-md  h-6 flex justify-center items-center rounded-r-full absolute text-white">
+            Out of stock
+          </span>
+        ) : (
+          <span className="font-semibold z-20 top-[80px] p-2 text-sm left-[0px] bg-main shadow-md  h-6 flex justify-center items-center rounded-r-full absolute text-white">
+            Stocking
+          </span>
+        )}
         <div className="w-full relative flex justify-center items-center">
           {isShowOption && (
             <div className="absolute gap-2 bottom-[-10px] left-0 right-0 flex justify-center animate-silde-top">
@@ -133,24 +167,46 @@ const Product = ({
                   }
                 ></SelectOption>
               </span>
-              {current?.cart?.some(
-                (e) => e?.product?._id === productData?._id
-              ) ? (
+              {(productData?.quantity === 0 &&
+                productData?.varriants.length === 0) ||
+              (productData?.quantity === 0 &&
+                productData?.varriants.length > 0 &&
+                productData?.varriants.filter((e) => e.quantity > 0).length ===
+                  0) ? (
                 <span
-                  title="Added to cart"
-                  onClick={(e) => e.stopPropagation()}
+                  title="The product is out of stock"
+                  // onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => handleOutStock(e)}
                 >
                   <SelectOption
-                    icon={<BsFillCartCheckFill color="red" />}
+                    icon={<BsFillCartPlusFill color="gray" />}
                   ></SelectOption>
                 </span>
               ) : (
-                <span
-                  title="Add to cart"
-                  onClick={(e) => handleClickOptions(e, "CART")}
-                >
-                  <SelectOption icon={<BsFillCartPlusFill />}></SelectOption>
-                </span>
+                <div>
+                  {current?.cart?.some(
+                    (e) => e?.product?._id === productData?._id
+                  ) ? (
+                    <span
+                      title="Added to cart"
+                      // onClick={(e) => e.stopPropagation()}
+                      onClick={(e) => handleShowCart(e)}
+                    >
+                      <SelectOption
+                        icon={<BsFillCartCheckFill color="red" />}
+                      ></SelectOption>
+                    </span>
+                  ) : (
+                    <span
+                      title="Add to cart"
+                      onClick={(e) => handleClickOptions(e, "CART")}
+                    >
+                      <SelectOption
+                        icon={<BsFillCartPlusFill />}
+                      ></SelectOption>
+                    </span>
+                  )}
+                </div>
               )}
               <span
                 title="Quick view"
@@ -194,18 +250,6 @@ const Product = ({
                 </>
               )}
             </div>
-          )}
-          <span className="font-semibold top-[33px] p-2 text-sm left-[-15.2px] bg-red-500 shadow-md h-6 flex justify-center items-center rounded-r-full absolute text-white">
-            -{productData?.discount}%
-          </span>
-          {productData?.quantity === 0 ? (
-            <span className="font-semibold top-[62px] p-2 text-sm left-[-15.2px] bg-black shadow-md  h-6 flex justify-center items-center rounded-r-full absolute text-white">
-              Out of stock
-            </span>
-          ) : (
-            <span className="font-semibold top-[62px] p-2 text-sm left-[-15.2px] bg-red-500 shadow-md  h-6 flex justify-center items-center rounded-r-full absolute text-white">
-              Stocking
-            </span>
           )}
         </div>
         <div className="flex flex-col mt-[15px] items-start gap gap-1 w-full">

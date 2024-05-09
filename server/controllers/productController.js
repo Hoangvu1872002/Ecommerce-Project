@@ -262,14 +262,15 @@ const addVarriants = asyncHandler(async (req, res) => {
 
 const editVarriants = asyncHandler(async (req, res) => {
   const { pid } = req.params;
-  const { titleTable, priceTable, colorTable, quantityTable } = req.body;
-  console.log({ titleTable, priceTable, colorTable, quantityTable });
+  const { titleTable, priceTable, colorTable, quantityTable, vid } = req.body;
+  console.log(req.body);
+  // console.log({ titleTable, priceTable, colorTable, quantityTable });
   // if (!(titleTable && priceTable && colorTable && quantityTable ))
   //   throw new Error("Missing inputs");
   const response = await productModel.updateOne(
     {
       _id: new ObjectId(pid),
-      varriants: { $elemMatch: { color: colorTable } },
+      varriants: { $elemMatch: { _id: vid } },
     },
     {
       $set: {
@@ -281,7 +282,7 @@ const editVarriants = asyncHandler(async (req, res) => {
     },
     { new: true }
   );
-  console.log(response);
+  // console.log(response);
   return res.status(200).json({
     success: response.modifiedCount !== 0 ? true : false,
     mes:

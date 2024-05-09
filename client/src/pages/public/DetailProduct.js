@@ -15,6 +15,7 @@ import { addressStore, productExtrainfoData } from "../../ultils/contants";
 import {
   formatMoney,
   fotmatPrice,
+  getColorClass,
   renderStarFromNumber,
 } from "../../ultils/helper";
 import DOMPurify from "dompurify";
@@ -137,6 +138,11 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
         toast.error(response.mes);
       }
     }
+  };
+
+  const handleOutStock = (e) => {
+    // e.stopPropagation();
+    Swal.fire("Oops!", "This product is currently out of stock.", "info");
   };
 
   const handleShowCart = () => {
@@ -393,8 +399,18 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
                     className="w-8 h-8 rounded-md object-cover"
                   ></img>
                   <span className="flex flex-col">
-                    <span>{product?.color}</span>
-                    <span className="text-sm">
+                    <span className="flex gap-3 items-center text-sm justify-start">
+                      <span>
+                        {product?.color?.slice(0, 1).toUpperCase() +
+                          product?.color?.slice(1)}
+                      </span>
+                      <span
+                        className={`w-3 h-3 ${getColorClass(
+                          product?.color
+                        )} rounded-lg shadow-sm`}
+                      ></span>
+                    </span>
+                    <span className="text-sm text-main font-semibold">
                       {formatMoney(product?.price)} vnd
                     </span>
                   </span>
@@ -417,8 +433,18 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
                       className="w-8 h-8 rounded-md object-cover"
                     ></img>
                     <span className="flex flex-col">
-                      <span>{e?.color}</span>
-                      <span className="text-sm">
+                      <span className="flex gap-3 text-sm items-center justify-start">
+                        <span>
+                          {e?.color?.slice(0, 1).toUpperCase() +
+                            e?.color?.slice(1)}
+                        </span>
+                        <span
+                          className={`w-3 h-3 ${getColorClass(
+                            e?.color
+                          )} border rounded-lg shadow-sm`}
+                        ></span>
+                      </span>
+                      <span className="text-sm font-semibold">
                         {formatMoney(e?.price)} vnd
                       </span>
                     </span>
@@ -453,6 +479,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
                 {currentProduct?.quantity === 0 || product?.quantity === 0 ? (
                   <Button
                     type="text"
+                    handleOnClick={handleOutStock}
                     style={`px-4 py-2 my-2 rounded-md shadow-md text-white bg-gray-600 text-seminold w-full`}
                   >
                     The product is out of stock

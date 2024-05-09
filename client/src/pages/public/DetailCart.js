@@ -28,7 +28,7 @@ const DetailCart = ({ navigate }) => {
       }).then((rs) => {
         if (rs.isConfirmed) navigate(`/${path.PRODUCTS}`);
       });
-    } else navigate(`/${path.MEMBER}/${path.CHECKOUT}`);
+    } else navigate(`/${path.DETAIL_CHECKOUT}`);
   };
 
   return (

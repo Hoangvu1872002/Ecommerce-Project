@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { formatMoney } from "../../ultils/helper";
+import { formatMoney, getColorClass } from "../../ultils/helper";
 import payment from "../../assets/payment.svg";
 import icons from "../../ultils/icons";
 import Button from "../../components/buttons/Button";
@@ -30,7 +30,6 @@ const Checkout = ({ navigate, dispatch }) => {
       setTextareaValue(event.target.value);
     }, 500);
   };
-  
 
   const totalPayment =
     currentCart?.reduce((sum, el) => +el?.price * el?.quantity + sum, 0) +
@@ -236,17 +235,31 @@ const Checkout = ({ navigate, dispatch }) => {
                     {e?.quantity}
                   </span>
                   <div className="flex flex-col">
-                    <span className="text-main text-sm">{e.title}</span>
+                    <span className=" text-sm">{e.title}</span>
                     <span className=" flex gap-2 justify-start items-center">
-                      <span className="text-[10px] text-gray-400">
-                        {e?.color}
+                      <span className="flex gap-3 items-center justify-start">
+                        <span className="text-[10px] text-gray-600">
+                          {e?.color?.slice(0, 1).toUpperCase() +
+                            e?.color?.slice(1)}
+                        </span>
+                        <span
+                          className={`w-2 h-2 ${getColorClass(
+                            e?.color
+                          )} rounded-lg border`}
+                        ></span>
                       </span>
                     </span>
                   </div>
                 </div>
-                <span className="mr-2  flex items-center justify-cente">
-                  <span className="text-sm">
+                <span className="mr-2 flex flex-col items-end justify-center">
+                  <span className="text-sm font-semibold text-main">
                     {formatMoney(e?.price * e?.quantity) + " vnd"}
+                  </span>
+                  <span className=" text-xs text-gray-500 line-through">
+                    {formatMoney(
+                      Math.ceil((e?.price / (100 - (e.discount || 0))) * 100)
+                    )}{" "}
+                    vnd
                   </span>
                 </span>
               </div>

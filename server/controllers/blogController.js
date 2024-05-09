@@ -101,7 +101,7 @@ const likeBlog = asyncHandler(async (req, res) => {
     );
     return res.json({
       success: response ? true : false,
-      rs: response,
+      mes: response ? "You liked the article." : "Cannot be removed.",
     });
   }
   const isliked = blog?.likes?.find((e) => e.toString() === _id);
@@ -113,7 +113,7 @@ const likeBlog = asyncHandler(async (req, res) => {
     );
     return res.json({
       success: response ? true : false,
-      rs: response,
+      mes: response ? "Your like have been removed." : "Cannot be removed.",
     });
   } else {
     const response = await blogModel.findByIdAndUpdate(
@@ -123,7 +123,7 @@ const likeBlog = asyncHandler(async (req, res) => {
     );
     return res.json({
       success: response ? true : false,
-      rs: response,
+      mes: response ? "You liked the article." : "Cannot be removed.",
     });
   }
 });
@@ -147,7 +147,7 @@ const dislikeBlog = asyncHandler(async (req, res) => {
     );
     return res.json({
       success: response ? true : false,
-      rs: response,
+      mes: response ? "You disliked the article." : "Cannot be removed.",
     });
   }
   const isDisliked = blog?.dislikes?.find((e) => e.toString() === _id);
@@ -159,7 +159,7 @@ const dislikeBlog = asyncHandler(async (req, res) => {
     );
     return res.json({
       success: response ? true : false,
-      rs: response,
+      mes: response ? "Your dislike have been removed." : "Cannot be removed.",
     });
   } else {
     const response = await blogModel.findByIdAndUpdate(
@@ -169,7 +169,7 @@ const dislikeBlog = asyncHandler(async (req, res) => {
     );
     return res.json({
       success: response ? true : false,
-      rs: response,
+      mes: response ? "You disliked the article." : "Cannot be removed.",
     });
   }
 });

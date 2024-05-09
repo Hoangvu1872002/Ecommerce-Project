@@ -75,7 +75,7 @@ export const generateRange = (start, end) => {
 };
 
 export function getBase64(file) {
-  if(!file) return ''
+  if (!file) return "";
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -83,3 +83,30 @@ export function getBase64(file) {
     reader.onerror = (error) => reject(error);
   });
 }
+
+export const getColorClass = (colorInt) => {
+  switch (colorInt) {
+    case "red":
+      return "bg-red-500";
+    case "green":
+      return "bg-green-500";
+    case "blue":
+      return "bg-blue-500";
+    case "yellow":
+      return "bg-yellow-500";
+    case "orange":
+      return "bg-orange-500";
+    case "purple":
+      return "bg-purple-500";
+    case "brown":
+      return "bg-neutral-500";
+    case "black":
+      return "bg-black";
+    case "white":
+      return "bg-slate-100";
+    case "gray":
+      return "bg-gray-500";
+    default:
+      return "";
+  }
+};

@@ -11,6 +11,7 @@ import { getBase64, validate } from "../../ultils/helper";
 import { showModal } from "../../store/app/appSlice";
 import { apiUpdateProduct } from "../../apis";
 import { useDispatch, useSelector } from "react-redux";
+import { colors } from "../../ultils/contants";
 
 const UpdateProduct = ({ editProduct, setEditProduct, render, toast }) => {
   const {
@@ -172,7 +173,7 @@ const UpdateProduct = ({ editProduct, setEditProduct, render, toast }) => {
               placeholder="Quantity of new product"
               type="number"
             />
-            <InputForm
+            {/* <InputForm
               label="Color"
               register={register}
               errors={errors}
@@ -182,7 +183,7 @@ const UpdateProduct = ({ editProduct, setEditProduct, render, toast }) => {
               }}
               style="flex-1"
               placeholder="Color of new product"
-            />
+            /> */}
             <InputForm
               label="Discount"
               register={register}
@@ -222,6 +223,18 @@ const UpdateProduct = ({ editProduct, setEditProduct, render, toast }) => {
                 }))}
               register={register}
               id={"brand"}
+              validate={{ required: "Need fill this field" }}
+              style="flex-auto"
+              errors={errors}
+              fullwidth
+            ></Select>
+            <Select
+              label="Color (Optional)"
+              options={colors?.map((e) => ({
+                value: e,
+              }))}
+              register={register}
+              id={"color"}
               validate={{ required: "Need fill this field" }}
               style="flex-auto"
               errors={errors}
@@ -294,8 +307,6 @@ const UpdateProduct = ({ editProduct, setEditProduct, render, toast }) => {
           <Button type="submit">Update new product</Button>
         </form>
       </div>
-
-      
     </div>
   );
 };

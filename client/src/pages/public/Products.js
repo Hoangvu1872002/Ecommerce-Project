@@ -127,11 +127,13 @@ const Products = () => {
     //     }).toString(),
     //   });
     // }
-  
   }, [sort]);
   return (
     <div className="w-full">
-      <div ref={titleRef} className="h-[81px] mt-4 flex justify-center items-center bg-gray-50">
+      <div
+        ref={titleRef}
+        className="h-[81px] mt-4 flex justify-center items-center bg-gray-50"
+      >
         <div className="w-main">
           <span className="font-semibold text-[18px] uppercase">
             {category === ":category" ? category.slice(1) : category}
@@ -185,7 +187,9 @@ const Products = () => {
               id="q"
               {...register("q")}
               placeholder="Search products by title"
-              className={clsx(`form-input text-xs border p-3 w-full rounded-md`)}
+              className={clsx(
+                `form-input text-xs border p-3 w-full rounded-md`
+              )}
             ></input>
             {errors["q"] && (
               <small className="text-xs text-red-500">
@@ -224,7 +228,7 @@ const Products = () => {
       <div className=" w-main m-auto my-4 flex justify-end">
         <Pagination totalCount={products?.counts}></Pagination>
       </div>
-      <div className="ư-full h-[100px]"></div>
+      <div className="w-full h-[30px]"></div>
       <ToastContainer autoClose={1200} />
     </div>
   );

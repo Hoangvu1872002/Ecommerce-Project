@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import SelectQuantity from "../common/SelectQuantity";
-import { formatMoney } from "../../ultils/helper";
+import { formatMoney, getColorClass } from "../../ultils/helper";
 import { apiRemoveCart, apiUpdateCart } from "../../apis";
 import icons from "../../ultils/icons";
 import withBase from "../../hocs/withBase";
@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 
 const OrderItem = ({ e, dispatch, defaultQuantity = 1, index }) => {
   const { MdDeleteForever } = icons;
+  console.log(getColorClass(e.color));
 
   const [quantity, setQuantity] = useState(() => defaultQuantity);
   const [resetQuantity, setResetQuantity] = useState(() => 1);
@@ -98,7 +99,7 @@ const OrderItem = ({ e, dispatch, defaultQuantity = 1, index }) => {
 
   return (
     <div className="border flex w-full mt-1 py-3 mx-auto">
-      <span className="px-4 flex-1 w-full text-center flex items-center justify-center">
+      <span className="px-4 text-sm flex-1 w-full text-center flex items-center justify-center">
         {index}
       </span>
       <span className="px-4 flex-8 w-full text-center flex justify-start items-center">
@@ -110,15 +111,17 @@ const OrderItem = ({ e, dispatch, defaultQuantity = 1, index }) => {
           ></img>
           <div className="flex flex-col items-start gap-1 ml-2">
             <span className="text-sm flex text-start">{e?.title}</span>
-            <span className="text-[10px]">{e?.color}</span>
+            <span
+              className={`w-3 h-3 ${getColorClass(e?.color)} border rounded-lg`}
+            ></span>
           </div>
         </div>
       </span>
-      <span className="px-4 flex-6 w-full text-center text-base flex justify-center items-center">
+      <span className="px-4 flex-6 w-full  text-sm text-main text-center flex justify-center items-center">
         {formatMoney(e?.price) + " vnd"}
       </span>
 
-      <span className="px-4 flex-6 w-full text-center text-gray-500 line-through text-base flex justify-center items-center">
+      <span className="px-4  flex-6 w-full text-center text-gray-500 line-through text-sm flex justify-center items-center">
         {formatMoney(Math.ceil((e?.price / (100 - e?.discount)) * 100))} vnd
       </span>
 
@@ -131,7 +134,7 @@ const OrderItem = ({ e, dispatch, defaultQuantity = 1, index }) => {
           ></SelectQuantity>
         </div>
       </span>
-      <span className="px-4 flex-6 w-full text-center flex justify-center items-center">
+      <span className="px-4 flex-6 w-full text-sm text-center flex justify-center items-center text-main">
         {formatMoney(e?.price * quantity) + " vnd"}
       </span>
       <span className="px-4 flex-4 w-full text-center flex justify-center items-center">

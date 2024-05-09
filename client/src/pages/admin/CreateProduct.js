@@ -13,6 +13,7 @@ import { ToastContainer, toast } from "react-toastify";
 import icons from "../../ultils/icons";
 import { apiCreateProduct } from "../../apis";
 import { showModal } from "../../store/app/appSlice";
+import { colors } from "../../ultils/contants";
 
 const CreateProduct = () => {
   const {
@@ -173,7 +174,7 @@ const CreateProduct = () => {
               placeholder="Quantity of new product"
               type="number"
             />
-            <InputForm
+            {/* <InputForm
               label="Color"
               register={register}
               errors={errors}
@@ -183,7 +184,7 @@ const CreateProduct = () => {
               }}
               style="flex-1"
               placeholder="Color of new product"
-            />
+            /> */}
             <InputForm
               label="Discount"
               register={register}
@@ -223,6 +224,18 @@ const CreateProduct = () => {
                 }))}
               register={register}
               id={"brand"}
+              validate={{ required: "Need fill this field" }}
+              style="flex-auto"
+              errors={errors}
+              fullwidth
+            ></Select>
+            <Select
+              label="Color (Optional)"
+              options={colors?.map((e) => ({
+                value: e,
+              }))}
+              register={register}
+              id={"color"}
               validate={{ required: "Need fill this field" }}
               style="flex-auto"
               errors={errors}

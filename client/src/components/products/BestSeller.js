@@ -20,7 +20,6 @@ const settings = {
   autoplay: true,
   autoplaySpeed: 2000,
   arrows: false,
-  
 };
 
 const BestSeller = () => {

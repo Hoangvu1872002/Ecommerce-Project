@@ -3,11 +3,12 @@ import icons from "../../ultils/icons";
 import { apiGetProducts } from "../../apis/product";
 import { formatMoney, renderStarFromNumber } from "../../ultils/helper";
 import Countdown from "../common/Countdown";
+import withBase from "../../hocs/withBase";
 
 let idInterval;
 
 const { BiSolidStar, HiMenu } = icons;
-const DealDaily = () => {
+const DealDaily = ({ navigate }) => {
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
@@ -18,7 +19,8 @@ const DealDaily = () => {
     const response = await apiGetProducts({
       limit: 1,
       // page: Math.round(Math.random() * 5),
-      totalRating: 5,
+      // totalRating: 5,
+      sort: "-totalRating",
     });
 
     if (response.success) {
@@ -102,6 +104,13 @@ const DealDaily = () => {
         </div>
         <button
           type="button"
+          onClick={() =>
+            navigate(
+              `/${dealDaily?.category?.toLowerCase()}/${dealDaily?._id}/${
+                dealDaily?.title
+              }`
+            )
+          }
           className="flex mb-2 gap-2 items-center shadow-md rounded-md justify-center w-full bg-main hover:bg-gray-800 text-white font-medium py-2"
         >
           <HiMenu></HiMenu>
@@ -112,4 +121,4 @@ const DealDaily = () => {
   );
 };
 
-export default memo(DealDaily);
+export default withBase(memo(DealDaily));

@@ -1,6 +1,5 @@
 import path from "./path";
 import icons from "./icons";
-import { VoteOption } from "../components";
 const {
   IoShieldHalf,
   FaTruck,
@@ -22,6 +21,7 @@ const {
   FiSpeaker,
   BsFillUsbPlugFill,
   PiTelevisionLight,
+  VscDebugBreakpointDataUnverified,
 } = icons;
 
 export const navigation = [
@@ -43,6 +43,7 @@ export const navigation = [
   {
     id: 3,
     value: "OUR SERVICES",
+    // value: "OUR SERVICES",
     path: `${path.OUR_SERVICES}`,
   },
   // {
@@ -222,10 +223,20 @@ export const adminSidebar = [
     submenu: [
       {
         text: "Create product",
+        icon: (
+          <VscDebugBreakpointDataUnverified
+            size={20}
+          ></VscDebugBreakpointDataUnverified>
+        ),
         path: `/${path.ADMIN}/${path.CREATE_PRODUCTS}`,
       },
       {
         text: "Manage product",
+        icon: (
+          <VscDebugBreakpointDataUnverified
+            size={20}
+          ></VscDebugBreakpointDataUnverified>
+        ),
         path: `/${path.ADMIN}/${path.MANAGE_PRODUCTS}`,
       },
     ],
@@ -245,10 +256,20 @@ export const adminSidebar = [
     submenu: [
       {
         text: "Create blogs",
+        icon: (
+          <VscDebugBreakpointDataUnverified
+            size={20}
+          ></VscDebugBreakpointDataUnverified>
+        ),
         path: `/${path.ADMIN}/${path.CREATE_BLOGS}`,
       },
       {
         text: "Manage blogs",
+        icon: (
+          <VscDebugBreakpointDataUnverified
+            size={20}
+          ></VscDebugBreakpointDataUnverified>
+        ),
         path: `/${path.ADMIN}/${path.MANAGE_BLOGS}`,
       },
     ],

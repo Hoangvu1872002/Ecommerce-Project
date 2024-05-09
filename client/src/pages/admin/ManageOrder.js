@@ -10,7 +10,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import { formatMoney } from "../../ultils/helper";
+import { formatMoney, getColorClass } from "../../ultils/helper";
 import clsx from "clsx";
 import moment from "moment";
 
@@ -93,7 +93,7 @@ const ManageOrder = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
   }, [queryDebounce]);
 
   return (
-    <div ref={titleRef} className="relative w-full flex flex-col">
+    <div ref={titleRef} className="relative w-full flex flex-col mb-[100px]">
       <h1 className="fixed z-50 bg-gray-100 w-full h-[75px] flex justify-between items-center text-3xl font-bold px-5 border-b">
         <span>HISTORY</span>
       </h1>
@@ -235,7 +235,7 @@ const ManageOrder = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                     className=" border-b flex w-full py-3 mx-auto bg-gray-50
                 "
                   >
-                    <span className="px-4 flex-1 w-full text-center flex items-center justify-center">
+                    <span className="px-4 flex-1 text-sm w-full text-center flex items-center justify-center">
                       {index}
                     </span>
                     <span className="px-4 flex-8 w-full text-center flex justify-start items-center">
@@ -251,7 +251,17 @@ const ManageOrder = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                       </div>
                     </span>
                     <span className="px-4 flex-4 text-sm w-full text-center flex justify-center items-center">
-                      {e?.color}
+                      <span className="flex gap-3 items-center justify-start">
+                        <span>
+                          {e?.color?.slice(0, 1).toUpperCase() +
+                            e?.color?.slice(1)}
+                        </span>
+                        <span
+                          className={`w-3 h-3 ${getColorClass(
+                            e?.color
+                          )} rounded-lg border`}
+                        ></span>
+                      </span>
                     </span>
                     <span className="px-4 flex-6 text-sm text-main w-full text-center flex justify-center items-center">
                       {formatMoney(e?.price) + " vnd"}
@@ -267,7 +277,7 @@ const ManageOrder = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                     <span className="px-4 flex-4 text-sm w-full text-center flex justify-center items-center">
                       {e?.quantity}
                     </span>
-                    <span className="px-4 flex-6 w-full text-sm flex justify-end pr-4 items-center">
+                    <span className="px-4 text-main font-semibold flex-6 w-full text-sm flex justify-end pr-4 items-center">
                       {formatMoney(e?.price * e?.quantity) + " vnd"}
                     </span>
                   </div>
@@ -382,7 +392,7 @@ const ManageOrder = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
         ))}
       </div>
       <div className="flex justify-center items-center w-full">
-        <div className="w-main flex justify-end mb-10">
+        <div className="w-main flex justify-end">
           <Pagination totalCount={count}></Pagination>
         </div>
       </div>

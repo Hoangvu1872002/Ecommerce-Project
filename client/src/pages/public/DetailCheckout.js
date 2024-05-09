@@ -4,7 +4,7 @@ import { Breadcrumbs, Button } from "../../components";
 import icons from "../../ultils/icons";
 import { useSelector } from "react-redux";
 import path from "../../ultils/path";
-import { formatMoney } from "../../ultils/helper";
+import { formatMoney, getColorClass } from "../../ultils/helper";
 import { apiCreateOrder, apiVnpay } from "../../apis";
 import Swal from "sweetalert2";
 import Congrat from "../../components/common/Congrat";
@@ -141,12 +141,16 @@ const DetailCheckout = ({ navigate, dispatch }) => {
         </div>
         <div className="w-main mx-auto mt-4 my-8 outline-dashed outline-gray-300 outline-1 outline-offset-1">
           <div className="py-4 border mx-auto bg-gray-200 w-main">
-            <div className="font-semibold grid grid-cols-11">
-              <span className="col-span-3 w-full text-center">Products</span>
-              <span className="col-span-2 w-full text-center">Type</span>
-              <span className="col-span-2 w-full text-center">Unit price</span>
-              <span className="col-span-2 w-full text-center"> Quantity</span>
-              <span className="col-span-2 w-full flex items-center justify-end pr-4">
+            <div className="font-semibold flex ">
+              <span className="px-4 flex-1 w-full text-center">#</span>
+              <span className="px-4 flex-8 w-full text-center">Products</span>
+              <span className="px-4 flex-4 w-full text-center">Color</span>
+              <span className="px-4 flex-6 w-full text-center">Unit price</span>
+              <span className="px-4 flex-6 w-full text-center">
+                Original price
+              </span>
+              <span className="px-4 flex-4 w-full text-center"> Quantity</span>
+              <span className="px-4 flex-6 w-full text-center">
                 Amount of money
               </span>
             </div>
@@ -155,31 +159,52 @@ const DetailCheckout = ({ navigate, dispatch }) => {
             {currentCart?.map((e, index) => (
               <div key={index}>
                 <div
-                  className="border-t border-b grid grid-cols-11 w-full mt-1 py-3 mx-auto bg-gray-50
+                  className="border-t border-b flex w-full mt-1 py-3 mx-auto bg-gray-50
                 "
                 >
-                  <span className="col-span-3 w-full text-center flex justify-start pl-4 items-center">
-                    <div className="flex gap-2  items-center ">
+                  <span className="px-4 flex-1 text-sm w-full text-center flex items-center justify-center">
+                    {index}
+                  </span>
+                  <span className="px-4 flex-8 w-full text-center flex justify-start items-center">
+                    <div className="flex gap-2 pl-8  items-center ">
                       <img
                         src={e?.thumbnail}
                         alt="thumb"
-                        className="w-14 h-14 object-cover rounded-lg"
+                        className="w-10 h-10 object-cover rounded-lg"
                       ></img>
                       <div className="flex items-start gap-1 ml-2">
-                        <span className="text-main text-sm">{e?.title}</span>
+                        <span className=" text-sm">{e?.title}</span>
                       </div>
                     </div>
                   </span>
-                  <span className="col-span-2 text-sm w-full text-center flex justify-center items-center">
-                    {e?.color}
+                  <span className="px-4 flex-4 text-sm w-full text-center flex justify-center items-center">
+                    <span className="flex gap-3 items-center justify-start">
+                      <span>
+                        {e?.color?.slice(0, 1).toUpperCase() +
+                          e?.color?.slice(1)}
+                      </span>
+                      <span
+                        className={`w-3 h-3 ${getColorClass(
+                          e?.color
+                        )} border rounded-lg`}
+                      ></span>
+                    </span>
                   </span>
-                  <span className="col-span-2 text-sm w-full text-center flex justify-center items-center">
+                  <span className="px-4 flex-6 text-sm text-main w-full text-center flex justify-center items-center">
                     {formatMoney(e?.price) + " vnd"}
                   </span>
-                  <span className="col-span-2 text-sm w-full text-center flex justify-center items-center">
+
+                  <span className="px-4 flex-6 w-full text-center text-sm text-gray-500 line-through flex justify-center items-center">
+                    {formatMoney(
+                      Math.ceil((e?.price / (100 - (e.discount || 0))) * 100)
+                    )}{" "}
+                    vnd
+                  </span>
+
+                  <span className="px-4 flex-4 text-sm w-full text-center flex justify-center items-center">
                     {e?.quantity}
                   </span>
-                  <span className="col-span-2 w-full text-sm flex justify-end pr-4 items-center">
+                  <span className="px-4 text-main font-semibold flex-6 w-full text-sm flex justify-end pr-4 items-center">
                     {formatMoney(e?.price * e?.quantity) + " vnd"}
                   </span>
                 </div>

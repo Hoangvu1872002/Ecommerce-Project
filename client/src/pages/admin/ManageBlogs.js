@@ -85,7 +85,7 @@ const ManageBlogs = ({ navigate }) => {
   }, [update, params]);
 
   return (
-    <div className="w-full relative">
+    <div className="w-full relative mb-[100px]">
       {editBlog && (
         <div className="absolute z-20 insert-0 min-h-full min-w-full bg-gray-100">
           <UpdateBlog
@@ -120,6 +120,7 @@ const ManageBlogs = ({ navigate }) => {
               <th className="px-4 py-2">Title</th>
               <th className="px-2 py-2">Like</th>
               <th className="px-2 py-2">Dislike</th>
+              <th className="px-2 py-2">View</th>
               <th className="px-2 py-2">CreatedAt</th>
               <th className="px-2 py-2">Active</th>
             </tr>
@@ -143,6 +144,7 @@ const ManageBlogs = ({ navigate }) => {
                 <td className="px-4 py-2 max-w-[130px]">{e.title}</td>
                 <td className="px-2 py-2">{e.likes.length || 0}</td>
                 <td className="px-2 py-2">{e.dislikes.length || 0}</td>
+                <td className="px-2 py-2">{e.numberViews}</td>
                 <td className="px-2 py-2">
                   {moment(e.createdAt).format("DD/MM/YYYY")}
                 </td>

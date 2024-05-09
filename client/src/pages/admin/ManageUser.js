@@ -104,7 +104,7 @@ const ManageUser = () => {
       });
   }, [editElm]);
   return (
-    <div className="w-full relative">
+    <div className="w-full relative mb-[100px]">
       <h1 className="fixed z-50 bg-gray-100 w-full h-[75px] flex justify-between items-center text-3xl font-bold px-5 border-b">
         <span>Manage User</span>
       </h1>

@@ -13,7 +13,7 @@ const path = {
   RESETPASSWORD: "reset-password/:token",
   DETAIL_CART: "my-cart",
   DETAIL_CHECKOUT: "checkout",
-  CHECKOUT_SUCCESS:"success",
+  CHECKOUT_SUCCESS: "success",
 
   //admin
   ADMIN: "admin",

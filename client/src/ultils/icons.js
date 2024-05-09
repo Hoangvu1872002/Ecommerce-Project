@@ -23,6 +23,8 @@ import {
   BiSolidStarHalf,
   BiStar,
   BiCustomize,
+  BiSolidDislike,
+  BiSolidLike,
 } from "react-icons/bi";
 import { LiaEyeSolid, LiaTabletAltSolid } from "react-icons/lia";
 import { HiMenu } from "react-icons/hi";
@@ -103,6 +105,8 @@ const icons = {
   LuUsers2,
 
   VscDebugBreakpointDataUnverified,
+  BiSolidDislike,
+  BiSolidLike,
 };
 
 export default icons;

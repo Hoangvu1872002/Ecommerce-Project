@@ -86,7 +86,7 @@ const Blog = ({ navigate }) => {
             </div>
             <div
               id="custom-scrollbar"
-              className="flex flex-col gap-4 my-4 ml-4 max-h-[400px] overflow-y-auto"
+              className="flex flex-col gap-4 my-4 ml-4 max-h-[60%] overflow-y-auto"
             >
               {dataBlogs?.map((e) => (
                 <div key={e.id} className="flex flex-col">

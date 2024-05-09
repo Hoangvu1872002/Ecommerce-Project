@@ -407,7 +407,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
                       <span
                         className={`w-3 h-3 ${getColorClass(
                           product?.color
-                        )} rounded-lg shadow-sm`}
+                        )} rounded-lg border shadow-sm`}
                       ></span>
                     </span>
                     <span className="text-sm text-main font-semibold">

@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useEffect, useRef } from "react";
 import { Breadcrumbs, Button } from "../../components";
 import withBase from "../../hocs/withBase";
 import { useSelector } from "react-redux";
@@ -16,6 +16,7 @@ import Swal from "sweetalert2";
 const DetailCart = ({ navigate }) => {
   const { currentCart } = useSelector((state) => state.user);
   // console.log(currentCart);
+  const titleRef = useRef();
 
   const handleCheckout = () => {
     if (currentCart.length === 0) {
@@ -31,10 +32,14 @@ const DetailCart = ({ navigate }) => {
     } else navigate(`/${path.DETAIL_CHECKOUT}`);
   };
 
+  useEffect(() => {
+    titleRef.current.scrollIntoView({ block: "start" });
+  }, []);
+
   return (
     <div className="w-full">
       <div className="h-[81px] mt-4 flex justify-center items-center bg-gray-50">
-        <div className="w-main">
+        <div ref={titleRef} className="w-main">
           <span className="font-semibold text-[18px]">My Cart</span>
           <div className="mt-2">
             <Breadcrumbs></Breadcrumbs>

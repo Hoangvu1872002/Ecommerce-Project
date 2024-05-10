@@ -33,8 +33,11 @@ const Blog = ({ navigate }) => {
   useEffect(() => {
     const searchParams = Object.fromEntries([...params]);
     fetchBlogs(searchParams);
-    titleRef.current.scrollIntoView({ block: "start" });
   }, [params]);
+
+  useEffect(() => {
+    titleRef.current.scrollIntoView({ block: "start" });
+  }, []);
 
   return (
     <div className="w-full">

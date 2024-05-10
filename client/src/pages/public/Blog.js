@@ -38,11 +38,8 @@ const Blog = ({ navigate }) => {
 
   return (
     <div className="w-full">
-      <div
-        ref={titleRef}
-        className="h-[81px] mt-4 flex justify-center items-center bg-gray-50"
-      >
-        <div className="w-main">
+      <div className="h-[81px] mt-4 flex justify-center items-center bg-gray-50">
+        <div className="w-main" ref={titleRef}>
           <span className="font-semibold text-[18px] uppercase">Blog</span>
           <div className="mt-2">
             <Breadcrumbs category={"Blog"}></Breadcrumbs>

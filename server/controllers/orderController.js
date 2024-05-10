@@ -20,6 +20,8 @@ const createNewOrder = asyncHandler(async (req, res) => {
 
   // console.log(products);
 
+  // console.log(products);
+
   let checkQuantity = false;
   for (let product of products) {
     // console.log("a");
@@ -138,7 +140,7 @@ const getUserOrders = asyncHandler(async (req, res) => {
   const queries = { ...req.query };
   const { _id } = req.user;
   const { status, q } = queries;
-  console.log(queries);
+  // console.log(queries);
 
   if (q) {
     const isValidId = ObjectId.isValid(q);
@@ -170,14 +172,21 @@ const getUserOrders = asyncHandler(async (req, res) => {
       qr = { orderBy: _id };
       queryCommand = orderModel
         .find(qr)
-        .populate("orderBy", "firstname lastname mobile");
+        .populate("orderBy", "firstname lastname mobile")
+        .populate({
+          path: "products",
+          populate: {
+            path: "product",
+            select: "title _id category",
+          },
+        });
     }
 
     //sorting
     //abc,efg => [abc,efg] => abc efg
     if (req.query.sort) {
       const sortBy = req.query.sort.split(",").join(" ");
-      console.log(sortBy);
+      // console.log(sortBy);
       queryCommand = queryCommand.sort(sortBy);
     }
 
@@ -191,7 +200,7 @@ const getUserOrders = asyncHandler(async (req, res) => {
 
     //execute query
     //so luong san pham thoa man dieu kien !== so luong sp tra ve 1 lan goi api
-    console.log(qr);
+    // console.log(qr);
     queryCommand
       .then(async (response) => {
         const counts = await orderModel.find(qr).countDocuments();
@@ -210,7 +219,7 @@ const getUserOrders = asyncHandler(async (req, res) => {
 const getAdminOrders = asyncHandler(async (req, res) => {
   const queries = { ...req.query };
   const { status, q } = queries;
-  console.log(queries);
+  // console.log(queries);
 
   if (q) {
     const isValidId = ObjectId.isValid(q);
@@ -248,7 +257,7 @@ const getAdminOrders = asyncHandler(async (req, res) => {
     //abc,efg => [abc,efg] => abc efg
     if (req.query.sort) {
       const sortBy = req.query.sort.split(",").join(" ");
-      console.log(sortBy);
+      // console.log(sortBy);
       queryCommand = queryCommand.sort(sortBy);
     }
 

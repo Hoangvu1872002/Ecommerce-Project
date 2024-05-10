@@ -6,7 +6,7 @@ const createNewBlog = asyncHandler(async (req, res) => {
   const thumb = req.files?.thumb[0]?.path;
   if (!title || !description || !thumb) throw new Error("Missing inputs.");
   if (thumb) req.body.thumb = thumb;
-  console.log(req.body);
+  // console.log(req.body);
   const response = await blogModel.create(req.body);
   return res.json({
     success: response ? true : false,
@@ -30,7 +30,7 @@ const updateBlog = asyncHandler(async (req, res) => {
 
 const getBlogs = asyncHandler(async (req, res) => {
   const queries = { ...req.query };
-  console.log(queries);
+  // console.log(queries);
   // tach ca truong dac biet ra khoi query
   const excludeFields = ["limit", "sort", "page"];
   excludeFields.forEach((el) => delete queries[el]);
@@ -176,7 +176,7 @@ const dislikeBlog = asyncHandler(async (req, res) => {
 
 const getOneBlog = asyncHandler(async (req, res) => {
   const { bid } = req.params;
-  console.log(bid);
+  // console.log(bid);
   const blog = await blogModel.findByIdAndUpdate(
     bid,
     { $inc: { numberViews: 1 } },
@@ -201,7 +201,7 @@ const deleteBlog = asyncHandler(async (req, res) => {
 
 const uploadImagesBlog = asyncHandler(async (req, res) => {
   const { bid } = req.params;
-  console.log(req.file);
+  // console.log(req.file);
   if (!req.file) throw new Error("Missing inputs.");
   const response = await blogModel.findByIdAndUpdate(
     bid,

@@ -263,7 +263,7 @@ const addVarriants = asyncHandler(async (req, res) => {
 const editVarriants = asyncHandler(async (req, res) => {
   const { pid } = req.params;
   const { titleTable, priceTable, colorTable, quantityTable, vid } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
   // console.log({ titleTable, priceTable, colorTable, quantityTable });
   // if (!(titleTable && priceTable && colorTable && quantityTable ))
   //   throw new Error("Missing inputs");
@@ -294,7 +294,7 @@ const editVarriants = asyncHandler(async (req, res) => {
 
 const deleteVarriants = asyncHandler(async (req, res) => {
   const { pid, color } = req.params;
-  console.log({ pid, color });
+  // console.log({ pid, color });
   if (!color) throw new Error("Missing inputs");
   const response = await productModel.findByIdAndUpdate(
     pid,

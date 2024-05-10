@@ -55,7 +55,7 @@ function App() {
   useEffect(() => {
     // Xử lý các sự kiện từ máy chủ
     socket.on("connect", () => {
-      console.log("Connected to server");
+      // console.log("Connected to server");
     });
     socket.on("updatedStatus", (data) => {
       setResetHistoryOrder((prev) => !prev);
@@ -101,7 +101,7 @@ function App() {
             element={<DetailBlog></DetailBlog>}
           />
           <Route path={path.FAQS} element={<FAQ></FAQ>} />
-          <Route path={path.OUR_SERVICES} element={<Services></Services>} />
+          <Route path={path.CONTACT} element={<Services></Services>} />
           <Route path={path.PRODUCTS} element={<Products></Products>} />
           <Route path={path.DETAIL_CART} element={<DetailCart></DetailCart>} />
           <Route

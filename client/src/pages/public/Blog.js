@@ -9,6 +9,7 @@ import moment from "moment";
 import DOMPurify from "dompurify";
 
 const Blog = ({ navigate }) => {
+  const titleRef = useRef();
   // const { blogs } = useParams();
   const [params] = useSearchParams();
 
@@ -32,11 +33,15 @@ const Blog = ({ navigate }) => {
   useEffect(() => {
     const searchParams = Object.fromEntries([...params]);
     fetchBlogs(searchParams);
+    titleRef.current.scrollIntoView({ block: "start" });
   }, [params]);
 
   return (
     <div className="w-full">
-      <div className="h-[81px] mt-4 flex justify-center items-center bg-gray-50">
+      <div
+        ref={titleRef}
+        className="h-[81px] mt-4 flex justify-center items-center bg-gray-50"
+      >
         <div className="w-main">
           <span className="font-semibold text-[18px] uppercase">Blog</span>
           <div className="mt-2">
@@ -80,13 +85,13 @@ const Blog = ({ navigate }) => {
           ))}
         </div>
         <div className="w-[22%] flex flex-col">
-          <div className="border rounded-md shadow-md">
+          <div className="border max-h-[60%] rounded-md shadow-md">
             <div className="p-2 rounded-t-md pl-4 font-semibold text-lg bg-red-500 text-white">
               RECENT ARTICLES
             </div>
             <div
               id="custom-scrollbar"
-              className="flex flex-col gap-4 my-4 ml-4 max-h-[60%] overflow-y-auto"
+              className="flex flex-col gap-4 my-4 ml-4  overflow-y-auto"
             >
               {dataBlogs?.map((e) => (
                 <div key={e.id} className="flex flex-col">
@@ -96,9 +101,9 @@ const Blog = ({ navigate }) => {
                   >
                     {e.title}
                   </span>
-                  <span className="text-xs mt-2 text-gray-400">
+                  <li className="text-xs mt-2 text-gray-400 pl-1">
                     {moment(e.createAt).format("DD/MM/YYYY")}
-                  </span>
+                  </li>
                 </div>
               ))}
             </div>

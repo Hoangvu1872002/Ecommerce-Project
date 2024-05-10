@@ -134,7 +134,7 @@ const OrderItem = ({ e, dispatch, defaultQuantity = 1, index }) => {
           ></SelectQuantity>
         </div>
       </span>
-      <span className="px-4 flex-6 w-full text-sm text-center flex justify-center items-center text-main">
+      <span className="px-4 flex-6 font-semibold w-full text-sm text-center flex justify-center items-center text-main">
         {formatMoney(e?.price * quantity) + " vnd"}
       </span>
       <span className="px-4 flex-4 w-full text-center flex justify-center items-center">

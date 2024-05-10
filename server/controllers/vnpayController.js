@@ -1,4 +1,3 @@
-
 const asyncHandler = require("express-async-handler");
 
 const moment = require("moment");
@@ -20,10 +19,7 @@ function sortObject(obj) {
 }
 
 const createVnpayOrder = asyncHandler(async (req, res) => {
-  const {
-    total,
-    locale
-  } = req.body;
+  const { total, locale } = req.body;
   // console.log({total, locale});
   process.env.TZ = "Asia/Ho_Chi_Minh";
   var ipAddr =
@@ -92,7 +88,7 @@ const createVnpayOrder = asyncHandler(async (req, res) => {
   var signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
   vnp_Params["vnp_SecureHash"] = signed;
   vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
-  console.log(vnpUrl);
+  // console.log(vnpUrl);
   res.json(vnpUrl);
 });
 
@@ -116,13 +112,9 @@ const vnpayReturn = asyncHandler(async (req, res) => {
 
   const code = Number(vnp_Params.vnp_ResponseCode);
   if (code === 0) {
-    res.redirect(
-      "http://localhost:3000/success"
-    );
+    res.redirect("http://localhost:3000/success");
   } else {
-    res.redirect(
-      "http://localhost:3000"
-    );
+    res.redirect("http://localhost:3000");
   }
 });
 

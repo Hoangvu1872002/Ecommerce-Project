@@ -321,7 +321,7 @@ const CreateProduct = () => {
           <Button type="submit">Create new product</Button>
         </form>
       </div>
-      <ToastContainer autoClose={1200} />
+      {/* <ToastContainer autoClose={1200} /> */}
     </div>
   );
 };

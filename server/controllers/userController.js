@@ -238,7 +238,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     .createHash("sha256")
     .update(token)
     .digest("hex");
-  console.log(passwordResetToken);
+  // console.log(passwordResetToken);
   const user = await userModel.findOne({
     passwordResetToken,
     passwordResetExprires: { $gt: Date.now() },
@@ -390,7 +390,7 @@ const updateCart = asyncHandler(async (req, res) => {
     title,
     discount,
   } = req.body;
-  console.log(discount);
+  // console.log(discount);
   if (!pid || !color) throw new Error("Missing inputs");
   const user = await userModel.findById(_id).select("cart");
   const alreadyProduct = user?.cart.find(

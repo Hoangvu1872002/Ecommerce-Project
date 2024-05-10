@@ -9,6 +9,7 @@ import { apiRating } from "../../apis";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import path from "../../ultils/path";
+import DOMPurify from "dompurify";
 
 const ProductInfo = ({ totalRating, ratings, nameProduct, pid, rerender }) => {
   const [activedTab, setActivedTab] = useState(1);
@@ -48,7 +49,7 @@ const ProductInfo = ({ totalRating, ratings, nameProduct, pid, rerender }) => {
   };
 
   const handleSubmitVoteOption = async ({ comment, score }) => {
-    console.log({ comment, score, pid });
+    // console.log({ comment, score, pid });
     if (!comment || !pid || !score) {
       alert("Please vote when click submit");
       return;
@@ -75,8 +76,18 @@ const ProductInfo = ({ totalRating, ratings, nameProduct, pid, rerender }) => {
         ))}
       </div>
       <div className="w-full border p-4 shadow-md rounded-b-lg rounded-r-lg">
-        {productInfoTabs.some((e) => e.id === activedTab) &&
-          productInfoTabs.find((e) => e.id === activedTab)?.content}
+        {/* {productInfoTabs.some((e) => e.id === activedTab) &&
+          productInfoTabs.find((e) => e.id === activedTab)?.content} */}
+        {productInfoTabs.some((e) => e.id === activedTab) && (
+          <div
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(
+                productInfoTabs.find((e) => e.id === activedTab)?.content
+              ),
+            }}
+          ></div>
+        )}
+        {/* productInfoTabs.find((e) => e.id === activedTab)?.content} */}
       </div>
       <div className="">
         <div className="flex flex-col w-main my-8 p-2 border shadow-md rounded-lg">

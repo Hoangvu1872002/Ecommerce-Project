@@ -444,7 +444,7 @@ const DetailProduct = ({ isQuickView, data, navigate, dispatch, location }) => {
                           )} border rounded-lg shadow-sm`}
                         ></span>
                       </span>
-                      <span className="text-sm font-semibold">
+                      <span className="text-sm text-main font-semibold">
                         {formatMoney(e?.price)} vnd
                       </span>
                     </span>

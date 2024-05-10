@@ -71,10 +71,15 @@ const Checkout = ({ navigate, dispatch }) => {
     if (response.success) {
       setIsSuccess(true);
       setTimeout(async () => {
-        Swal.fire("Congrat!", "Order was created!", "success").then(() => {
+        Swal.fire("Congrat!", "Order was created!", "info").then(() => {
           dispatch(getCurrent());
         });
       }, [500]);
+    } else {
+      Swal.fire("Oops!", response.mes, "info").then(() => {
+        navigate(`/${path.HOME}`);
+        dispatch(getCurrent());
+      });
     }
   };
 

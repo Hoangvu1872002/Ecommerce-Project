@@ -473,7 +473,7 @@ const CustomizeVarriants = ({
         )}
         <Button type="submit">Add varriant</Button>
       </form>
-      <ToastContainer autoClose={1200} />
+      {/* <ToastContainer autoClose={1200} /> */}
     </div>
   );
 };

@@ -281,24 +281,6 @@ const ManageOrder = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                       {formatMoney(e?.price * e?.quantity) + " vnd"}
                     </span>
                   </div>
-                  {el?.status === "Successed" && (
-                    <div className="px-4 flex gap-2">
-                      <Button
-                        style={
-                          "px-1 text-xs  my-1 rounded-md text-white bg-main hover:bg-red-600"
-                        }
-                      >
-                        Reviews
-                      </Button>
-                      <Button
-                        style={
-                          "px-1 text-xs my-1 rounded-md text-white bg-main hover:bg-red-600"
-                        }
-                      >
-                        Repurchase
-                      </Button>
-                    </div>
-                  )}
                 </div>
               ))}
             </div>

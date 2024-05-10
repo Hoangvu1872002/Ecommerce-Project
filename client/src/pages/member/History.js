@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from "react";
-import { apiGetUserOrders } from "../../apis";
+import { apiGetUserOrders, apiUpdateCart } from "../../apis";
 import { limit, statusOrders } from "../../ultils/contants";
 import { useForm } from "react-hook-form";
 import { Button, CustomSelect, InputForm, Pagination } from "../../components";
@@ -13,10 +13,20 @@ import {
 import { formatMoney, getColorClass } from "../../ultils/helper";
 import clsx from "clsx";
 import moment from "moment";
+import Swal from "sweetalert2";
+import { ToastContainer, toast } from "react-toastify";
+import withBase from "../../hocs/withBase";
+import { getCurrent } from "../../store/users/asyncAction";
+import { useSelector } from "react-redux";
+import { showCart } from "../../store/app/appSlice";
 
-const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
+const History = ({ handleUpdateStatusOrder, resetHistoryOrder, dispatch }) => {
+  const { currentCart } = useSelector((state) => state.user);
+
   const [orders, setOrders] = useState();
   const [count, setCout] = useState(0);
+
+  console.log(currentCart);
   // const [scroll, setScroll] = useState(() => resetHistoryOrder);
 
   const titleRef = useRef();
@@ -52,6 +62,59 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
       setOrders([]);
     }
   };
+
+  const handleReview = (rvpid, category, title) => {
+    if (rvpid) {
+      navigate(`/${category}/${rvpid}/${title}`);
+    } else {
+      Swal.fire("Oops!", "This product is no longer available.", "info");
+    }
+  };
+
+  const handleRepurchase = async (
+    pid,
+    color,
+    price,
+    thumbnail,
+    title,
+    discount
+  ) => {
+    if (pid) {
+      if (
+        currentCart?.find((e) => e.product?._id === pid && e.color === color)
+      ) {
+        return Swal.fire({
+          title: "Almost...",
+          text: "Products already in the cart. You want to open cart?",
+          icon: "info",
+          cancelButtonText: "Not now!",
+          showCancelButton: true,
+          confirmButtonText: "Open cart.",
+        }).then((rs) => {
+          if (rs.isConfirmed) dispatch(showCart());
+        });
+      } else {
+        const response = await apiUpdateCart({
+          pid,
+          quantity: 1,
+          color,
+          price,
+          thumbnail,
+          title,
+          discount,
+        });
+        if (response.success) {
+          toast.success(response.mes);
+          dispatch(getCurrent());
+        } else {
+          toast.error(response.mes);
+        }
+      }
+    } else {
+      Swal.fire("Oops!", "This product is no longer available.", "info");
+    }
+  };
+
   useEffect(() => {
     const searchParams = Object.fromEntries([...params]);
     fetchOrder(searchParams);
@@ -274,6 +337,13 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                   {el?.status === "Successed" && (
                     <div className="px-4 flex gap-2">
                       <Button
+                        handleOnClick={() =>
+                          handleReview(
+                            e?.product?._id,
+                            e?.product?.category,
+                            e?.product?.title
+                          )
+                        }
                         style={
                           "px-1 text-xs  my-1 rounded-md text-white bg-main hover:bg-red-600"
                         }
@@ -281,6 +351,16 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
                         Reviews
                       </Button>
                       <Button
+                        handleOnClick={() =>
+                          handleRepurchase(
+                            e?.product?._id,
+                            e?.color,
+                            e?.price,
+                            e?.thumbnail,
+                            e?.title,
+                            e?.discount
+                          )
+                        }
                         style={
                           "px-1 text-xs my-1 rounded-md text-white bg-main hover:bg-red-600"
                         }
@@ -410,8 +490,9 @@ const History = ({ handleUpdateStatusOrder, resetHistoryOrder }) => {
           <Pagination totalCount={count}></Pagination>
         </div>
       </div>
+      <ToastContainer autoClose={1200} />
     </div>
   );
 };
 
-export default memo(History);
+export default withBase(memo(History));

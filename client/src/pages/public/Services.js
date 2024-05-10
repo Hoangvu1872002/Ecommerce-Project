@@ -1,22 +1,31 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Breadcrumbs, Button, InputField } from "../../components";
 import { useParams } from "react-router-dom";
 import icons from "../../ultils/icons";
 
 const Services = () => {
-  const { services } = useParams();
+  const titleRef = useRef();
+
+  const { contact } = useParams();
 
   const { MdEmail, FaPerson, TiTick, FaPhoneAlt } = icons;
 
+  useEffect(() => {
+    titleRef.current.scrollIntoView({ block: "start" });
+  }, []);
+
   return (
     <div className="w-full">
-      <div className="h-[81px] mt-4 flex justify-center items-center bg-gray-50">
+      <div
+        ref={titleRef}
+        className="h-[81px] mt-4 flex justify-center items-center bg-gray-50"
+      >
         <div className="w-main">
           <span className="font-semibold text-[18px] uppercase">
-            {services.slice(1)}
+            {contact.slice(1)}
           </span>
           <div className="mt-2">
-            <Breadcrumbs category={services.slice(1)}></Breadcrumbs>
+            <Breadcrumbs category={contact.slice(1)}></Breadcrumbs>
           </div>
         </div>
       </div>

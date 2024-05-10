@@ -75,6 +75,11 @@ const DetailCheckout = ({ navigate, dispatch }) => {
           dispatch(getCurrent());
         });
       }, [500]);
+    } else {
+      Swal.fire("Oops!", response.mes, "info").then(() => {
+        navigate(`/${path.HOME}`);
+        dispatch(getCurrent());
+      });
     }
   };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Banner,
   BestSeller,
@@ -14,9 +14,14 @@ import Blogs from "../../components/blogs/Blogs";
 
 const { IoIosArrowForward } = icons;
 const Home = () => {
+  // const titleRef = useRef();
   const { newProducts } = useSelector((state) => state.products);
   const { categories } = useSelector((state) => state.app);
-  const { isLogedIn, current } = useSelector((state) => state.user);
+  // const { isLogedIn, current } = useSelector((state) => state.user);
+
+  // useEffect(() => {
+  //   titleRef.current.scrollIntoView({ block: "start" });
+  // }, []);
 
   return (
     <>
@@ -38,10 +43,7 @@ const Home = () => {
           NEW ARRIVALS
         </h3>
         <div className="mt-4 border rounded-lg">
-          <CustomSlider
-            products={newProducts}
-            slidesToShow={4}
-          ></CustomSlider>
+          <CustomSlider products={newProducts} slidesToShow={4}></CustomSlider>
         </div>
         <div className="my-8 w-full ">
           <h3 className="text-[20px] font-semibold py-[15px] border-b-2 border-main">

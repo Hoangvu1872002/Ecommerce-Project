@@ -80,6 +80,7 @@ const ProductInfo = ({ totalRating, ratings, nameProduct, pid, rerender }) => {
           productInfoTabs.find((e) => e.id === activedTab)?.content} */}
         {productInfoTabs.some((e) => e.id === activedTab) && (
           <div
+            className="text-base"
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(
                 productInfoTabs.find((e) => e.id === activedTab)?.content

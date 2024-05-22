@@ -79,14 +79,15 @@ const ProductInfo = ({ totalRating, ratings, nameProduct, pid, rerender }) => {
         {/* {productInfoTabs.some((e) => e.id === activedTab) &&
           productInfoTabs.find((e) => e.id === activedTab)?.content} */}
         {productInfoTabs.some((e) => e.id === activedTab) && (
-          <div
-            className="text-base"
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(
-                productInfoTabs.find((e) => e.id === activedTab)?.content
-              ),
-            }}
-          ></div>
+          <div className="text-sm">
+            <div
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(
+                  productInfoTabs.find((e) => e.id === activedTab)?.content
+                ),
+              }}
+            ></div>
+          </div>
         )}
         {/* productInfoTabs.find((e) => e.id === activedTab)?.content} */}
       </div>

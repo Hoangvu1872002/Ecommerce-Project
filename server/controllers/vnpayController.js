@@ -33,7 +33,8 @@ const createVnpayOrder = asyncHandler(async (req, res) => {
   let tmnCode = "TN44ADZK";
   let secretKey = "BEBLNQOQOJXNTUDOHMIBPAHSXQVHPWHK";
   let vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-  let returnUrl = "http://localhost:5001/vnpay/vnpay_return";
+  let returnUrl =
+    "https://hoangvux-be-ecommerce.onrender.com/vnpay/vnpay_return";
 
   var date = new Date();
 

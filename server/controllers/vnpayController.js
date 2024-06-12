@@ -112,9 +112,9 @@ const vnpayReturn = asyncHandler(async (req, res) => {
 
   const code = Number(vnp_Params.vnp_ResponseCode);
   if (code === 0) {
-    res.redirect("http://localhost:3000/success");
+    res.redirect("https://hoangvux-fe-ecommerce.netlify.app/success");
   } else {
-    res.redirect("http://localhost:3000");
+    res.redirect("https://hoangvux-fe-ecommerce.netlify.app");
   }
 });
 

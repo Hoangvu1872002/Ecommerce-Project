@@ -16,5 +16,6 @@ https://github.com/Hoangvu1872002/Ecommerce-Project/assets/108190241/7594f33c-93
 https://github.com/Hoangvu1872002/Ecommerce-Project/assets/108190241/fea02a66-3318-42c6-8c32-9375549e5d4e
 
 ## Trang thông tin cá nhân (thông tin cá nhân, giỏ hàng, lịch sử thanh toán, danh sách yêu thích)
+https://github.com/Hoangvu1872002/Ecommerce-Project/assets/108190241/8e91c766-7733-4b0c-9d2d-1750bfe71384
 
 ## Trang quản lý (quản lý doanh thu, quản lý người dùng, quản lý sản phẩm, quản lý trạng thái đơn hàng, quản lý blog)

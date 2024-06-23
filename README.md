@@ -1,6 +1,7 @@
 # Demo website
 
 ## Trang chủ
+https://github.com/Hoangvu1872002/Ecommerce-Project/assets/108190241/01eb8dd5-49be-4d63-8e81-f9caee8b7f1e
 
 ## Trang chi tiết sản phẩm và chức năng đánh giá sản phẩm
 

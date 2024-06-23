@@ -4,6 +4,7 @@
 https://github.com/Hoangvu1872002/Ecommerce-Project/assets/108190241/01eb8dd5-49be-4d63-8e81-f9caee8b7f1e
 
 ## Trang chi tiết sản phẩm và chức năng đánh giá sản phẩm
+https://github.com/Hoangvu1872002/Ecommerce-Project/assets/108190241/f6c81674-d7b2-4a52-89e3-2502425449ee
 
 ## Chức năng tìm kiếm
 

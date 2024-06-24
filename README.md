@@ -19,3 +19,4 @@ https://github.com/Hoangvu1872002/Ecommerce-Project/assets/108190241/fea02a66-33
 https://github.com/Hoangvu1872002/Ecommerce-Project/assets/108190241/8e91c766-7733-4b0c-9d2d-1750bfe71384
 
 ## Trang quản lý (quản lý doanh thu, quản lý người dùng, quản lý sản phẩm, quản lý trạng thái đơn hàng, quản lý blog)
+https://github.com/Hoangvu1872002/Ecommerce-Project/assets/108190241/339a114f-d6ab-4628-8643-99a6ae845960
